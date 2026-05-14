@@ -1,7 +1,7 @@
 # 工程任务书 Engineering Tasks
 
-版本：v1.5.5
-关联实施计划：[`00-implementation-plan.md`](00-implementation-plan.md) v2.5.2
+版本：v1.5.6
+关联实施计划：[`00-implementation-plan.md`](00-implementation-plan.md) v2.5.3
 关联技术规约：[`00-tech-constraints.md`](00-tech-constraints.md) v1.3.1
 关联垂直切片：[`00-vertical-slice.md`](00-vertical-slice.md) v1.0.4
 创建日期：2026-05-14
@@ -424,12 +424,21 @@
   4. 现形效果：在 `rule_triggered("apparition_condition")` 时短暂提升 `Sprite2D` alpha 至 0.3 持续 2~3 秒。
   5. 严禁随机传送；如需"突然出现"必须经由规则触发。
 - **验收**：
-  - [ ] VS §4 前 3 项可勾选。
-  - [ ] VS §1 第 2 项可勾选：玩家以不同噪声等级行走，怪物有可观察的行为变化（如 `walk` 时不响应，`run` 时进入 `probe`）。
-  - [ ] `da_zhi.gd` 文件本体 ≤ 200 行；阶段转移条件不在脚本内硬编码。
+  - [x] VS §4 前 3 项可勾选。
+  - [x] VS §1 第 2 项可勾选：玩家以不同噪声等级行走，怪物有可观察的行为变化（如 `walk` 时不响应，`run` 时进入 `probe`）。
+  - [x] `da_zhi.gd` 文件本体 ≤ 200 行；阶段转移条件不在脚本内硬编码。
 - **关联 VS**：§4 前 3 项 + §1 第 2 项。
 - **关联模块**：[`modules/03-monster-anomaly-rules.md`](modules/03-monster-anomaly-rules.md)、[`monsters/001-da-zhi.md`](monsters/001-da-zhi.md)。
-- **状态**：TODO（Q-16 已定案，待 P2 阶段前置完成）
+- **状态**：DONE
+
+#### TASK-P2-2 完成记录（2026-05-14）
+
+- 实现提交：`ad22a25 feat(TASK-P2-2): add da zhi ai skeleton`。
+- 设计：大只 AI 骨架只消费 `RuleEngine` 注入的 `rule_effect`，不写具体规则 ID；阶段节点使用 LimboHSM，移动使用 `NavigationAgent2D`。
+- 搭建：新增 `scenes/monster/da_zhi.tscn`、`scripts/monster/da_zhi.gd`、`scripts/monster/states/da_zhi_limbo_state.gd`、`data/monsters/da_zhi.tres` 和 7 个 GUT 用例。
+- 占位资源：大只视觉为 `Polygon2D` 剪影 + `PlaceholderAssetLabel`“占位: 大只远处剪影/2.5D Live分层怪物立绘”。
+- 审计修复：`da_zhi.gd` 116 行，不包含 `rule_da_zhi_` 或随机/传送逻辑；GoPeak `resource_dependencies` 检查大只场景、脚本和 profile 无循环依赖。
+- 验收：GUT `32/32` 通过；schema 校验 12 个资源通过；大只场景 headless 加载通过；奔跑噪声可触发搜索阶段，行走不会触发。
 
 ---
 
@@ -929,7 +938,7 @@
 | TASK-P1-3-interactables-stub | P1 | DONE | `ca89401` |
 | TASK-P1-4-phase-exit-review | P1 | DONE | `f81dbb9` |
 | TASK-P2-1-rule-engine | P2 | DONE | `9acd9d8` |
-| TASK-P2-2-da-zhi-ai | P2 | TODO（Q-16 已定案） | — |
+| TASK-P2-2-da-zhi-ai | P2 | DONE | `ad22a25` |
 | TASK-P2-3-pressure-feedback | P2 | TODO | — |
 | TASK-P2-4-monster-clue-stubs | P2 | TODO | — |
 | TASK-P2-5-phase-exit-review | P2 | TODO | — |
@@ -956,11 +965,17 @@
 | TASK-P8-2-schema-validation-ci | P8 | TODO | — |
 | TASK-P8-3-docs-closeout | P8 | TODO | — |
 
-合计：**37 条 TASK**，P0、P1 与 P2-1 已完成并通过命令行复核；当前可进入 TASK-P2-2 大只 AI 四阶段行为。当前没有因开放问题阻塞的 TASK。
+合计：**37 条 TASK**，P0、P1 与 P2-1/P2-2 已完成并通过命令行复核；当前可进入 TASK-P2-3 恐怖感知与压力反馈。当前没有因开放问题阻塞的 TASK。
 
 ---
 
 ## 版本记录
+
+### v1.5.6 - 2026-05-14
+
+- 完成 TASK-P2-2：新增大只 AI 骨架、LimboHSM 阶段节点、NavigationAgent2D、MonsterProfile 和 GUT 覆盖。
+- 记录 P2-2 设计、搭建、占位资源、审计修复和验收结果；状态跟踪表写入实现提交 `ad22a25`。
+- 同步实施计划 v2.5.3、怪物规则模块 v0.3.5 与 Monster Bible v0.2.3。
 
 ### v1.5.5 - 2026-05-14
 

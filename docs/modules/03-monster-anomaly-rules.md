@@ -1,6 +1,6 @@
 # 怪物与异常规则模块
 
-版本：v0.3.4
+版本：v0.3.5
 关联总设定版本：v0.8.2
 状态：异常规则原语与反学习机制确认
 创建日期：2026-05-14
@@ -217,6 +217,15 @@
 - 大只最低规则资源位于 `data/rules/da_zhi/`：`rule_da_zhi_corridor_run`、`rule_da_zhi_first_manifestation`、`rule_da_zhi_broadcast_power_off_weakness`、`rule_da_zhi_containment_roster_step`。
 - 会导致死亡、失败或错误收容的规则必须在 `learnable_hint` 中提供最低学习反馈；P2-1 已由 GUT 检查关键失败规则非空。
 
+### P2-2 大只 AI 骨架落地口径
+
+- 大只场景为 `scenes/monster/da_zhi.tscn`，根节点 `CharacterBody2D`，包含 `Visual`、`CollisionShape2D`、`NavigationAgent2D` 和 `StateMachine`。
+- `StateMachine` 使用 LimboAI `LimboHSM` + `LimboState` 节点，阶段 ID 为 `dormant / probing / search / hunt / disposal`；当前阶段由 `DaZhiAI.get_phase()` 暴露给测试和后续调试。
+- 阶段变化只读取 `RuleEngine` 通过 `EventBus.rule_triggered(rule_id, context)` 注入的 `context.rule_effect`，不在 `da_zhi.gd` 中写具体规则 ID 或计时触发条件。
+- 现形由 `rule_effect.type == "manifestation"` 触发，最低表现为剪影 alpha 提升到 0.3；默认不可见，避免过早破坏“看不见但可学习”的体验。
+- 寻路使用 `NavigationAgent2D`，P2-2 只提供目标点移动骨架；正式搜索路径、门/房间搜索与追猎节奏由后续压力反馈和关卡联调继续细化。
+- 当前大只美术为 `Polygon2D` 剪影占位，场景内标签标注“占位: 大只远处剪影/2.5D Live分层怪物立绘”。
+
 ## 验收标准（Acceptance Criteria）
 
 - [ ] 玩家能在不直接看见怪物的情况下判断危险阶段（潜伏/搜索/追猎可区分）。
@@ -257,6 +266,11 @@
 - 第一只怪物名为"大只"，主题为破败校园，见 docs/monsters/001-da-zhi.md。
 
 ## 版本记录
+
+### v0.3.5 - 2026-05-14
+
+- 记录 TASK-P2-2 大只 AI 骨架落地口径：场景结构、LimboHSM 阶段节点、RuleEngine effect 驱动、NavigationAgent2D 与剪影占位。
+- 明确 `da_zhi.gd` 不写具体规则 ID 或随机传送逻辑。
 
 ### v0.3.4 - 2026-05-14
 
