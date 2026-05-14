@@ -1,8 +1,8 @@
 # 叙事与世界观模块
 
-版本：v0.4.0
-关联总设定版本：v0.6.0
-状态：2 主轴矩阵结局结构确认
+版本：v0.4.1
+关联总设定版本：v0.6.1
+状态：2 主轴矩阵结局结构确认；数据契约方向修订
 创建日期：2026-05-14
 最后更新：2026-05-14
 
@@ -117,16 +117,16 @@
 | origin_route_distribution | 对象 | 08-origin-acquisition | 所有养成原形的路线分布 |
 | archive_completeness | 数值（0–1） | 10-base-management | 档案完整度（真相完成度） |
 | radio_relationship | 数值（见 Q-05） | 10-base-management | 电台关系分值（待 Q-05 定案） |
+| axis1_score | 数值（对抗↔共生） | 12-progression | 12 模块计算后的主轴 1 倾向分数 |
+| axis2_score | 数值（揭露↔继承） | 12-progression | 12 模块计算后的主轴 2 倾向分数 |
+| modifier_state | 对象 | 12-progression | 12 模块追踪的修饰位当前状态 |
 
 ### 输出
 
 | 字段名 | 类型 | 目标模块 | 说明 |
 |---|---|---|---|
-| axis1_score | 数值（对抗↔共生） | 12-progression | 主轴 1 当前倾向分数 |
-| axis2_score | 数值（揭露↔继承） | 12-progression | 主轴 2 当前倾向分数 |
-| modifier_state | 对象 | 12-progression | 修饰位当前状态 |
-| ending_cluster | 枚举 | 12-progression | 4 大族群中的归属 |
-| ending_variant | 对象 | 12-progression | 修饰位组合后的具体结局变体描述 |
+| ending_cluster | 枚举 | 12-progression / 结局展示 | 4 大族群中的归属（最后清算/冷酷管理者/异常解放/新秩序） |
+| ending_variant | 对象 | 结局展示 | 修饰位组合后的具体结局变体描述（约 12–20 种差异化表述） |
 
 ## 关键参数表
 
@@ -221,6 +221,11 @@
 - 异常来源具体设定暂不定案。
 
 ## 版本记录
+
+### v0.4.1 - 2026-05-14
+
+- 修正数据契约方向错误：`axis1_score`/`axis2_score`/`modifier_state` 从"输出→12"改为"输入←12"，因为 12 模块负责计算，11 模块负责叙事展示；输出仅保留 `ending_cluster` 和 `ending_variant`。
+- 关联总设定版本升至 v0.6.1。
 
 ### v0.4.0 - 2026-05-14
 
