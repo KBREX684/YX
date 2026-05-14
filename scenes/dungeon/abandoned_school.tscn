@@ -1,0 +1,85 @@
+[gd_scene load_steps=5 format=3 uid="uid://yx_abandoned_school"]
+
+[ext_resource type="PackedScene" path="res://scenes/dungeon/rooms/classroom_a.tscn" id="1_classroom"]
+[ext_resource type="PackedScene" path="res://scenes/dungeon/rooms/storage_a.tscn" id="2_storage"]
+[ext_resource type="PackedScene" path="res://scenes/dungeon/rooms/restroom_a.tscn" id="3_restroom"]
+[ext_resource type="PackedScene" path="res://scenes/dungeon/rooms/office_a.tscn" id="4_office"]
+
+[node name="AbandonedSchool" type="Node2D"]
+
+[node name="Sections" type="Node2D" parent="."]
+
+[node name="Entrance" type="Node2D" parent="Sections"]
+position = Vector2(-520, 0)
+
+[node name="Floor" type="Polygon2D" parent="Sections/Entrance"]
+polygon = PackedVector2Array(-90, -60, 90, -60, 90, 60, -90, 60)
+color = Color(0.13, 0.18, 0.2, 1)
+
+[node name="PlaceholderAssetLabel" type="Label" parent="Sections/Entrance"]
+offset_left = -100.0
+offset_top = -18.0
+offset_right = 100.0
+offset_bottom = 18.0
+text = "占位: 入口区校门/值班室"
+horizontal_alignment = 1
+
+[node name="MainCorridor" type="Node2D" parent="Sections"]
+
+[node name="Floor" type="Polygon2D" parent="Sections/MainCorridor"]
+polygon = PackedVector2Array(-420, -48, 420, -48, 420, 48, -420, 48)
+color = Color(0.12, 0.16, 0.18, 1)
+
+[node name="PlaceholderAssetLabel" type="Label" parent="Sections/MainCorridor"]
+offset_left = -160.0
+offset_top = -34.0
+offset_right = 160.0
+offset_bottom = 8.0
+text = "占位: 完整主走廊分层背景"
+horizontal_alignment = 1
+
+[node name="RitualRoom" type="Node2D" parent="Sections"]
+position = Vector2(160, -190)
+
+[node name="Floor" type="Polygon2D" parent="Sections/RitualRoom"]
+polygon = PackedVector2Array(-130, -70, 130, -70, 130, 70, -130, 70)
+color = Color(0.25, 0.18, 0.18, 1)
+
+[node name="PlaceholderAssetLabel" type="Label" parent="Sections/RitualRoom"]
+offset_left = -135.0
+offset_top = -20.0
+offset_right = 135.0
+offset_bottom = 20.0
+text = "占位: 仪式房/收容符号层"
+horizontal_alignment = 1
+
+[node name="ExitArea" type="Node2D" parent="Sections"]
+position = Vector2(520, 0)
+
+[node name="Floor" type="Polygon2D" parent="Sections/ExitArea"]
+polygon = PackedVector2Array(-90, -60, 90, -60, 90, 60, -90, 60)
+color = Color(0.14, 0.2, 0.18, 1)
+
+[node name="PlaceholderAssetLabel" type="Label" parent="Sections/ExitArea"]
+offset_left = -100.0
+offset_top = -18.0
+offset_right = 100.0
+offset_bottom = 18.0
+text = "占位: 出口区/逃离门"
+horizontal_alignment = 1
+
+[node name="CandidateRooms" type="Node2D" parent="."]
+
+[node name="ClassroomA" parent="CandidateRooms" instance=ExtResource("1_classroom")]
+position = Vector2(-260, -180)
+
+[node name="StorageA" parent="CandidateRooms" instance=ExtResource("2_storage")]
+position = Vector2(-80, 170)
+
+[node name="RestroomA" parent="CandidateRooms" instance=ExtResource("3_restroom")]
+position = Vector2(160, 170)
+
+[node name="OfficeA" parent="CandidateRooms" instance=ExtResource("4_office")]
+position = Vector2(340, -170)
+
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]

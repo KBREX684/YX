@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="LevelResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/systems/resources/level_resource.gd" id="1_level_script"]
+
+[resource]
+script = ExtResource("1_level_script")
+id = "level_abandoned_school"
+display_name = "破败校园"
+scene_id = "scene_abandoned_school"
+scene_path = "res://scenes/dungeon/abandoned_school.tscn"
+room_ids = PackedStringArray("room_classroom_a", "room_storage_a", "room_restroom_a", "room_office_a")
+map_event_ids = PackedStringArray("event_corridor_stretch")
+entrance_id = "section_entrance"
+exit_id = "section_exit"
