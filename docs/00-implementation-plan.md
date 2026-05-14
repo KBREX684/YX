@@ -1,9 +1,9 @@
 # 项目实施计划 Implementation Plan
 
-版本：v2.6.3
+版本：v2.6.4
 关联总设定版本：v0.8.6
 关联技术规约版本：[`00-tech-constraints.md`](00-tech-constraints.md) v1.3.1
-关联垂直切片版本：[`00-vertical-slice.md`](00-vertical-slice.md) v1.0.4
+关联垂直切片版本：[`00-vertical-slice.md`](00-vertical-slice.md) v1.0.5
 创建日期：2026-05-14
 最后更新：2026-05-14
 
@@ -258,7 +258,7 @@
 
 **阶段目标**：玩家能在副本中收集线索、推理出三条路径（逃离/击杀/收容），并触发对应结算屏幕。本阶段的"通关"还不依赖原形养成，只验证"单次副本的信息闭环"。
 
-**当前状态（2026-05-14）**：P3-1 线索信息层、P3-2 弱点/收容执行链、P3-3 结算计算器与 P3-4 死亡复活流程已完成：11 条 `ClueResource`、Dialogic `.dtl` 时间线占位、`ClueBook`、`ObjectiveResolver`、5 条大只执行规则、仪式占位触发节点、`SettlementCalculator`、`SettlementPayoffResource`、`SettlementScreen`、结算数值表、`DeathFeedbackResolver` 与基地占位复活场景已接入；当前可进入 P3-5 阶段出口走查。
+**当前状态（2026-05-14）**：P3-1 线索信息层、P3-2 弱点/收容执行链、P3-3 结算计算器与 P3-4 死亡复活流程已完成：11 条 `ClueResource`、Dialogic `.dtl` 时间线占位、`ClueBook`、`ObjectiveResolver`、5 条大只执行规则、仪式占位触发节点、`SettlementCalculator`、`SettlementPayoffResource`、`SettlementScreen`、结算数值表、`DeathFeedbackResolver` 与基地占位复活场景已接入；P3-5 自动化出口走查记录见 [`docs/perf/p3-review.md`](perf/p3-review.md)，当前因非开发者盲测未执行而阻塞，暂不进入 P4。
 
 ---
 
@@ -615,6 +615,12 @@ P7-1 不再因 Q-01 阻塞；其前置仍为 P6-4。
 ---
 
 ## 版本记录
+
+### v2.6.4 - 2026-05-14
+
+- 新增 P3 阶段出口走查记录 [`docs/perf/p3-review.md`](perf/p3-review.md)：自动化工程验收通过，非开发者盲测未执行。
+- 将当前实施入口停在 P3-5 阶段出口门禁，明确盲测完成前不进入 P4。
+- 同步垂直切片 v1.0.5：修正 §6 结算奖励验收口径为三维分工。
 
 ### v2.6.3 - 2026-05-14
 

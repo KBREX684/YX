@@ -1,9 +1,9 @@
 # 工程任务书 Engineering Tasks
 
-版本：v1.6.3
-关联实施计划：[`00-implementation-plan.md`](00-implementation-plan.md) v2.6.3
+版本：v1.6.4
+关联实施计划：[`00-implementation-plan.md`](00-implementation-plan.md) v2.6.4
 关联技术规约：[`00-tech-constraints.md`](00-tech-constraints.md) v1.3.1
-关联垂直切片：[`00-vertical-slice.md`](00-vertical-slice.md) v1.0.4
+关联垂直切片：[`00-vertical-slice.md`](00-vertical-slice.md) v1.0.5
 创建日期：2026-05-14
 最后更新：2026-05-14
 
@@ -636,7 +636,14 @@
 - **前置**：TASK-P3-1 ~ TASK-P3-4
 - **产出**：`/docs/perf/p3-review.md`
 - **验收**：VS §4 + §5 + §6 + §1 第 4 项全勾；`SettlementCalculator` GUT 全过；盲测口述规则成功。
-- **状态**：TODO
+- **状态**：BLOCKED（待非开发者盲测）
+
+**阶段出口记录（2026-05-14）**
+
+- 设计：P3 出口只判定"单次副本信息闭环"，不提前接入 P4 搜刮、P5 基地循环或 P7 文案演出；小阶段不再单独执行完整审计验收，正式审计与验收集中在本阶段出口。
+- 审计修复：新增 [`docs/perf/p3-review.md`](perf/p3-review.md)，并修正 [`00-vertical-slice.md`](00-vertical-slice.md) §6 奖励验收口径，保持"逃离偏素材、击杀偏中间策略、收容偏原形质量与叙事条目"。
+- 自动化验收：全量 GUT 73/73、schema 35 个资源检查、`abandoned_school.tscn` 与 `base_placeholder.tscn` headless check-only、GoPeak 关键依赖审计均通过。
+- 阻塞项：非开发者盲测尚未执行，暂不勾选 VS §4/§5 中的人工推理项，也不进入 TASK-P4-1。
 
 ---
 
@@ -995,7 +1002,7 @@
 | TASK-P3-2-weakness-containment | P3 | DONE | `95b3d9f` |
 | TASK-P3-3-settlement-calculator | P3 | DONE | `8029341` |
 | TASK-P3-4-death-respawn | P3 | DONE | `ac46b9c` |
-| TASK-P3-5-phase-exit-review | P3 | TODO | — |
+| TASK-P3-5-phase-exit-review | P3 | BLOCKED（待非开发者盲测） | `docs/perf/p3-review.md` |
 | TASK-P4-1-loot-system | P4 | TODO | — |
 | TASK-P4-2-origin-growth | P4 | TODO | — |
 | TASK-P4-3-save-system | P4 | TODO | — |
@@ -1014,11 +1021,17 @@
 | TASK-P8-2-schema-validation-ci | P8 | TODO | — |
 | TASK-P8-3-docs-closeout | P8 | TODO | — |
 
-合计：**37 条 TASK**，P0、P1、P2 与 P3-1~P3-4 已完成并通过命令行复核；当前可进入 TASK-P3-5 阶段出口走查。当前没有因开放问题阻塞的 TASK。
+合计：**37 条 TASK**，P0、P1、P2 与 P3-1~P3-4 已完成并通过命令行复核；TASK-P3-5 自动化出口走查已完成，但因非开发者盲测未执行而阻塞，暂不可进入 TASK-P4-1。
 
 ---
 
 ## 版本记录
+
+### v1.6.4 - 2026-05-14
+
+- 新增 TASK-P3-5 阶段出口记录 [`docs/perf/p3-review.md`](perf/p3-review.md)，记录 P3 自动化验收、GoPeak 依赖审计和人工盲测阻塞项。
+- 将 TASK-P3-5 状态置为 `BLOCKED（待非开发者盲测）`，明确 P4-1 不在盲测完成前启动。
+- 同步实施计划 v2.6.4 与垂直切片 v1.0.5；保持小阶段只做快速自测，大阶段出口集中审计修复和验收。
 
 ### v1.6.3 - 2026-05-14
 
