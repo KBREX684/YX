@@ -1,7 +1,7 @@
 # 项目实施计划 Implementation Plan
 
-版本：v2.6.1
-关联总设定版本：v0.8.4
+版本：v2.6.2
+关联总设定版本：v0.8.5
 关联技术规约版本：[`00-tech-constraints.md`](00-tech-constraints.md) v1.3.1
 关联垂直切片版本：[`00-vertical-slice.md`](00-vertical-slice.md) v1.0.4
 创建日期：2026-05-14
@@ -258,7 +258,7 @@
 
 **阶段目标**：玩家能在副本中收集线索、推理出三条路径（逃离/击杀/收容），并触发对应结算屏幕。本阶段的"通关"还不依赖原形养成，只验证"单次副本的信息闭环"。
 
-**当前状态（2026-05-14）**：P3-1 线索信息层与 P3-2 弱点/收容执行链已完成：11 条 `ClueResource`、Dialogic `.dtl` 时间线占位、`ClueBook`、`ObjectiveResolver`、5 条大只执行规则和仪式占位触发节点已接入；当前可进入 P3-3 结算系统施工。
+**当前状态（2026-05-14）**：P3-1 线索信息层、P3-2 弱点/收容执行链与 P3-3 结算计算器已完成：11 条 `ClueResource`、Dialogic `.dtl` 时间线占位、`ClueBook`、`ObjectiveResolver`、5 条大只执行规则、仪式占位触发节点、`SettlementCalculator`、`SettlementPayoffResource`、`SettlementScreen` 与结算数值表已接入；当前可进入 P3-4 死亡、失败与撤离规则施工。
 
 ---
 
@@ -294,7 +294,7 @@
 - **目标**：勾选 [`00-vertical-slice.md`](00-vertical-slice.md) §6（四种结算 + 数值展示 + 错误收容惩罚）。
 - **主要工作**：
   1. `SettlementCalculator` 单独成系统，输入：路径标志、剩余 HP、拾取列表、规则触发记录；输出：四种结算之一与对应数值。
-  2. 三档奖励差："收容 > 击杀 > 逃离"在素材量 / 原形质量 / 叙事条目三维同时拉开。
+  2. 三维奖励差：素材量维度按"逃离 > 击杀 > 收容"拉开，原形质量与叙事条目维度按"收容 > 击杀 > 逃离"拉开。
   3. 错误收容惩罚扣减基地资源并在结算页显示（基地资源由 P5 接入，此阶段可用占位值验证）。
   4. 编写 GUT 用例覆盖 `SettlementCalculator`（[`00-tech-constraints.md`](00-tech-constraints.md) §九 强制项）。
 - **关联文档**：[`modules/06-objectives-settlement.md`](modules/06-objectives-settlement.md)。
@@ -615,6 +615,12 @@ P7-1 不再因 Q-01 阻塞；其前置仍为 P6-4。
 ---
 
 ## 版本记录
+
+### v2.6.2 - 2026-05-14
+
+- 完成 P3-3 副本目标结算系统：`SettlementCalculator` 订阅 `EventBus.objective_completed`，输出四种结算的资源、原形、档案、基地占位扣减与污染变化数据。
+- 新增 Inspector 可编辑数值表 `data/settlement_payoffs.tres` 与 `SettlementScreen`；当前实施入口推进至 P3-4 玩家死亡与复活流程。
+- 修正 P3-3 奖励描述，保持与模块 06 的三维奖励分工一致：逃离偏素材，击杀偏中间策略，收容偏原形质量与叙事档案。
 
 ### v2.6.1 - 2026-05-14
 

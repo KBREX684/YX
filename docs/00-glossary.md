@@ -1,7 +1,7 @@
 # 术语表 Glossary
 
-版本：v1.5.1
-关联总设定版本：v0.8.4
+版本：v1.5.2
+关联总设定版本：v0.8.5
 创建日期：2026-05-14
 最后更新：2026-05-14
 
@@ -221,6 +221,30 @@
 
 ---
 
+### 结算计算器（SettlementCalculator）
+
+**定义：** 副本场景内的普通系统节点，负责把目标完成事件、玩家剩余 HP、拾取列表和规则触发记录转换为结算 payload。
+
+**补充说明：** P3-3 起，`SettlementCalculator` 默认订阅 `EventBus.objective_completed(objective_type, payload)`，并输出 `EventBus.settlement_ready(payload)`。它不进入 Autoload 白名单，奖励曲线来自 `data/settlement_payoffs.tres`。
+
+---
+
+### 结算数值表（SettlementPayoffResource）
+
+**定义：** 用 `.tres` 保存四种结算路径奖励倍率、档案条目、原形质量和错误收容惩罚参数的数据资源。
+
+**补充说明：** P3-3 默认文件为 `data/settlement_payoffs.tres`。该表可在 Inspector 中调整，不需要修改 `SettlementCalculator` 脚本；schema 工具已注册 `SettlementPayoffResource` 的关键字段校验。
+
+---
+
+### 结算界面（SettlementScreen）
+
+**定义：** P3-3 的结算 UI 占位场景，用于显示完成方式、资源分类、原形质量、档案新增、基地占位扣减和污染变化。
+
+**补充说明：** 当前场景为 `scenes/ui/settlement_screen.tscn`，已挂接到 `abandoned_school.tscn`。后续正式美术替换时保留字段和节点契约，视觉改为 2.5D Live + 厚涂精美二次元结算演出。
+
+---
+
 ### 收容步骤触发器（Ritual Step Trigger）
 
 **定义：** 放置在副本场景中的占位交互区域，用于承载收容步骤、触发 zone/action 上下文和后续正式美术资产说明。
@@ -358,6 +382,11 @@
 ---
 
 ## 版本记录
+
+### v1.5.2 - 2026-05-14
+
+- 新增 3 个 P3-3 工程术语：结算计算器、结算数值表、结算界面。
+- 同步总设定 v0.8.5、目标结算模块 v0.3.4、实施计划 v2.6.2 与工程任务书 v1.6.2。
 
 ### v1.5.1 - 2026-05-14
 

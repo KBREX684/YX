@@ -1,7 +1,7 @@
 # 工程任务书 Engineering Tasks
 
-版本：v1.6.1
-关联实施计划：[`00-implementation-plan.md`](00-implementation-plan.md) v2.6.1
+版本：v1.6.2
+关联实施计划：[`00-implementation-plan.md`](00-implementation-plan.md) v2.6.2
 关联技术规约：[`00-tech-constraints.md`](00-tech-constraints.md) v1.3.1
 关联垂直切片：[`00-vertical-slice.md`](00-vertical-slice.md) v1.0.4
 创建日期：2026-05-14
@@ -585,15 +585,21 @@
 - **实现步骤**：
   1. 输入：`path_flag`（逃离/击杀/收容/错误收容）、`hp_remaining`、`pickup_list`、`triggered_rules`。输出：四种结算之一 + 资源/原形/档案三项数值。
   2. 错误收容惩罚：扣减基地资源占位字段（P5 接入正式基地资源），并在结算页显示数值。
-  3. 三档奖励差："收容 > 击杀 > 逃离"在素材量 / 原形质量 / 叙事条目三维同时拉开（数值表 `/data/settlement_payoffs.tres`）。
+  3. 三维奖励差：素材量维度按"逃离 > 击杀 > 收容"拉开，原形质量与叙事条目维度按"收容 > 击杀 > 逃离"拉开；曲线来自数值表 `/data/settlement_payoffs.tres`。
   4. GUT 用例覆盖：四种路径各一例 + 错误收容扣减 + 边界（HP=0 / 拾取空）。
 - **验收**：
-  - [ ] `test_settlement_calculator.gd` 100% 通过（至少 6 用例）。
-  - [ ] VS §6 全部 5 项可勾选。
-  - [ ] 数值表在 Inspector 中可读可改，不需要改代码就能调奖励曲线。
+  - [x] `test_settlement_calculator.gd` 100% 通过（9 用例）。
+  - [ ] VS §6 全部 5 项正式验收收束到 TASK-P3-5 阶段出口。
+  - [x] 数值表在 Inspector 中可读可改，不需要改代码就能调奖励曲线。
 - **关联 VS**：§6。
 - **关联模块**：[`modules/06-objectives-settlement.md`](modules/06-objectives-settlement.md)。
-- **状态**：TODO
+- **状态**：DONE
+
+**完成记录（2026-05-14）**
+
+- 设计：`SettlementCalculator` 订阅 `EventBus.objective_completed(objective_type, payload)`，将 P3-2 目标完成事实转换为四类结算数据；奖励差异遵循模块 06 的三维分工，素材量与原形/叙事价值不互相塌缩。
+- 搭建：新增 `SettlementPayoffResource`、`data/settlement_payoffs.tres`、`SettlementCalculator`、`SettlementScreen` 与 `test_settlement_calculator.gd`；`abandoned_school.tscn` 已挂接结算器和结算屏，错误收容通过 `base_resource_delta.placeholder_materials` 输出 P5 前的基地资源占位扣减。
+- 快速自测：`test_settlement_calculator.gd` 9/9 通过；全量 GUT 67/67 通过；schema 校验 35 个资源通过或按既定 P8 口径 SKIP，其中 `settlement_payoffs.tres` 已注册为 `SettlementPayoffResource`；`abandoned_school.tscn` headless check-only 通过；GoPeak 资源依赖检查无循环引用，编辑器桥接仍因 6506 端口占用未连接。
 
 ---
 
@@ -981,7 +987,7 @@
 | TASK-P2-5-phase-exit-review | P2 | DONE | `5023655` / review doc |
 | TASK-P3-1-clue-system | P3 | DONE | `4840f2a` |
 | TASK-P3-2-weakness-containment | P3 | DONE | `95b3d9f` |
-| TASK-P3-3-settlement-calculator | P3 | TODO | — |
+| TASK-P3-3-settlement-calculator | P3 | DONE | `8029341` |
 | TASK-P3-4-death-respawn | P3 | TODO | — |
 | TASK-P3-5-phase-exit-review | P3 | TODO | — |
 | TASK-P4-1-loot-system | P4 | TODO | — |
@@ -1002,11 +1008,18 @@
 | TASK-P8-2-schema-validation-ci | P8 | TODO | — |
 | TASK-P8-3-docs-closeout | P8 | TODO | — |
 
-合计：**37 条 TASK**，P0、P1、P2 与 P3-1~P3-2 已完成并通过命令行复核；当前可进入 TASK-P3-3 结算系统。当前没有因开放问题阻塞的 TASK。
+合计：**37 条 TASK**，P0、P1、P2 与 P3-1~P3-3 已完成并通过命令行复核；当前可进入 TASK-P3-4 死亡、失败与撤离规则。当前没有因开放问题阻塞的 TASK。
 
 ---
 
 ## 版本记录
+
+### v1.6.2 - 2026-05-14
+
+- 完成 TASK-P3-3：新增 `SettlementCalculator`、`SettlementPayoffResource`、`data/settlement_payoffs.tres`、`SettlementScreen` 与结算系统 GUT。
+- 记录 P3-3 设计与搭建结果；状态跟踪表写入实现提交 `8029341`，当前入口推进至 TASK-P3-4。
+- 修正 P3-3 奖励表述：素材量维度为逃离最高，原形质量与叙事条目维度为收容最高，保持与目标结算模块 v0.3.4 一致。
+- 同步实施计划 v2.6.2、目标结算模块 v0.3.4、术语表 v1.5.2 与总设定 v0.8.5。
 
 ### v1.6.1 - 2026-05-14
 

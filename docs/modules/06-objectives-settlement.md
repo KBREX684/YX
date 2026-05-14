@@ -1,8 +1,8 @@
 # 副本目标与结算模块
 
-版本：v0.3.3
-关联总设定版本：v0.8.4
-状态：目标完成事件接入
+版本：v0.3.4
+关联总设定版本：v0.8.5
+状态：结算计算器已接入
 创建日期：2026-05-14
 最后更新：2026-05-14
 
@@ -166,6 +166,33 @@ EventBus.objective_completed(objective_type: int, payload: Dictionary)
 
 `ObjectiveResolver` 同时记录收容步骤完成状态，供后续步骤以 `completed_steps` 条件验证顺序。结算数值、界面和奖励计算仍由 P3-3 `SettlementCalculator` 承担；P3-2 只保证目标完成事实和 payload 可被可靠传递。
 
+## P3-3 结算计算器与数值表
+
+P3-3 引入 `SettlementCalculator` 作为副本场景内的普通系统节点。它不进入 Autoload 白名单，默认订阅：
+
+```gdscript
+EventBus.objective_completed(objective_type: int, payload: Dictionary)
+```
+
+结算器从当前副本运行上下文读取 `path_flag`、`hp_remaining`、`pickup_list`、`triggered_rules` 与 `base_storage_total`，输出统一结算 payload，并通过 `EventBus.settlement_ready(payload)` 交给结算界面显示。
+
+当前数据表为：
+
+```text
+res://data/settlement_payoffs.tres
+```
+
+该表基于 `SettlementPayoffResource`，可在 Inspector 中直接调整奖励曲线，不需要修改脚本。当前第一阶段曲线为：
+
+| 维度 | 逃离 | 击杀 | 收容 | 错误收容 |
+|---|---|---|---|---|
+| 素材倍率 | 1.0 | 0.75 | 0.5 | 0.25 |
+| 原形质量 | 无 | medium / low stability | high / stable | unstable / volatile |
+| 档案条目 | 1 | 2 | 4 | 1 |
+| 基地占位资源 | 增加带回素材 | 增加带回素材 | 增加带回素材 | 扣除占位仓库物资 |
+
+`SettlementScreen` 是 P3-3 的 UI 占位界面，显示完成方式、资源分类、原形质量、档案新增、基地占位扣减与污染变化。后续正式美术替换时，应保留稳定节点和字段契约，只替换视觉样式与 2.5D Live 结算演出素材。
+
 ## 数据契约
 
 ### 输入
@@ -191,14 +218,29 @@ EventBus.objective_completed(objective_type: int, payload: Dictionary)
 | next_dungeon_unlock | 列表 | 12-progression | 后续副本解锁或变体触发条件 |
 | base_invasion_trigger | 布尔/对象 | 10-base-management | 是否触发基地入侵（错误收容） |
 
+P3-3 工程 payload 使用以下稳定键名，供 P4/P5 继续接线：
+
+| 字段名 | 类型 | 当前含义 |
+|---|---|---|
+| settlement_type | 字符串 | `escape` / `kill` / `contain` / `miscontain` |
+| resource_summary | 对象 | 生存/解谜/养成/情报四类带回值，含 `total_raw`、`total_awarded`、`lost` |
+| origin_output | 对象 | 是否获得原形、品质、稳定度、路线倾向 |
+| archive_update | 对象 | 新增档案条目数与当前完成度百分比 |
+| base_resource_delta | 对象 | P5 前的基地资源占位增减，`placeholder_materials` 为当前显示字段 |
+| base_invasion_trigger | 对象 | 错误收容入侵概率与错误等级 |
+| pollution_delta | 对象 | 玩家污染、基地污染与死亡待处理标记 |
+
 ## 关键参数表
 
 | 参数名 | 类型 | 默认值 | 有效范围 | 影响 |
 |---|---|---|---|---|
-| error_contain_light_loss_pct | 数值 | 0.05 | 0.03–0.10 | 轻度错误收容仓库损失比例 |
-| error_contain_light_loss_cap | 整数 | 3 | 2–5 | 轻度错误收容损失上限 |
-| error_contain_heavy_invasion_prob | 数值 | 0.6 | 0.4–0.8 | 重度错误收容触发入侵概率 |
-| escape_origin_fragment | 布尔 | false | — | 纯逃离是否产出残片（默认不产出） |
+| escape_material_multiplier | 数值 | 1.0 | 0.0–2.0 | 逃离带回素材倍率 |
+| kill_material_multiplier | 数值 | 0.75 | 0.0–2.0 | 击杀带回素材倍率 |
+| contain_material_multiplier | 数值 | 0.5 | 0.0–2.0 | 收容带回素材倍率 |
+| light_error_loss_pct / cap | 数值 / 整数 | 0.05 / 3 | 0.0–1.0 / 正整数 | 轻度错误收容仓库损失 |
+| medium_error_loss_pct / cap | 数值 / 整数 | 0.10 / 8 | 0.0–1.0 / 正整数 | 中度错误收容仓库损失 |
+| heavy_error_loss_pct / cap | 数值 / 整数 | 0.15 / 15 | 0.0–1.0 / 正整数 | 重度错误收容仓库损失 |
+| heavy_error_invasion_chance | 数值 | 0.6 | 0.0–1.0 | 重度错误收容触发基地入侵概率 |
 
 ## 关键流程
 
@@ -280,6 +322,13 @@ EventBus.objective_completed(objective_type: int, payload: Dictionary)
 - 结算结果显示明确数值。
 
 ## 版本记录
+
+### v0.3.4 - 2026-05-14
+
+- 接入 P3-3 结算工程口径：新增 `SettlementCalculator`、`SettlementPayoffResource`、`data/settlement_payoffs.tres` 与 `SettlementScreen`。
+- 明确 P3-3 payload 稳定键名：`resource_summary`、`origin_output`、`archive_update`、`base_resource_delta`、`base_invasion_trigger`、`pollution_delta`。
+- 修正奖励曲线表述：素材量维度保持逃离最高，原形质量与档案维度保持收容最高；正式 VS §6 体验验收仍收束到 P3-5 阶段出口。
+- 同步总设定版本至 v0.8.5、实施计划 v2.6.2、工程任务书 v1.6.2 与术语表 v1.5.2。
 
 ### v0.3.3 - 2026-05-14
 
