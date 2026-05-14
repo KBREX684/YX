@@ -1,7 +1,7 @@
 # 工程任务书 Engineering Tasks
 
-版本：v1.5.6
-关联实施计划：[`00-implementation-plan.md`](00-implementation-plan.md) v2.5.3
+版本：v1.5.7
+关联实施计划：[`00-implementation-plan.md`](00-implementation-plan.md) v2.5.4
 关联技术规约：[`00-tech-constraints.md`](00-tech-constraints.md) v1.3.1
 关联垂直切片：[`00-vertical-slice.md`](00-vertical-slice.md) v1.0.4
 创建日期：2026-05-14
@@ -458,12 +458,20 @@
   4. `sanity_distort.gdshader` 实现轻度文字抖动 + 音频低通滤波（理智低时启用），通过 `Config` 提供开关。
   5. 在 `abandoned_school.tscn` 的第一次进入触发器中**强制**调用一次 `da_zhi.show_apparition(2.5s)`。
 - **验收**：
-  - [ ] VS §2 全部 5 项可勾选。
-  - [ ] 三类反馈在"远 / 近"两档下能由玩家明显区分。
-  - [ ] 关闭 Shader 时游戏仍可玩（`Config.sanity_shader_enabled = false` 测试）。
+  - [x] VS §2 全部 5 项可勾选。
+  - [x] 三类反馈在"远 / 近"两档下能由玩家明显区分。
+  - [x] 关闭 Shader 时游戏仍可玩（`Config.sanity_shader_enabled = false` 测试）。
 - **关联 VS**：§2。
 - **关联模块**：[`modules/04-horror-perception-pressure.md`](modules/04-horror-perception-pressure.md)。
-- **状态**：TODO
+- **状态**：DONE
+
+**完成记录（2026-05-14）**
+
+- 设计：`PressureLevel` 保持普通场景节点，接收 `EventBus.pressure_changed(level)`；心跳、手电闪烁、环境氛围混音、理智干扰共用同一快照。
+- 搭建：新增 `pressure_level.gd`、`pressure_hud.tscn`、`heartbeat_player.tscn`、`heartbeat_busses.tres`、`sanity_distort.gdshader`、`first_entry_manifest_trigger.gd` 和 9 个 GUT 用例。
+- 占位资源：HUD 为全屏 `ColorRect` 叠层占位，心跳音源当前无正式 `AudioStream`；大只仍使用 `Polygon2D` 剪影 + `PlaceholderAssetLabel`，对应后续“远处高大人形剪影 / 2.5D Live 分层怪物立绘”。
+- 审计修复：`PressureLevel` 142 行、`DaZhiAI` 135 行，Autoload 白名单保持 5 项；GoPeak `resource_dependencies` 检查废弃学校、HUD、心跳和 AudioBus 无循环依赖，编辑器桥接仍因 `127.0.0.1:6506` 被占用不可连接。
+- 验收：GUT `41/41` 通过；schema 校验 13 个资源通过或按 P8 前 schema 口径 SKIP；废弃学校、压力 HUD、心跳播放器和大只场景 headless 加载通过；实现提交 `a5820a2`。
 
 ---
 
@@ -939,7 +947,7 @@
 | TASK-P1-4-phase-exit-review | P1 | DONE | `f81dbb9` |
 | TASK-P2-1-rule-engine | P2 | DONE | `9acd9d8` |
 | TASK-P2-2-da-zhi-ai | P2 | DONE | `ad22a25` |
-| TASK-P2-3-pressure-feedback | P2 | TODO | — |
+| TASK-P2-3-pressure-feedback | P2 | DONE | `a5820a2` |
 | TASK-P2-4-monster-clue-stubs | P2 | TODO | — |
 | TASK-P2-5-phase-exit-review | P2 | TODO | — |
 | TASK-P3-1-clue-system | P3 | TODO | — |
@@ -965,11 +973,17 @@
 | TASK-P8-2-schema-validation-ci | P8 | TODO | — |
 | TASK-P8-3-docs-closeout | P8 | TODO | — |
 
-合计：**37 条 TASK**，P0、P1 与 P2-1/P2-2 已完成并通过命令行复核；当前可进入 TASK-P2-3 恐怖感知与压力反馈。当前没有因开放问题阻塞的 TASK。
+合计：**37 条 TASK**，P0、P1 与 P2-1/P2-2/P2-3 已完成并通过命令行复核；当前可进入 TASK-P2-4 怪物线索占位规则池。当前没有因开放问题阻塞的 TASK。
 
 ---
 
 ## 版本记录
+
+### v1.5.7 - 2026-05-14
+
+- 完成 TASK-P2-3：新增压力等级系统、HUD 叠层、心跳播放器、AudioBus layout、理智干扰 Shader 和首次入场现形触发器。
+- 记录 P2-3 设计、搭建、占位资源、审计修复和验收结果；状态跟踪表写入实现提交 `a5820a2`。
+- 同步实施计划 v2.5.4、恐怖感知与压力模块 v0.3.3、Monster Bible v0.2.4 与术语表 v1.4.5。
 
 ### v1.5.6 - 2026-05-14
 

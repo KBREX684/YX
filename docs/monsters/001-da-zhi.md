@@ -1,6 +1,6 @@
 # 大只 — Monster Bible
 
-版本：v0.2.3
+版本：v0.2.4
 关联总设定版本：v0.8.2
 关联副本主题：破败校园
 状态：Demo 规则口径确认
@@ -106,10 +106,20 @@
 | 潜伏 | `dormant` | 默认阶段，剪影不可见，不移动 |
 | 试探 | `probing` | 弱点窗口或后续环境变化阶段占位，暂不主动追踪 |
 | 搜索 | `search` | 由规则效果 `phase = "search"` 触发，进入 NavigationAgent2D 目标点移动 |
-| 追猎 | `hunt` | 预留高速追踪阶段，P2-3/P2-4 接入压力反馈与追猎演出 |
+| 追猎 | `hunt` | 预留高速追踪阶段，P2-3 已接入最高压力反馈，P2-4 继续补线索反应 |
 | 处置 | `disposal` | 预留抓取/失败阶段，死亡复活由 P3-4 接入 |
 
 P2-2 不写具体规则 ID；大只只读取 `RuleEngine` 注入的 `rule_effect`。当前剪影占位对应后续正式“远处高大人形剪影 / 2.5D Live 分层怪物立绘”。
+
+### P2-3 压力反馈映射
+
+| 工程事件 | 当前输出 | 设计含义 |
+|---|---|---|
+| `search` 阶段 | `EventBus.pressure_changed(0.7)` | 玩家能感到大只正在接近，但仍有躲藏与绕行窗口 |
+| `hunt` / `disposal` 阶段 | `EventBus.pressure_changed(1.0)` | 近距离高压，心跳、手电和环境氛围达到最高档 |
+| `show_apparition(2.5)` | `monster_manifested` + 不低于 `0.65` 的压力 | 首次进入废弃学校时的弱光远处显形，提供基础外观信息 |
+
+`show_apparition(duration)` 是 `manifest(duration)` 的语义别名，供场景触发器调用；正式美术替换时仍对应“远处高大人形弱光轮廓”，不是近景完整立绘。
 
 ---
 
@@ -253,6 +263,11 @@ P2-2 不写具体规则 ID；大只只读取 `RuleEngine` 注入的 `rule_effect
 ---
 
 ## 版本记录
+
+### v0.2.4 - 2026-05-14
+
+- 新增 P2-3 压力反馈映射，记录大只阶段与 `EventBus.pressure_changed` 的对应关系。
+- 记录 `show_apparition(2.5)` 首次入场触发语义与占位美术意图。
 
 ### v0.2.3 - 2026-05-14
 

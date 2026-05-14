@@ -1,8 +1,8 @@
 # 恐怖感知与压力模块
 
-版本：v0.3.2
-关联总设定版本：v0.8.1
-状态：现形频率契约与理智阈值系统确认
+版本：v0.3.3
+关联总设定版本：v0.8.2
+状态：P2-3 压力反馈工程落地
 创建日期：2026-05-14
 最后更新：2026-05-14
 
@@ -182,6 +182,15 @@
 
 理智阈值第一阶段只实现 3 段（稳定/中度/崩溃），完整 5 段在第二阶段引入。
 
+### P2-3 工程落地口径
+
+- `PressureLevel` 是 Autoload 之外的普通系统节点，通过 `EventBus.pressure_changed(level)` 接收怪物压力输入。
+- 远/近压力快照至少包含：心跳强度、手电闪烁频率、环境氛围总线音量、危险档位、理智干扰强度和线索可靠性。
+- `data/audio/heartbeat_busses.tres` 当前建立 `Heartbeat`、`Flashlight`、`Ambience` 三路总线；`Ambience` 预置低理智低通滤波，默认关闭，由 `PressureLevel` 按理智阈值启用。
+- `scenes/ui/hud/pressure_hud.tscn` 是临时 HUD 叠层占位，不作为正式 UI 明示压力数值；后续美术需替换为手绘血色边缘、手电光斑不稳与轻度视觉噪声。
+- `scenes/audio/heartbeat_player.tscn` 当前无正式音频流，保留 `AudioStreamPlayer2D`、`Heartbeat` bus 与衰减参数，后续资源应替换为分层心跳循环音效。
+- `scripts/shaders/sanity_distort.gdshader` 仅承担轻度文字/画面抖动与色偏；`Config.sanity_shader_enabled = false` 时必须关闭视觉强干扰，保证可玩性。
+
 ## 验收标准（Acceptance Criteria）
 
 - [ ] 玩家能根据反馈判断危险大致阶段（潜伏/搜索/追猎可区分）。
@@ -221,6 +230,11 @@
 - 理智输入事件表和回复方式表已在本文档中定义。
 
 ## 版本记录
+
+### v0.3.3 - 2026-05-14
+
+- 新增 P2-3 工程落地口径：`PressureLevel`、三路 AudioBus、低理智低通、HUD 占位、心跳占位和理智干扰 Shader 的责任边界。
+- 同步总设定版本至 v0.8.2。
 
 ### v0.3.2 - 2026-05-14
 
