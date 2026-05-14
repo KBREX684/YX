@@ -4,6 +4,7 @@ const RULE_ENGINE_SCRIPT := "res://scripts/systems/rule_engine.gd"
 const DA_ZHI_RULE_FILES := [
 	"res://data/rules/da_zhi/rule_da_zhi_corridor_run.tres",
 	"res://data/rules/da_zhi/rule_da_zhi_first_manifestation.tres",
+	"res://data/rules/da_zhi/rule_da_zhi_flashlight_stare_manifestation.tres",
 	"res://data/rules/da_zhi/rule_da_zhi_broadcast_power_off_weakness.tres",
 	"res://data/rules/da_zhi/rule_da_zhi_containment_roster_step.tres",
 ]
@@ -118,6 +119,7 @@ func test_clue_unlock_signal_emits_from_effect() -> void:
 
 func test_da_zhi_data_contains_required_rule_types_and_failure_hints() -> void:
 	var effect_types := {}
+	var manifestation_count := 0
 	for path in DA_ZHI_RULE_FILES:
 		assert_true(ResourceLoader.exists(path), "%s should exist." % path)
 		if not ResourceLoader.exists(path):
@@ -125,10 +127,13 @@ func test_da_zhi_data_contains_required_rule_types_and_failure_hints() -> void:
 		var rule: Resource = load(path)
 		var effect: Dictionary = rule.get("effect")
 		effect_types[effect.get("type", "")] = true
+		if effect.get("type", "") == "manifestation":
+			manifestation_count += 1
 		if bool(effect.get("is_critical_failure", false)):
 			assert_ne(String(rule.get("learnable_hint")).strip_edges(), "")
 
 	assert_true(effect_types.has("manifestation"))
+	assert_gte(manifestation_count, 2)
 	assert_true(effect_types.has("weakness_window"))
 	assert_true(effect_types.has("containment_step"))
 

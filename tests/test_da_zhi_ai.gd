@@ -35,6 +35,7 @@ func test_da_zhi_profile_references_rule_resources() -> void:
 	assert_eq(profile.get("id"), "da_zhi")
 	assert_has(profile.get("rule_ids"), "rule_da_zhi_corridor_run")
 	assert_has(profile.get("rule_ids"), "rule_da_zhi_first_manifestation")
+	assert_has(profile.get("rule_ids"), "rule_da_zhi_flashlight_stare_manifestation")
 	assert_eq(profile.get("weakness_rule_id"), "rule_da_zhi_broadcast_power_off_weakness")
 	assert_has(profile.get("containment_rule_ids"), "rule_da_zhi_containment_roster_step")
 

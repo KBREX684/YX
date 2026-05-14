@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="RuleResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/systems/resources/rule_resource.gd" id="1_rule"]
+
+[resource]
+script = ExtResource("1_rule")
+id = "rule_da_zhi_flashlight_stare_manifestation"
+trigger_conditions = [{
+"type": "zone",
+"zone_id": "main_corridor"
+}, {
+"type": "light_state",
+"is_on": true
+}, {
+"type": "flag",
+"key": "stare_at_empty_corridor",
+"value": true
+}]
+effect = {
+"type": "manifestation",
+"target_id": "da_zhi",
+"manifestation_id": "flashlight_stare_side_glimpse",
+"duration": 1.0
+}
+clue_unlock_id = ""
+learnable_hint = "手电长时间照向空走廊时，侧影可能只是确认你有没有看见它。"
