@@ -1,7 +1,7 @@
 # 项目实施计划 Implementation Plan
 
-版本：v2.5.6
-关联总设定版本：v0.8.2
+版本：v2.6.0
+关联总设定版本：v0.8.3
 关联技术规约版本：[`00-tech-constraints.md`](00-tech-constraints.md) v1.3.1
 关联垂直切片版本：[`00-vertical-slice.md`](00-vertical-slice.md) v1.0.4
 创建日期：2026-05-14
@@ -206,7 +206,7 @@
 
 **阶段目标**：大只进入副本，玩家能被追杀，压力反馈系统正确驱动。本阶段不要求玩家能"赢"（线索/结算尚未完成），只要求怪物行为可观察、可推理、反馈可区分强弱。
 
-**当前状态（2026-05-14）**：P2 阶段出口走查已通过，记录见 [`docs/perf/p2-review.md`](perf/p2-review.md)；当前可进入 P3-1 线索系统与规则推理施工。
+**当前状态（2026-05-14）**：P2 阶段出口走查已通过，记录见 [`docs/perf/p2-review.md`](perf/p2-review.md)；后续入口以 P3 当前状态为准。
 
 ---
 
@@ -258,18 +258,20 @@
 
 **阶段目标**：玩家能在副本中收集线索、推理出三条路径（逃离/击杀/收容），并触发对应结算屏幕。本阶段的"通关"还不依赖原形养成，只验证"单次副本的信息闭环"。
 
+**当前状态（2026-05-14）**：P3-1 线索系统与规则推理信息层已完成：11 条 `ClueResource`、Dialogic `.dtl` 时间线占位、`ClueBook`、`GameState.known_clue_ids` 与收容行为验证规则已接入；当前可进入 P3-2 弱点与收容执行链施工。
+
 ---
 
 ### P3-1 线索系统与规则推理
 
 - **目标**：勾选 [`00-vertical-slice.md`](00-vertical-slice.md) §5 全部 7 项（3 逃离 + 3 击杀 + 5 收容线索 + 可推理 + 怪物反应验证）。
 - **主要工作**：
-  1. 使用 **Dialogic 2** 编辑可拾取线索（笔记、对话、电台），保持低代码（[`00-tech-constraints.md`](00-tech-constraints.md) §五）。
-  2. 每条线索关联到一条或多条 `RuleResource`，被拾取后写入 `GameState.knownClues`。
-  3. 至少一条收容线索通过怪物对特定物品/行为的反应间接验证（与 P2-1 `RuleEngine` 联动）。
+    1. 使用 **Dialogic 2** 编辑可拾取线索（笔记、对话、电台），保持低代码（[`00-tech-constraints.md`](00-tech-constraints.md) §五）。
+    2. 每条线索关联到一条或多条 `RuleResource`，被拾取后写入 `GameState.known_clue_ids`。
+    3. 至少一条收容线索通过怪物对特定物品/行为的反应间接验证（与 P2-1 `RuleEngine` 联动）。
 - **关联文档**：[`modules/05-clues-puzzles-rule-deduction.md`](modules/05-clues-puzzles-rule-deduction.md)。
 - **关联 Pillar**：Pillar 1。
-- **验收门禁**：[`00-vertical-slice.md`](00-vertical-slice.md) §5 全部 7 项可勾选；线索表已通过 [`00-glossary.md`](00-glossary.md) 术语校对；**盲测玩家在死亡后能口述"我是被什么规则杀的"**（此时线索系统已就绪，该条件从 P2-3 延续至此验收）。
+- **验收门禁**：P3-1 只验收信息层可用性：3 逃离 + 3 击杀 + 5 收容线索存在，`ClueBook` 写入 `GameState.known_clue_ids`，至少 1 条收容线索可被 `RuleEngine` 行为验证，低理智线索显示可干扰；[`00-vertical-slice.md`](00-vertical-slice.md) §5 的完整玩家路径验证与非开发者口述盲测收束到 P3-5 出口门禁。
 - **关联风险**：信息过载、线索冗余导致推理路径崩溃。
 
 ---
@@ -613,6 +615,12 @@ P7-1 不再因 Q-01 阻塞；其前置仍为 P6-4。
 ---
 
 ## 版本记录
+
+### v2.6.0 - 2026-05-14
+
+- 完成 P3-1 信息层：新增 `ClueResource`、`ClueBook`、`ClueNote`、11 条线索、Dialogic `.dtl` 时间线占位与收容行为验证规则。
+- 审计修复 P3-1 验收口径：P3-1 只验收线索系统信息层，VS §5 完整玩家路径验证与非开发者口述盲测收束到 P3-5 出口门禁。
+- 当前实施入口推进至 P3-2 弱点与收容执行链施工。
 
 ### v2.5.6 - 2026-05-14
 

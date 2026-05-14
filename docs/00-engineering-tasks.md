@@ -1,7 +1,7 @@
 # 工程任务书 Engineering Tasks
 
-版本：v1.5.9
-关联实施计划：[`00-implementation-plan.md`](00-implementation-plan.md) v2.5.6
+版本：v1.6.0
+关联实施计划：[`00-implementation-plan.md`](00-implementation-plan.md) v2.6.0
 关联技术规约：[`00-tech-constraints.md`](00-tech-constraints.md) v1.3.1
 关联垂直切片：[`00-vertical-slice.md`](00-vertical-slice.md) v1.0.4
 创建日期：2026-05-14
@@ -532,13 +532,20 @@
   1. 每条线索由 Dialogic 2 timeline 编辑文本；脚本字段 `clue_id` 关联到 P2-4 已建的 `RuleResource.clue_unlock_id`。
   2. 玩家拾取后 `EventBus.clue_unlocked(clue_id)` → `clue_book.gd` 写入 `GameState.known_clue_ids`。
   3. 至少 1 条收容线索通过怪物行为反应间接验证：例如"对某物品有规避反应"→ 触发 `RuleEngine` 中的"验证规则"，更新 UI 标签。
-- **验收**：
-  - [ ] VS §5 全部 7 项可勾选。
-  - [ ] 盲测：1 名非开发玩家死亡后能口述"我是被什么规则杀的"（兑现 P2-3 延后的口述条件）。
-  - [ ] [`00-glossary.md`](00-glossary.md) 中所有线索术语已统一。
-- **关联 VS**：§5；兑现 P2 延后的盲测条件。
-- **关联模块**：[`modules/05-clues-puzzles-rule-deduction.md`](modules/05-clues-puzzles-rule-deduction.md)。
-- **状态**：TODO
+  - **验收**：
+    - [x] P3-1 信息层工程验收通过：11 条线索、Dialogic timeline、`ClueBook`、`GameState.known_clue_ids`、低理智干扰与 1 条收容行为验证规则均已覆盖。
+    - [ ] VS §5 完整玩家路径验证与非开发者口述盲测收束到 TASK-P3-5 出口门禁。
+    - [x] [`00-glossary.md`](00-glossary.md) 中 P3-1 线索术语已统一。
+  - **关联 VS**：§5；兑现 P2 延后的盲测条件。
+  - **关联模块**：[`modules/05-clues-puzzles-rule-deduction.md`](modules/05-clues-puzzles-rule-deduction.md)。
+  - **状态**：DONE
+
+**完成记录（2026-05-14）**
+
+- 设计：P3-1 只承接线索信息层，不提前实现击杀/收容执行、结算或死亡复活；VS §5 的完整路径验收保留到 P3-5。
+- 搭建：新增 `ClueResource`、`ClueBook`、`ClueNote`、11 条 `data/clues/*.tres`、11 条 Dialogic `.dtl` 时间线占位、`EventBus.clue_unlocked` 与 `GameState.known_clue_ids`。
+- 审计修复：GoPeak 发现 `@export_dir` 目录被误报为缺失资源依赖，已改为运行时拼接默认目录；未启用 Dialogic editor plugin，也未扩展 Autoload 白名单。
+- 验收：`test_clue_system.gd` 8/8 通过；全量 GUT `50/50` 通过；schema 校验 29 个资源通过或按既定 P8 口径 SKIP；关键场景 headless 加载与 GoPeak 依赖审计通过。
 
 ---
 
@@ -965,7 +972,7 @@
 | TASK-P2-3-pressure-feedback | P2 | DONE | `a5820a2` |
 | TASK-P2-4-monster-clue-stubs | P2 | DONE | `b52b51c` |
 | TASK-P2-5-phase-exit-review | P2 | DONE | `5023655` / review doc |
-| TASK-P3-1-clue-system | P3 | TODO | — |
+| TASK-P3-1-clue-system | P3 | DONE | `4840f2a` |
 | TASK-P3-2-weakness-containment | P3 | TODO | — |
 | TASK-P3-3-settlement-calculator | P3 | TODO | — |
 | TASK-P3-4-death-respawn | P3 | TODO | — |
@@ -988,11 +995,18 @@
 | TASK-P8-2-schema-validation-ci | P8 | TODO | — |
 | TASK-P8-3-docs-closeout | P8 | TODO | — |
 
-合计：**37 条 TASK**，P0、P1 与 P2 全部 TASK 已完成并通过命令行复核；当前可进入 TASK-P3-1 线索系统与规则推理。当前没有因开放问题阻塞的 TASK。
+合计：**37 条 TASK**，P0、P1、P2 与 P3-1 已完成并通过命令行复核；当前可进入 TASK-P3-2 弱点与收容执行链。当前没有因开放问题阻塞的 TASK。
 
 ---
 
 ## 版本记录
+
+### v1.6.0 - 2026-05-14
+
+- 完成 TASK-P3-1：新增线索系统信息层、11 条线索资源、Dialogic 时间线占位、`ClueBook` 与收容行为验证规则。
+- 审计修复 P3-1 验收口径：完整玩家路径验证和非开发者口述盲测推至 TASK-P3-5 出口门禁。
+- 状态跟踪表写入实现提交 `4840f2a`；当前入口推进至 TASK-P3-2。
+- 同步实施计划 v2.6.0、线索模块 v0.3.5、Monster Bible v0.2.7、术语表 v1.5.0 与总设定 v0.8.3。
 
 ### v1.5.9 - 2026-05-14
 

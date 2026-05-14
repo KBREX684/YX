@@ -1,6 +1,6 @@
 # 无限流异常副本游戏设想
 
-版本：v0.8.2
+版本：v0.8.3
 状态：初期设想
 创建日期：2026-05-14
 最后更新：2026-05-14
@@ -26,7 +26,7 @@
 | 文档 | 内容 |
 |---|---|
 | [Design Pillars](00-design-pillars.md) | 2 条设计支柱，所有模块裁决依据 |
-| [术语表 Glossary](00-glossary.md) | 核心术语定义，24 个词条 |
+| [术语表 Glossary](00-glossary.md) | 核心术语定义与工程术语对照 |
 | [美术风格与制作底基 Art Direction](00-art-direction.md) | 视觉最高规约：2.5D Live、厚涂精美二次元、动画管线与外包验收 |
 | [风险登记 Risk Register](00-risk-register.md) | 15 条已识别设计与工程风险 |
 | [设计决策与开放问题 Open Questions](00-open-questions.md) | 集中管理已定案设计问题与后续阶段问题；当前无用户待确认阻塞项 |
@@ -94,6 +94,7 @@
 ### 线索、资源与压力
 
 - 线索自动整理。
+- P3-1 起，线索信息层由 `ClueResource`、`ClueNote`、`ClueBook` 和 `EventBus.clue_unlocked(clue_id)` 组成；已知线索写入 `GameState.known_clue_ids`。
 - 谜题采用现实逻辑与超自然规则混合。
 - 文本量保持克制。
 - 不使用 UI 明示压力或理智状态，完全依赖声音、心跳、画面、光源和环境表现。
@@ -513,6 +514,12 @@
 当前建议是：以恐怖求生和异常规则探索作为主体验，以原形养成作为长期奖励和策略扩展。养成系统不应完全安全化、萌化或数值化异常，否则会削弱恐怖基调。
 
 ## 版本记录
+
+### v0.8.3 - 2026-05-14
+
+- 同步 P3-1 线索系统信息层：`ClueResource`、`ClueNote`、`ClueBook`、`EventBus.clue_unlocked(clue_id)` 与 `GameState.known_clue_ids`。
+- 明确 Dialogic `.dtl` 作为线索文本占位，不在 P3-1 启用 Dialogic editor plugin 或扩展 Autoload 白名单。
+- 同步术语表 v1.5.0 与线索模块 v0.3.5。
 
 ### v0.8.2 - 2026-05-14
 

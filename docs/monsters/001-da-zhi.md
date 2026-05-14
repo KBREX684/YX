@@ -1,7 +1,7 @@
 # 大只 — Monster Bible
 
-版本：v0.2.6
-关联总设定版本：v0.8.2
+版本：v0.2.7
+关联总设定版本：v0.8.3
 关联副本主题：破败校园
 状态：Demo 规则口径确认
 创建日期：2026-05-14
@@ -238,6 +238,7 @@ P2-2 不写具体规则 ID；大只只读取 `RuleEngine` 注入的 `rule_effect
 | `rule_da_zhi_flashlight_stare_manifestation` | 手电长时间照向空走廊后的侧影现形 | P2-5 审计修复，补足第二种特定现形条件 |
 | `rule_da_zhi_broadcast_power_off_weakness` | 广播断电后失向弱点窗口 | 击杀链弱点窗口，需 `clue_broadcast_dependency` 解锁 |
 | `rule_da_zhi_containment_roster_step` | 收容步骤 1：名单确认 | 收容链第 1 步，需 `clue_full_roster` 解锁 |
+| `rule_da_zhi_roster_reaction_verification` | 完整名单让大只停步 | P3-1 收容线索行为验证规则，验证 `clue_full_roster` |
 | `clue_da_zhi_corridor_echo` | 奔跑后额外脚步声行为观察 | P3-1 线索对象占位，稳定 ID 为 `clue_corridor_echo` |
 | `clue_da_zhi_broadcast_dependency` | 广播依赖弱点线索 | P3-1 击杀线索占位，稳定 ID 为 `clue_broadcast_dependency` |
 | `clue_da_zhi_full_roster` | 完整名单收容步骤线索 | P3-1 收容线索占位，稳定 ID 为 `clue_full_roster` |
@@ -267,6 +268,11 @@ P2-2 不写具体规则 ID；大只只读取 `RuleEngine` 注入的 `rule_effect
 ---
 
 ## 版本记录
+
+### v0.2.7 - 2026-05-14
+
+- P3-1 新增 `rule_da_zhi_roster_reaction_verification`，让完整名单线索具备怪物行为反应验证。
+- 同步 11 条线索资源与 `ClueBook` 信息层落地；大只 `MonsterProfile.rule_ids` 已纳入验证规则。
 
 ### v0.2.6 - 2026-05-14
 
