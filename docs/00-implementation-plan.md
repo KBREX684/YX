@@ -1,6 +1,6 @@
 # 项目实施计划 Implementation Plan
 
-版本：v2.0.0
+版本：v2.0.1
 关联总设定版本：v0.6.2
 关联技术规约版本：[`00-tech-constraints.md`](00-tech-constraints.md) v1.0.0
 关联垂直切片版本：[`00-vertical-slice.md`](00-vertical-slice.md) v1.0.0
@@ -50,7 +50,7 @@
 | [`docs/game-concept.md`](game-concept.md) | 总设定与核心循环来源 |
 | [`docs/00-design-pillars.md`](00-design-pillars.md) | 设计裁决（Pillar 1 / Pillar 2） |
 | [`docs/00-tech-constraints.md`](00-tech-constraints.md) | 技术裁决（引擎、目录、Autoload、低代码工具链、禁止事项） |
-| [`docs/00-vertical-slice.md`](00-vertical-slice.md) | P0 阶段唯一验收单 |
+| [`docs/00-vertical-slice.md`](00-vertical-slice.md) | 垂直切片唯一验收单（文档内的"P0/P1"是验收优先级标签，与本计划的 P0~P8 实施里程碑是独立体系，不混用） |
 | [`docs/00-glossary.md`](00-glossary.md) | 术语统一来源 |
 | [`docs/00-risk-register.md`](00-risk-register.md) | 风险跟踪（R-XX 编号） |
 | [`docs/00-open-questions.md`](00-open-questions.md) | 未决问题（Q-XX 编号） |
@@ -163,7 +163,7 @@
 
 ### P1-1 玩家控制与探索
 
-- **目标**：勾选 [`00-vertical-slice.md`](00-vertical-slice.md) §1 前 3 项（移动/蹲伏/开门/拾取/阅读/躲藏 + 手电电量反馈）；死亡复活项等怪物接入后在 P3 补全。
+- **目标**：勾选 [`00-vertical-slice.md`](00-vertical-slice.md) §1 第 1 项和第 3 项（移动/蹲伏/开门/拾取/阅读/躲藏 + 手电电量反馈）；第 2 项（行为产生不同怪物判断结果）的噪声信号接口在本阶段实现，但需要怪物接入后才可观察验证，**第 2 项的验收推迟至 P2**；第 4 项死亡复活推迟至 P3-4。
 - **主要工作**：
   1. 实现玩家 `CharacterBody2D`，状态机使用 P0-3 选定的插件，**禁止**单文件多层 if/else（[`00-tech-constraints.md`](00-tech-constraints.md) §四.3）。
   2. 行走/奔跑/蹲伏产生的"噪声等级"作为信号经 `EventBus` 广播（为 P2 怪物 AI 预留订阅口）。
@@ -212,14 +212,14 @@
 
 ### P2-2 大只 AI 四阶段行为
 
-- **目标**：勾选 [`00-vertical-slice.md`](00-vertical-slice.md) §4 前 3 项（通常不可见 + 间接反馈可判断 + 四阶段流程不随机传送）。
+- **目标**：勾选 [`00-vertical-slice.md`](00-vertical-slice.md) §4 前 3 项（通常不可见 + 间接反馈可判断 + 四阶段流程不随机传送）；同时验证 P1-1 遗留的 VS §1 第 2 项（行为差异产生不同怪物判断结果，通过观察怪物对噪声等级的响应确认）。
 - **主要工作**：
   1. 用行为树/状态机插件搭建大只四阶段流程：潜伏 → 试探 → 搜索 → 追猎，依据 [`monsters/001-da-zhi.md`](monsters/001-da-zhi.md)。
   2. 大只寻路使用 P1-2 配置的 `NavigationRegion2D`。
   3. 现形仅在两种以上特定条件下短暂触发（条件来自 P2-1 的 `RuleResource`）。
 - **关联文档**：[`modules/03-monster-anomaly-rules.md`](modules/03-monster-anomaly-rules.md)、[`monsters/001-da-zhi.md`](monsters/001-da-zhi.md)。
 - **关联 Pillar**：Pillar 1。
-- **验收门禁**：大只按四阶段 AI 在副本中运行，不出现无规则随机传送；玩家可通过行为变化区分当前 AI 阶段。
+- **验收门禁**：大只按四阶段 AI 在副本中运行，不出现无规则随机传送；玩家可通过行为变化区分当前 AI 阶段；VS §1 第 2 项可勾选（不同噪声等级引发可观察的怪物行为差异）。
 - **关联风险**：行为树插件与 Godot 4.x 兼容性。
 
 ---
@@ -234,7 +234,7 @@
   4. 第一次进入副本必须触发大只至少一次弱光现形（2–3 秒）。
 - **关联文档**：[`modules/04-horror-perception-pressure.md`](modules/04-horror-perception-pressure.md)。
 - **关联 Pillar**：Pillar 1（反馈须可推理）+ Pillar 2（理智低 = 信息变差）。
-- **验收门禁**：[`00-vertical-slice.md`](00-vertical-slice.md) §2 全部 5 项可勾选；盲测玩家死后能口述"我是被什么规则杀的"。
+- **验收门禁**：[`00-vertical-slice.md`](00-vertical-slice.md) §2 全部 5 项可勾选；VS §1 第 2 项已在 P2-2 勾选；**注：压力反馈-规则口述盲测（"我是被什么规则杀的"）推迟至 P3-1 完成后执行**，此时玩家已能通过线索理解规则。
 - **关联风险**：反馈过载（玩家麻木）/ 反馈不足（无法判断）。
 
 ---
@@ -254,7 +254,7 @@
   3. 至少一条收容线索通过怪物对特定物品/行为的反应间接验证（与 P2-1 `RuleEngine` 联动）。
 - **关联文档**：[`modules/05-clues-puzzles-rule-deduction.md`](modules/05-clues-puzzles-rule-deduction.md)。
 - **关联 Pillar**：Pillar 1。
-- **验收门禁**：[`00-vertical-slice.md`](00-vertical-slice.md) §5 全部 7 项可勾选；线索表已通过 [`00-glossary.md`](00-glossary.md) 术语校对。
+- **验收门禁**：[`00-vertical-slice.md`](00-vertical-slice.md) §5 全部 7 项可勾选；线索表已通过 [`00-glossary.md`](00-glossary.md) 术语校对；**盲测玩家在死亡后能口述"我是被什么规则杀的"**（此时线索系统已就绪，该条件从 P2-3 延续至此验收）。
 - **关联风险**：信息过载、线索冗余导致推理路径崩溃。
 
 ---
@@ -469,7 +469,7 @@
 
 - **目标**：在不增加内容量的前提下，将 P6 盲测暴露的反馈痛点收敛；接通副本动态危险度第一档。
 - **主要工作**：
-  1. 汇总 P5-3 / P6 盲测中发现的"反馈过载 / 反馈不足"案例，逐条回写 [`modules/04-horror-perception-pressure.md`](modules/04-horror-perception-pressure.md) 关键参数表。
+  1. 汇总 P5-3 盲测中发现的"反馈过载 / 反馈不足"案例，逐条回写 [`modules/04-horror-perception-pressure.md`](modules/04-horror-perception-pressure.md) 关键参数表。
   2. 通过 `Config` 资源调参三类反馈强度曲线，**不改代码**。
   3. 副本动态危险度接通第一档：第二次进入同一副本时，`RuleEngine` 新增 1 条 `RuleResource`，验证 [`00-risk-register.md`](00-risk-register.md) R-01 的缓解路径。
 - **关联文档**：[`modules/02-dungeon-generation-map.md`](modules/02-dungeon-generation-map.md)、[`modules/04-horror-perception-pressure.md`](modules/04-horror-perception-pressure.md)、[`modules/12-progression-difficulty-longterm-growth.md`](modules/12-progression-difficulty-longterm-growth.md)、[`00-risk-register.md`](00-risk-register.md) R-01。
@@ -545,9 +545,9 @@
 | 门禁 | 必要条件 |
 |---|---|
 | **P0 通过** | 空项目可运行；Autoload 五件套就绪；Q-13~Q-18 全部决策；插件采纳门槛核查完成；Schema 框架文件存在 |
-| **P1 通过** | VS §1（前 3 项）+ VS §3 全勾；副本可徒步完整探索 |
-| **P2 通过** | VS §2 + VS §4（前 3 项）全勾；`RuleEngine` GUT 用例 100% 通过；盲测玩家死后能口述规则 |
-| **P3 通过** | VS §4 全勾 + VS §5 + VS §6 全勾；VS §1 第 4 项勾选；`SettlementCalculator` GUT 用例 100% 通过 |
+| **P1 通过** | VS §1 第 1 项和第 3 项勾选（第 2 项噪声接口实现，验收推迟至 P2；第 4 项推迟至 P3）+ VS §3 全勾；副本可徒步完整探索 |
+| **P2 通过** | VS §2 全部 5 项 + VS §4（前 3 项）+ VS §1 第 2 项 全勾；`RuleEngine` GUT 用例 100% 通过 |
+| **P3 通过** | VS §4 全勾 + VS §5 全勾 + VS §6 全勾；VS §1 第 4 项勾选；`SettlementCalculator` GUT 用例 100% 通过；盲测玩家死后能口述"我是被什么规则杀的" |
 | **P4 通过** | VS §7 + VS §8 全勾；`SaveSystem` GUT 用例 100% 通过；存档重启恢复正常 |
 | **P5 通过** | VS §9 + VS §10 + VS §11 全勾；至少 1 名非开发玩家盲测通过；Schema 已冻结 |
 | **P6 通过（垂直切片验收）** | VS 全部 P0 验收项全勾；GUT 三类强制用例全过；性能基线达标；`.exe` 四条交付校验通过 |
@@ -585,6 +585,14 @@
 ---
 
 ## 版本记录
+
+### v2.0.1 - 2026-05-14
+
+复检修正（4 处）：
+- **Bug-1 修复**：P1-1 目标从"勾选 VS §1 前 3 项"改为"第 1、3 项"，第 2 项（噪声→怪物反应）接口在 P1 实现、验收推迟至 P2-2；阶段门禁表 P1 行同步更新。
+- **Bug-2 修复**：P2-3 的"盲测玩家死后能口述规则"门禁不可达（P2 阶段线索未装），将该条件移至 P3-1 验收；P2-2 同时接收 VS §1 第 2 项的最终验收；阶段门禁表 P2/P3 行同步更新。
+- **Bug-3 修复**：§二 参考表中 VS 文档角色描述从"P0 阶段唯一验收单"改为带消歧注释，明确其内部 P0/P1 标签与本计划 P0~P8 为独立体系。
+- **Bug-4 修复**：P7-2 主要工作中删去不存在的"P6 盲测"引用，仅保留"P5-3 盲测"。
 
 ### v2.0.0 - 2026-05-14
 
