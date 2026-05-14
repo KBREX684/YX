@@ -7,7 +7,7 @@ extends Node
 ##   - 跨模块通信必须经由本总线，禁止直接调用其他模块节点方法。
 
 # --- 探索与玩家行为 ----------------------------------------------------------
-signal noise_emitted(level: int, position: Vector2)         ## 玩家/物体发出声响
+signal noise_emitted(level: int, position: Vector2, source_action_id: StringName) ## 玩家/物体发出声响
 signal player_died                                          ## 玩家死亡
 signal player_hidden_changed(is_hidden: bool)               ## 进入/离开躲藏点
 signal flashlight_toggled(is_on: bool, battery: float)      ## 手电开关与电量更新

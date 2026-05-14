@@ -1,0 +1,66 @@
+[gd_scene load_steps=5 format=3 uid="uid://yx_player_p1_placeholder"]
+
+[ext_resource type="Script" path="res://scripts/player/player.gd" id="1_player_script"]
+[ext_resource type="Resource" path="res://data/items/flashlight.tres" id="2_flashlight"]
+[ext_resource type="Script" path="res://scripts/player/states/player_limbo_state.gd" id="3_state_script"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_player"]
+size = Vector2(32, 56)
+
+[node name="Player" type="CharacterBody2D"]
+collision_layer = 2
+collision_mask = 1
+script = ExtResource("1_player_script")
+flashlight_data = ExtResource("2_flashlight")
+
+[node name="Visual" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -20)
+
+[node name="PlaceholderBody" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-14, -52, 14, -52, 18, -8, 10, 8, -10, 8, -18, -8)
+color = Color(0.23, 0.34, 0.55, 0.9)
+
+[node name="PlaceholderAssetLabel" type="Label" parent="."]
+offset_left = -96.0
+offset_top = 14.0
+offset_right = 96.0
+offset_bottom = 50.0
+text = "占位: 玩家2.5D Live分层立绘"
+horizontal_alignment = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -22)
+shape = SubResource("RectangleShape2D_player")
+
+[node name="StateMachine" type="LimboHSM" parent="."]
+
+[node name="Idle" type="LimboState" parent="StateMachine"]
+script = ExtResource("3_state_script")
+state_id = &"idle"
+noise_level = 0
+
+[node name="Walk" type="LimboState" parent="StateMachine"]
+script = ExtResource("3_state_script")
+state_id = &"walk"
+noise_level = 2
+
+[node name="Run" type="LimboState" parent="StateMachine"]
+script = ExtResource("3_state_script")
+state_id = &"run"
+noise_level = 3
+
+[node name="Crouch" type="LimboState" parent="StateMachine"]
+script = ExtResource("3_state_script")
+state_id = &"crouch"
+noise_level = 1
+
+[node name="Hide" type="LimboState" parent="StateMachine"]
+script = ExtResource("3_state_script")
+state_id = &"hide"
+noise_level = 0
+
+[node name="Flashlight" type="PointLight2D" parent="."]
+position = Vector2(28, -28)
+color = Color(1, 0.94, 0.76, 1)
+energy = 0.0
+texture_scale = 2.0

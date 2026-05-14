@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="FlashlightResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/systems/resources/flashlight_resource.gd" id="1_flashlight_script"]
+
+[resource]
+script = ExtResource("1_flashlight_script")
+id = "item_flashlight"
+category = 0
+stack_max = 1
+rarity = 0
+spawn_zone_ids = PackedStringArray("starter_loadout")
+battery_capacity = 100.0
+battery_drain_per_second = 8.0
+low_battery_threshold = 20.0
+full_energy = 1.35
+low_energy = 0.45
+off_energy = 0.0
