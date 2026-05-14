@@ -1,9 +1,9 @@
 # 工程任务书 Engineering Tasks
 
-版本：v1.4.1
-关联实施计划：[`00-implementation-plan.md`](00-implementation-plan.md) v2.4.1
-关联技术规约：[`00-tech-constraints.md`](00-tech-constraints.md) v1.3.0
-关联垂直切片：[`00-vertical-slice.md`](00-vertical-slice.md) v1.0.3
+版本：v1.5.0
+关联实施计划：[`00-implementation-plan.md`](00-implementation-plan.md) v2.5.0
+关联技术规约：[`00-tech-constraints.md`](00-tech-constraints.md) v1.3.1
+关联垂直切片：[`00-vertical-slice.md`](00-vertical-slice.md) v1.0.4
 创建日期：2026-05-14
 最后更新：2026-05-14
 
@@ -59,6 +59,9 @@
 - 单文件 ≤ ~400 行；超出需拆分。
 - 任何决策与开放问题状态不一致时，停下来更新 [`00-open-questions.md`](00-open-questions.md)，不要私下假设。
 - 第一阶段 2.5D Live 动画使用 Godot 原生管线；不要把 Live2D Cubism 或 Spine 作为默认施工方案。
+- 输入必须通过 Input Map action，不得在玩法脚本中硬编码物理按键。
+- 玩法逻辑必须引用稳定 `resource_id` / manifest key，不得把裸文件路径当作跨系统公共契约。
+- 暂不进入第一阶段的想法必须记录到 [`00-next-stage-expansions.md`](00-next-stage-expansions.md) 或模块"后续扩展方向"。
 
 ---
 
@@ -67,9 +70,9 @@
 | 阶段 | TASK 数 | 入口前置 | 出口门禁（引用实施计划 §十三） |
 |---|---|---|---|
 | P0 工程底座 | 6 | — | 空项目可运行 + 五件 Autoload + Schema 框架 |
-| P1 地图与玩家原型 | 4 | P0 全部 DONE | VS §1 第 1、3 项 + §3 全勾 |
-| P2 怪物与压力 | 5 | P1 全部 DONE | VS §2 + §4 前 3 项 + §1 第 2 项 + RuleEngine GUT 全过 |
-| P3 线索/解谜/结算 | 5 | P2 全部 DONE | VS §4 全 + §5 + §6 + §1 第 4 项 + SettlementCalculator GUT 全过 |
+| P1 地图与玩家原型 | 4 | P0 全部 DONE | 微切片门禁 + VS §1 第 1、3 项 + §3 全勾 |
+| P2 怪物与压力 | 5 | P1 全部 DONE | VS §2 + §4 前 3 项 + §1 第 2 项 + RuleEngine GUT 全过 + `learnable_hint` 填充 |
+| P3 线索/解谜/结算 | 5 | P2 全部 DONE | VS §4 全 + §5 + §6 + §1 第 4 项 + 死亡提示显示 + SettlementCalculator GUT 全过 |
 | P4 搜刮与原形养成 | 4 | P3 全部 DONE | VS §7 + §8 + SaveSystem GUT 全过 |
 | P5 助战与核心循环 | 4 | P4 全部 DONE | VS §9 + §10 + §11 + Schema 冻结 |
 | P6 切片验收与性能 | 4 | P5 全部 DONE | VS 全部 P0 + 性能基线达标 + .exe 交付 |
@@ -88,7 +91,7 @@
 - **产出**：
   - `/project.godot`（Godot 项目根）
   - `/assets/`（含 `sprites/`、`audio/`、`fonts/`、`shaders/` 四个空子目录，各放一个 `.gitkeep`）
-  - `/data/`（含 `monsters/`、`origins/`、`rules/`、`items/`、`levels/` 五个空子目录，各放 `.gitkeep`）
+  - `/data/`（含 `monsters/`、`origins/`、`rules/`、`items/`、`levels/`、`manifest/` 六个空子目录，各放 `.gitkeep`）
   - `/scenes/`（含 `player/`、`monster/`、`dungeon/`、`base/`、`ui/`）
   - `/scripts/`（含 `player/`、`monster/`、`systems/`、`ui/`、`autoload/`）
   - `/tests/`、`/tools/`、`/addons/`
@@ -248,18 +251,21 @@
 
 - **前置**：TASK-P0-3、TASK-P0-4
 - **产出**：
+  - `/project.godot`（Input Map action：`move_left` / `move_right` / `move_up` / `move_down` / `run` / `crouch` / `flashlight` / `interact` / `hide` / `pause`）
   - `/scenes/player/player.tscn`
   - `/scripts/player/player.gd`
   - `/scripts/player/states/`（按 Q-16 选定的状态机插件组织，含 `idle / walk / run / crouch / hide` 等节点）
   - `/data/items/flashlight.tres`（基于 `ItemResource` 或新增 `FlashlightResource`，含电量上限、消耗速率、阈值）
 - **实现步骤**：
-  1. `player.tscn` 根节点 `CharacterBody2D`，挂载 `AnimatedSprite2D`、`CollisionShape2D`、状态机插件根节点、`PointLight2D`（手电）。
-  2. `player.gd` ≤ 200 行；仅负责输入采集与状态机参数注入，不写超过 1 层 if/else 行为分支。
-  3. 在状态机插件中分别建 `idle / walk / run / crouch / interact / hide` 状态，转移条件用插件可视化编辑器配置。
-  4. 每个状态在 `Enter` 时通过 `EventBus.noise_emitted` 广播噪声等级（`idle`=0、`crouch`=1、`walk`=2、`run`=3）。
-  5. 手电参数全部从 `flashlight.tres` 读取；电量低于阈值时 `PointLight2D.energy` 阶梯式下降并播放手电闪烁音效（音效占位 `.wav`）。
-  6. 开门、拾取、阅读、躲藏通过 `Area2D` + `interact` 状态触发（具体 NPC/物品在 P1-2 提供）。
+  1. 先在 `project.godot` 写入全部 Input Map action；默认键位可后续调整，但脚本只能读取 action。
+  2. `player.tscn` 根节点 `CharacterBody2D`，挂载 `AnimatedSprite2D`、`CollisionShape2D`、状态机插件根节点、`PointLight2D`（手电）。
+  3. `player.gd` ≤ 200 行；仅负责输入 action 采集与状态机参数注入，不写超过 1 层 if/else 行为分支，不硬编码物理按键。
+  4. 在状态机插件中分别建 `idle / walk / run / crouch / interact / hide` 状态，转移条件用插件可视化编辑器配置。
+  5. 每个状态在 `Enter` 时通过 `EventBus.noise_emitted` 广播噪声等级（`idle`=0、`crouch`=1、`walk`=2、`run`=3），信号包含稳定 action id。
+  6. 手电参数全部从 `flashlight.tres` 读取；电量低于阈值时 `PointLight2D.energy` 阶梯式下降并播放手电闪烁音效（音效占位 `.wav`）。
+  7. 开门、拾取、阅读、躲藏通过 `Area2D` + `interact` 状态触发（具体 NPC/物品在 P1-2 提供）。
 - **验收**：
+  - [ ] `project.godot` Input Map 中存在 10 个指定 action；`player.gd` 不出现物理按键硬编码。
   - [ ] 玩家可在测试场景内完成行走 / 奔跑 / 蹲伏 / 开关手电；手电电量下降并在阈值触发视觉变化。
   - [ ] 控制台能在每次状态切换时打印 `EventBus.noise_emitted` 的等级（手动用一个临时订阅者验证）。
   - [ ] `player.gd` 不出现 3 层及以上 if/else（grep `if .* and .*:` 配合人工核对）。
@@ -271,22 +277,28 @@
 
 ### TASK-P1-2-dungeon-handmade
 
-- **前置**：TASK-P0-1
+- **前置**：TASK-P0-1、TASK-P1-1
 - **产出**：
+  - `/scenes/dungeon/micro_school_blockout.tscn`（走廊 + 2 个房间 + 1 个躲藏点 + 1 个交互占位物 + 1 个变化事件）
   - `/scenes/dungeon/abandoned_school.tscn`（含入口区 / 主走廊 / 4~6 候选房间 / 仪式房 / 出口区）
   - `/scenes/dungeon/rooms/`（每个候选房间一个 `.tscn` 子场景，便于通过房间池抽取）
   - `/scripts/systems/room_pool.gd`（按确定性种子从候选池抽取 4~6 间）
   - `/data/levels/abandoned_school.tres`（`LevelResource`，新增 schema 或复用 `MonsterProfile` 旁的"关卡数据"约定）
+  - `/data/manifest/level_manifest.tres`（或等价 manifest 资源，记录关卡、房间、地图事件稳定 ID）
 - **实现步骤**：
-  1. 用场景嵌套 + `Node2D` / `Sprite2D` / `Parallax2D` / 碰撞层手工搭建 2.5D Live 分区，`TileMap` 仅可作为灰盒辅助；所有可走区域共用一个 `NavigationRegion2D`（为 P2-2 寻路预留）。
-  2. 每个候选房间封装为独立 `.tscn`，根节点 `Node2D`，含本房间的物品/线索锚点占位。
-  3. `room_pool.gd` 接收 `seed: int`，输出抽中房间列表；用 `RandomNumberGenerator` 并显式 `seed` 以保证可复盘。
-  4. 实现一个由 `RuleResource` 驱动的"变化事件"（走廊变长 / 门牌错乱 / 已探索房间出现新物品三选一）：在仪式房交互完成时通过 `RuleEngine` 占位（P2-1 实现真实引擎前用一个本地 stub 也可）触发变化。
-  5. 验证从入口到任一出口（逃离 / 仪式房 / 击杀点占位）步行 ≤ 90 秒。
+  1. 先搭建 `micro_school_blockout.tscn`：1 条走廊、2 个房间、1 个躲藏点、1 个交互占位物（stub）、1 次地图变化事件；只做灰盒和必要碰撞，不投入完整美术。
+  2. 用场景嵌套 + `Node2D` / `Sprite2D` / `Parallax2D` / 碰撞层手工搭建 2.5D Live 分区，`TileMap` 仅可作为灰盒辅助；所有可走区域共用一个 `NavigationRegion2D`（为 P2-2 寻路预留）。
+  3. 每个候选房间封装为独立 `.tscn`，根节点 `Node2D`，含本房间的物品/线索锚点占位。
+  4. `room_pool.gd` 接收 `seed: int`，输出抽中房间列表；用 `RandomNumberGenerator` 并显式 `seed` 以保证可复盘。
+  5. 实现一个由 `RuleResource` 驱动的"变化事件"（走廊变长 / 门牌错乱 / 已探索房间出现新物品三选一）：在仪式房交互完成时通过 `RuleEngine` 占位（P2-1 实现真实引擎前用一个本地 stub 也可）触发变化。
+  6. 为关卡、房间、地图事件写入稳定 `resource_id`，并登记到 `level_manifest.tres`；脚本引用 manifest key，不直接写裸场景路径。
+  7. 验证从入口到任一出口（逃离 / 仪式房 / 击杀点占位）步行 ≤ 90 秒。
 - **验收**：
+  - [ ] 微切片门禁通过：走廊 + 2 房间 + 1 躲藏点 + 1 交互占位物 + 1 变化事件可玩，变化不阻断逃离占位路径。
   - [ ] [`00-vertical-slice.md`](00-vertical-slice.md) §3 全部 4 项手测可勾选。
   - [ ] 同一 `seed` 跑两次 `room_pool.gd`，抽取结果完全一致。
   - [ ] `NavigationRegion2D` baked 后无 `Navigation Mesh Generation Failed` 告警。
+  - [ ] `level_manifest.tres` 或等价 manifest 中存在关卡、房间、地图事件稳定 ID。
 - **关联 VS**：§3。
 - **关联模块**：[`modules/02-dungeon-generation-map.md`](modules/02-dungeon-generation-map.md)、[`00-art-direction.md`](00-art-direction.md)。
 - **状态**：TODO
@@ -317,7 +329,7 @@
 - **前置**：TASK-P1-1、TASK-P1-2、TASK-P1-3
 - **产出**：`/docs/perf/p1-review.md`（阶段出口走查记录）
 - **实现步骤**：
-  1. 按实施计划 §十三 P1 行逐项勾验：VS §1 第 1、3 项 + §3 全勾。
+  1. 按实施计划 §十三 P1 行逐项勾验：微切片门禁 + Input Map action + VS §1 第 1、3 项 + §3 全勾。
   2. 记录已发现但延后处理的 issue 列表（指向后续 TASK）。
   3. 让 P2 入口前置任务 `block_until_p1_done` 解除。
 - **验收**：
@@ -342,11 +354,13 @@
   1. `RuleEngine` 加载 `Array[RuleResource]`，订阅 `EventBus` 中相关信号（噪声、灯光、物品使用等）。
   2. 提供 `evaluate(context: Dictionary) -> Array[RuleResource]`：返回当前帧被触发的规则列表，发出 `rule_triggered(rule_id)` 信号。
   3. 提供 `clue_unlocked(clue_id)` 输出，便于 P3 线索系统订阅。
-  4. **禁止**在引擎中写任何怪物专属硬编码字段——所有判定都从 `RuleResource.trigger_conditions` 解析。
-  5. GUT 用例覆盖：a) 单条规则触发；b) 多条规则同帧；c) 触发条件不满足时不发信号；d) 重复触发去重。
+  4. 关键失败规则必须填入 `RuleResource.learnable_hint`，用于 P3-4 死亡/失败后的最低学习反馈。
+  5. **禁止**在引擎中写任何怪物专属硬编码字段——所有判定都从 `RuleResource.trigger_conditions` 解析。
+  6. GUT 用例覆盖：a) 单条规则触发；b) 多条规则同帧；c) 触发条件不满足时不发信号；d) 重复触发去重；e) 关键失败规则 `learnable_hint` 非空。
 - **验收**：
   - [ ] `test_rule_engine.gd` 中至少 6 个用例 100% 通过。
   - [ ] 在编辑器内替换 `RuleEngine` 加载的 `.tres` 列表，可观察到不同的 `rule_triggered` 信号序列。
+  - [ ] 会导致死亡、失败或错误收容的规则均有非空 `learnable_hint`。
   - [ ] `rule_engine.gd` ≤ 300 行；无 `monster_*` 命名字段。
 - **关联 VS**：—（为 §4 §5 提供基础）
 - **关联模块**：[`modules/03-monster-anomaly-rules.md`](modules/03-monster-anomaly-rules.md)、[`monsters/001-da-zhi.md`](monsters/001-da-zhi.md)。
@@ -502,13 +516,16 @@
 - **产出**：
   - `/scenes/base/base_placeholder.tscn`（基地占位）
   - `GameState` 内 `respawn_at_base()` 方法
+  - 死亡/失败提示占位显示（可复用结算或临时提示层）
 - **实现步骤**：
   1. 玩家死亡 → `EventBus.player_died` → `GameState` 切场到 `base_placeholder.tscn`。
   2. 副本场景 unload；副本内拾取资源按占位比例（默认 0%，P4 改为 65%）返还。
   3. 复活时清空副本状态，重置 `RuleEngine` 内部计数器。
+  4. 读取本次死亡关联 `RuleResource.learnable_hint` 并显示；无法定位规则时显示通用提示并把缺失 rule id 记入调试日志。
 - **验收**：
   - [ ] VS §1 第 4 项可勾选。
   - [ ] 死亡 → 复活 → 再次进入副本全流程无脚本红字。
+  - [ ] 死亡后至少出现一条可学习提示；提示来自 `learnable_hint` 或明确记录 fallback 原因。
 - **关联 VS**：§1 第 4 项。
 - **关联模块**：[`modules/01-player-control-exploration.md`](modules/01-player-control-exploration.md)。
 - **状态**：TODO
@@ -744,7 +761,7 @@
   1. 基地补"被污染过"细节：随机异响计时器、随机物品轻微旋转 1~3 度（每次进入基地概率触发）。
   2. 电台第一通话脚本走 Dialogic 2，依据 [`modules/11-narrative-worldbuilding.md`](modules/11-narrative-worldbuilding.md) 与 Q-01 定案（异常事件幸存者 + 旧机构候选执行者）。
   3. 大只档案页在收容成功后扩写一段（与 [`monsters/001-da-zhi.md`](monsters/001-da-zhi.md) 一致）。
-  4. 死亡复盘提示：从被触发的 `RuleResource.learnable_hint` 拼装一句话。
+  4. 死亡复盘提示打磨：沿用 P3-4 已显示的 `RuleResource.learnable_hint`，只优化文字、节奏和演出，不在 P7 首次补功能。
   5. **先订字数上限**再写：每条 P1 文本 ≤ 80 字。
 - **验收**：
   - [ ] VS P1 全部 4 条勾选。
@@ -819,26 +836,29 @@
 - **产出**：
   - [`00-open-questions.md`](00-open-questions.md) 状态全量复审
   - [`00-risk-register.md`](00-risk-register.md) 归档"已缓解 / 已关闭"项
+  - [`00-next-stage-expansions.md`](00-next-stage-expansions.md) 延后项复核
   - 各模块文档"后续扩展方向"节走查
   - 顶层所有 `00-*.md` 版本号统一推进一档
 - **实现步骤**：
   1. 把 P0~P7 实测中形成的设计决策回填 [`00-open-questions.md`](00-open-questions.md)，关闭已决问题，新增第二阶段才需要的问题。
   2. [`00-risk-register.md`](00-risk-register.md) 中"已缓解 / 已关闭"项归档。
   3. 各模块"后续扩展方向"节走查，与冻结 schema 冲突项升级为新 Open Question。
-  4. 顶层文档版本号统一推进；交叉引用全部检查无悬挂链接（`grep` 一遍 `](.*\.md)` 即可）。
+  4. 对照 [`00-next-stage-expansions.md`](00-next-stage-expansions.md) 复核延后项：仍保留的进入第二阶段立项草案，不再需要的关闭并写明理由。
+  5. 顶层文档版本号统一推进；交叉引用全部检查无悬挂链接（`grep` 一遍 `](.*\.md)` 即可）。
 - **验收**：
   - [ ] 顶层文档版本一致；无悬挂引用。
   - [ ] 所有 Open Questions 状态明确（已定案 / 后续阶段细化且有默认方案）。
   - [ ] [`00-risk-register.md`](00-risk-register.md) 无滞留"开放"且已可关闭的条目。
+  - [ ] [`00-next-stage-expansions.md`](00-next-stage-expansions.md) 中每个延后项都有保留/关闭结论。
 - **关联 VS**：—
-- **关联模块**：所有模块"后续扩展方向"节、[`00-open-questions.md`](00-open-questions.md)、[`00-risk-register.md`](00-risk-register.md)。
+- **关联模块**：所有模块"后续扩展方向"节、[`00-open-questions.md`](00-open-questions.md)、[`00-risk-register.md`](00-risk-register.md)、[`00-next-stage-expansions.md`](00-next-stage-expansions.md)。
 - **状态**：TODO
 
 ---
 
 ## 十三、跨阶段通用约束（每条 TASK 自查）
 
-每条 TASK 在自检验收前，必须额外满足以下 8 条（取自实施计划 §十二）：
+每条 TASK 在自检验收前，必须额外满足以下 10 条（取自实施计划 §十二）：
 
 1. **Pillar 优先**：设计/实现冲突先用 [`00-design-pillars.md`](00-design-pillars.md) 裁决。
 2. **技术红线**：[`00-tech-constraints.md`](00-tech-constraints.md) §十 八条禁止事项 + §五 插件门槛 + §六 美术与音频约束 + §七 性能指标全程强制。
@@ -848,6 +868,8 @@
 6. **文档同步**：完成 TASK 后必须更新对应模块文档版本记录与 [`00-glossary.md`](00-glossary.md)。
 7. **Codex 协作**：单文件 ≤ ~400 行，中文+英文术语对照。
 8. **美术底基**：涉及视觉与动画的 TASK 必须遵守 [`00-art-direction.md`](00-art-direction.md)，第一阶段不默认引入 Live2D Cubism 或 Spine。
+9. **微切片优先**：P1 完整地图和美术投入前必须先通过微切片门禁。
+10. **延后项登记**：不进入 P1~P6 的内容必须写入 [`00-next-stage-expansions.md`](00-next-stage-expansions.md) 或模块"后续扩展方向"。
 
 ---
 
@@ -893,11 +915,19 @@
 | TASK-P8-2-schema-validation-ci | P8 | TODO | — |
 | TASK-P8-3-docs-closeout | P8 | TODO | — |
 
-合计：**37 条 TASK**，P0 已完成并通过命令行复核；当前可进入 P1。当前没有因开放问题阻塞的 TASK。
+合计：**37 条 TASK**，P0 已完成并通过命令行复核；当前可进入 P1，且 P1 必须先过微切片门禁。当前没有因开放问题阻塞的 TASK。
 
 ---
 
 ## 版本记录
+
+### v1.5.0 - 2026-05-14
+
+- 同步实施计划 v2.5.0、技术规约 v1.3.1 与垂直切片 v1.0.4。
+- TASK-P1-1 前置 Input Map action 输出与验收，禁止玩家控制脚本硬编码物理按键。
+- TASK-P1-2 新增微切片灰盒产出、`level_manifest.tres` 与稳定资源 ID 验收。
+- TASK-P2-1 / TASK-P3-4 前置 `RuleResource.learnable_hint` 与死亡学习提示最低版；TASK-P7-1 改为复盘提示打磨。
+- TASK-P8-3 新增 `00-next-stage-expansions.md` 延后项复核。
 
 ### v1.4.1 - 2026-05-14
 

@@ -1,9 +1,9 @@
 # 项目实施计划 Implementation Plan
 
-版本：v2.4.1
-关联总设定版本：v0.8.1
-关联技术规约版本：[`00-tech-constraints.md`](00-tech-constraints.md) v1.3.0
-关联垂直切片版本：[`00-vertical-slice.md`](00-vertical-slice.md) v1.0.3
+版本：v2.5.0
+关联总设定版本：v0.8.2
+关联技术规约版本：[`00-tech-constraints.md`](00-tech-constraints.md) v1.3.1
+关联垂直切片版本：[`00-vertical-slice.md`](00-vertical-slice.md) v1.0.4
 创建日期：2026-05-14
 最后更新：2026-05-14
 
@@ -35,7 +35,7 @@
 | **P7** | 体验打磨与氛围补完 | VS P1 四条全勾 + 难度曲线收敛 | VS P1 |
 | **P8** | 工程化与发布管线 | CI 绿 + 可重复发布 + 文档收尾 | — |
 
-> 本文档明确**不**涉及第二阶段（更多副本主题、研究树、第二只怪、程序化走廊、多结局等），上述项见各模块"后续扩展方向"节，于 P8 验收后另行立项。
+> 本文档明确**不**涉及第二阶段（更多副本主题、研究树、第二只怪、程序化走廊、多结局等），上述项集中登记在 [`00-next-stage-expansions.md`](00-next-stage-expansions.md)，并于 P8 验收后另行立项。
 
 ---
 
@@ -55,6 +55,7 @@
 | [`docs/00-glossary.md`](00-glossary.md) | 术语统一来源 |
 | [`docs/00-risk-register.md`](00-risk-register.md) | 风险跟踪（R-XX 编号） |
 | [`docs/00-open-questions.md`](00-open-questions.md) | 设计决策与开放问题登记（Q-XX 编号） |
+| [`docs/00-next-stage-expansions.md`](00-next-stage-expansions.md) | 下一阶段扩展项、延后原因与回归条件 |
 
 ### 模块文档
 
@@ -93,7 +94,7 @@
 
 ## 三、P0 阶段：工程底座与配置决策
 
-**阶段目标**：搭建完整项目骨架，决策所有技术配置项（Q-13~Q-18 已全部定案），使后续所有阶段可以在统一约定下逐步推进。本阶段**不实现任何游戏玩法**，只产出"空项目能运行、工具链确认可用、数据结构已预留接口"。
+**阶段目标**：搭建完整项目骨架，决策所有技术配置项（Q-13~Q-20 已全部定案），使后续所有阶段可以在统一约定下逐步推进。本阶段**不实现任何游戏玩法**，只产出"空项目能运行、工具链确认可用、数据结构已预留接口"。
 
 **当前状态（2026-05-14）**：P0 命令行门禁已通过。空项目可进入占位主菜单，运行时 Autoload 为 5 项白名单；schema 示例资源 4/4 通过；GUT sanity test 1/1 通过。
 
@@ -164,18 +165,21 @@
 
 **阶段目标**：在手工搭建的副本场景里，玩家能完整移动、探索、开门、拾取物品、阅读线索、使用手电。**本阶段没有怪物**，只验证"人在图中"基础可玩性与场景结构。
 
+**微切片门禁**：P1 不直接冲完整破败校园。先完成 [`00-vertical-slice.md`](00-vertical-slice.md) "微切片门禁"：Input Map + 玩家基础动词 + 走廊 + 2 个房间 + 1 个躲藏点 + 1 个交互占位物 + 1 次地图变化 + 1 条噪声事件。通过后再扩展到 4–6 房间版本和完整 P1 出口门禁。
+
 ---
 
 ### P1-1 玩家控制与探索
 
 - **目标**：勾选 [`00-vertical-slice.md`](00-vertical-slice.md) §1 第 1 项和第 3 项（移动/蹲伏/开门/拾取/阅读/躲藏 + 手电电量反馈）；第 2 项（行为产生不同怪物判断结果）的噪声信号接口在本阶段实现，但需要怪物接入后才可观察验证，**第 2 项的验收推迟至 P2**；第 4 项死亡复活推迟至 P3-4。
 - **主要工作**：
-  1. 实现玩家 `CharacterBody2D`，状态机使用 P0-3 选定的插件，**禁止**单文件多层 if/else（[`00-tech-constraints.md`](00-tech-constraints.md) §四.3）。
-  2. 行走/奔跑/蹲伏产生的"噪声等级"作为信号经 `EventBus` 广播（为 P2 怪物 AI 预留订阅口）。
-  3. 手电系统：电量资源化（`.tres`），电量阈值触发视觉反馈。
+  1. 在 `project.godot` Input Map 中先定义 `move_left` / `move_right` / `move_up` / `move_down` / `run` / `crouch` / `flashlight` / `interact` / `hide` / `pause`，玩家脚本只读 action，不硬编码物理按键。
+  2. 实现玩家 `CharacterBody2D`，状态机使用 P0-3 选定的插件，**禁止**单文件多层 if/else（[`00-tech-constraints.md`](00-tech-constraints.md) §四.3）。
+  3. 行走/奔跑/蹲伏产生的"噪声等级"作为信号经 `EventBus` 广播（为 P2 怪物 AI 预留订阅口），信号中保留稳定 action id。
+  4. 手电系统：电量资源化（`.tres`），电量阈值触发视觉反馈。
 - **关联文档**：[`modules/01-player-control-exploration.md`](modules/01-player-control-exploration.md)。
 - **关联 Pillar**：Pillar 1（行为差异须可被怪物"学习"，不是孤立手感）。
-- **验收门禁**：玩家可在副本内完成行走/奔跑/蹲伏/开门/拾取/阅读/进入躲藏点；手电开关有电量消耗，电量低时视觉反馈激活。
+- **验收门禁**：Input Map action 全部存在；玩家可在微切片或副本内完成行走/奔跑/蹲伏/开门/拾取/阅读/进入躲藏点；手电开关有电量消耗，电量低时视觉反馈激活；控制脚本不硬编码物理按键。
 - **关联风险**：手感与恐怖感平衡（详见 [`00-risk-register.md`](00-risk-register.md)）。
 
 ---
@@ -184,13 +188,14 @@
 
 - **目标**：勾选 [`00-vertical-slice.md`](00-vertical-slice.md) §3（地图分区 + 一次变化事件 + 三路径不阻断 + 重玩房间池）。
 - **主要工作**：
-  1. 用场景嵌套 + `Node2D` / `Sprite2D` / `Parallax2D` / 碰撞层手工搭建 1 个 2.5D Live 副本：入口区 / 主走廊 / 4–6 候选房间 / 仪式房 / 出口区。`TileMap` 仅可作为灰盒辅助，最终画面不走瓦片方案；**禁止**程序化生成（[`00-tech-constraints.md`](00-tech-constraints.md) §十.3）。
-  2. `NavigationRegion2D` 配置（为 P2 怪物寻路预留）。
-  3. "变化事件"由 `RuleResource` 驱动（走廊变长 / 门牌错乱 / 已探索房间出现新物品三选一），数据驱动可切换。
-  4. 候选房间池使用确定性随机种子，便于复盘。
+  1. 先搭建灰盒微切片：主走廊 + 2 个房间 + 1 个躲藏点 + 1 个可交互占位物（stub）+ 1 次地图变化事件，确认路径不阻断后再扩展。
+  2. 用场景嵌套 + `Node2D` / `Sprite2D` / `Parallax2D` / 碰撞层手工搭建 1 个 2.5D Live 副本：入口区 / 主走廊 / 4–6 候选房间 / 仪式房 / 出口区。`TileMap` 仅可作为灰盒辅助，最终画面不走瓦片方案；**禁止**程序化生成（[`00-tech-constraints.md`](00-tech-constraints.md) §十.3）。
+  3. `NavigationRegion2D` 配置（为 P2 怪物寻路预留）。
+  4. "变化事件"由 `RuleResource` 驱动（走廊变长 / 门牌错乱 / 已探索房间出现新物品三选一），数据驱动可切换，并拥有稳定 `resource_id`。
+  5. 候选房间池使用确定性随机种子，便于复盘。
 - **关联文档**：[`modules/02-dungeon-generation-map.md`](modules/02-dungeon-generation-map.md)、[`00-art-direction.md`](00-art-direction.md)。
 - **关联 Pillar**：Pillar 1（地图变化须可解释、可学习）。
-- **验收门禁**：[`00-vertical-slice.md`](00-vertical-slice.md) §3 全部 4 项可勾选；从入口到任一路径出口步行 ≤ 90 秒。
+- **验收门禁**：微切片门禁先通过；随后 [`00-vertical-slice.md`](00-vertical-slice.md) §3 全部 4 项可勾选；从入口到任一路径出口步行 ≤ 90 秒。
 - **关联风险**：[`00-risk-register.md`](00-risk-register.md) R-01（体验曲线塌陷，地图是动态危险度的承载位）。
 
 ---
@@ -207,10 +212,11 @@
 - **主要工作**：
   1. 实现 `RuleEngine`：消费 `RuleResource (.tres)` 列表，订阅 `EventBus`，输出触发结果与线索解锁状态。**禁止**将规则硬编码进怪物脚本（[`00-tech-constraints.md`](00-tech-constraints.md) §四.4）。
   2. 现形条件、弱点条件、收容三步仪式全部以 `RuleResource` 表达，对齐 [`monsters/001-da-zhi.md`](monsters/001-da-zhi.md)。
-  3. 编写 GUT 用例覆盖 `RuleEngine` 触发判定（[`00-tech-constraints.md`](00-tech-constraints.md) §九 强制项）。
+  3. 每条会导致死亡、失败或错误收容的规则必须填入 `learnable_hint`，用于 P3-4 的最低失败学习反馈。
+  4. 编写 GUT 用例覆盖 `RuleEngine` 触发判定（[`00-tech-constraints.md`](00-tech-constraints.md) §九 强制项）。
 - **关联文档**：[`modules/03-monster-anomaly-rules.md`](modules/03-monster-anomaly-rules.md)、[`monsters/001-da-zhi.md`](monsters/001-da-zhi.md)、[`00-design-pillars.md`](00-design-pillars.md)（Pillar 1）。
 - **关联 Pillar**：Pillar 1（**本工作流是 Pillar 1 的核心承载**）。
-- **验收门禁**：`RuleEngine` GUT 用例 100% 通过；在编辑器内可切换 `.tres` 文件并观察到不同的规则触发结果。
+- **验收门禁**：`RuleEngine` GUT 用例 100% 通过；在编辑器内可切换 `.tres` 文件并观察到不同的规则触发结果；关键失败规则均有非空 `learnable_hint`。
 - **关联风险**：R-01；规则可读性风险（玩家无法推理 → 退化为随机惊吓）。
 
 ---
@@ -298,9 +304,10 @@
 - **主要工作**：
   1. 死亡信号经 `EventBus` 触发 `GameState` 切换至基地场景（基地此阶段仅为占位场景）。
   2. 副本资源损失占位计算（正式逻辑由 P4 搜刮模块补全）。
+  3. 读取本次死亡或失败关联的 `RuleResource.learnable_hint`，显示一条最低学习反馈；若无法定位规则，显示通用提示并记录缺失规则 ID。
 - **关联文档**：[`modules/01-player-control-exploration.md`](modules/01-player-control-exploration.md)。
 - **关联 Pillar**：Pillar 2。
-- **验收门禁**：[`00-vertical-slice.md`](00-vertical-slice.md) §1 第 4 项可勾选；死亡到复活整个流程无脚本红字。
+- **验收门禁**：[`00-vertical-slice.md`](00-vertical-slice.md) §1 第 4 项可勾选；死亡到复活整个流程无脚本红字；死亡后至少能看到一条来自 `learnable_hint` 的可学习提示。
 - **关联风险**：场景切换状态丢失。
 
 ---
@@ -462,7 +469,7 @@
   1. 基地增加随机异响 / 物品轻微位移等"被污染过的氛围细节"（Pillar 2：基地不完全安全）。
   2. 电台第一通话脚本走 Dialogic 2，依据 [`modules/11-narrative-worldbuilding.md`](modules/11-narrative-worldbuilding.md) 与 [`00-open-questions.md`](00-open-questions.md) Q-01（异常事件幸存者 + 旧机构候选执行者）。
   3. 大只档案页收容成功后扩写，与 [`monsters/001-da-zhi.md`](monsters/001-da-zhi.md) 一致。
-  4. 死亡复盘提示：来自被触发的 `RuleResource` 的"事后提示"字段，一句话可学习。
+  4. 死亡复盘提示打磨：沿用 P3-4 已接入的 `RuleResource.learnable_hint`，只增强节奏、文案和演出，不在 P7 首次补功能。
 - **关联文档**：[`modules/10-base-management-research.md`](modules/10-base-management-research.md)、[`modules/11-narrative-worldbuilding.md`](modules/11-narrative-worldbuilding.md)、[`monsters/001-da-zhi.md`](monsters/001-da-zhi.md)。
 - **关联 Pillar**：Pillar 1（死亡复盘要可学习）+ Pillar 2（基地不完全安全）。
 - **验收门禁**：[`00-vertical-slice.md`](00-vertical-slice.md) P1 4 条全部勾选。
@@ -523,8 +530,9 @@
   1. 把 P0~P7 阶段实测中形成的设计决策回填 [`00-open-questions.md`](00-open-questions.md)，关闭已决问题，新增第二阶段才需要回答的问题。
   2. [`00-risk-register.md`](00-risk-register.md) 中"已缓解 / 已关闭"项整理归档。
   3. 走查所有模块文档"后续扩展方向"节，确认与现有数据资源 schema 不冲突；冲突项升级为新 Open Question。
-  4. 所有顶层文档版本号统一推进一档，彼此引用无版本错配、无悬挂链接。
-- **关联文档**：所有模块文档"后续扩展方向"节、[`00-open-questions.md`](00-open-questions.md)、[`00-risk-register.md`](00-risk-register.md)。
+  4. 对照 [`00-next-stage-expansions.md`](00-next-stage-expansions.md) 复核所有延后项：仍保留的写入下一阶段立项草案，已不需要的关闭并记录理由。
+  5. 所有顶层文档版本号统一推进一档，彼此引用无版本错配、无悬挂链接。
+- **关联文档**：所有模块文档"后续扩展方向"节、[`00-open-questions.md`](00-open-questions.md)、[`00-risk-register.md`](00-risk-register.md)、[`00-next-stage-expansions.md`](00-next-stage-expansions.md)。
 - **关联 Pillar**：—。
 - **验收门禁**：顶层文档版本一致；无悬挂引用；所有 Open Questions 状态明确（已定案 / 后续阶段细化且有默认方案）；[`00-risk-register.md`](00-risk-register.md) 无滞留"开放"且已可关闭的条目。
 - **关联风险**：文档腐化 → 与代码脱节，影响 Codex 对上下文的准确理解。
@@ -542,6 +550,8 @@
 5. **通信方式**：跨模块只能走 signal + EventBus（[`00-tech-constraints.md`](00-tech-constraints.md) §四.2）；禁止跨模块直接调用节点方法。
 6. **文档同步**：每个工作流完成后，必须更新对应模块文档的版本记录与 [`00-glossary.md`](00-glossary.md)（[`00-tech-constraints.md`](00-tech-constraints.md) §八.4）。
 7. **Codex 协作**：单文件 ~400 行上限，中文+英文术语对照（[`00-tech-constraints.md`](00-tech-constraints.md) §一.5）。
+8. **输入与资源 ID 稳定**：输入只读 Input Map action；玩法逻辑引用稳定 `resource_id` / manifest key，不把物理按键或裸文件路径写死为公共契约。
+9. **延后项显式登记**：任何不进入 P1~P6 的想法都必须写入 [`00-next-stage-expansions.md`](00-next-stage-expansions.md) 或对应模块"后续扩展方向"，不得在第一阶段无记录扩范围。
 
 ---
 
@@ -549,15 +559,15 @@
 
 | 门禁 | 必要条件 |
 |---|---|
-| **P0 通过** | 已通过：空项目可运行；Autoload 五件套就绪；Q-13~Q-18 全部决策；插件采纳门槛核查完成；Schema 框架文件存在并通过示例校验 |
-| **P1 通过** | VS §1 第 1 项和第 3 项勾选（第 2 项噪声接口实现，验收推迟至 P2；第 4 项推迟至 P3）+ VS §3 全勾；副本可徒步完整探索 |
-| **P2 通过** | VS §2 全部 5 项 + VS §4（前 3 项）+ VS §1 第 2 项 全勾；`RuleEngine` GUT 用例 100% 通过 |
-| **P3 通过** | VS §4 全勾 + VS §5 全勾 + VS §6 全勾；VS §1 第 4 项勾选；`SettlementCalculator` GUT 用例 100% 通过；盲测玩家死后能口述"我是被什么规则杀的" |
+| **P0 通过** | 已通过：空项目可运行；Autoload 五件套就绪；Q-13~Q-20 全部决策；插件采纳门槛核查完成；Schema 框架文件存在并通过示例校验 |
+| **P1 通过** | 微切片门禁通过；Input Map action 全部存在；VS §1 第 1 项和第 3 项勾选（第 2 项噪声接口实现，验收推迟至 P2；第 4 项推迟至 P3）+ VS §3 全勾；副本可徒步完整探索 |
+| **P2 通过** | VS §2 全部 5 项 + VS §4（前 3 项）+ VS §1 第 2 项 全勾；`RuleEngine` GUT 用例 100% 通过；关键失败规则均有 `learnable_hint` |
+| **P3 通过** | VS §4 全勾 + VS §5 全勾 + VS §6 全勾；VS §1 第 4 项勾选；`SettlementCalculator` GUT 用例 100% 通过；死亡后能显示 `learnable_hint`，盲测玩家死后能口述"我是被什么规则杀的" |
 | **P4 通过** | VS §7 + VS §8 全勾；`SaveSystem` GUT 用例 100% 通过；存档重启恢复正常 |
 | **P5 通过** | VS §9 + VS §10 + VS §11 全勾；至少 1 名非开发玩家盲测通过；Schema 已冻结 |
 | **P6 通过（垂直切片验收）** | VS 全部 P0 验收项全勾；GUT 三类强制用例全过；性能基线达标；`.exe` 四条交付校验通过 |
 | **P7 通过** | VS P1 验收项 4 条全勾；R-01 降级为"已缓解" |
-| **P8 通过** | CI 持续绿；Schema 校验在 CI 中生效；顶层文档版本一致、无悬挂引用 |
+| **P8 通过** | CI 持续绿；Schema 校验在 CI 中生效；顶层文档版本一致、无悬挂引用；`00-next-stage-expansions.md` 已完成复核 |
 | **进入第二阶段（本计划外）** | P8 通过 + 新立项实施计划文档 v3.x |
 
 ---
@@ -599,6 +609,14 @@ P7-1 不再因 Q-01 阻塞；其前置仍为 P6-4。
 ---
 
 ## 版本记录
+
+### v2.5.0 - 2026-05-14
+
+- 同步 `game-concept.md` v0.8.2、`00-tech-constraints.md` v1.3.1、`00-vertical-slice.md` v1.0.4、`00-next-stage-expansions.md` v1.0.0。
+- P1 新增微切片门禁：Input Map、玩家基础动词、走廊 + 2 房间、1 躲藏点、1 交互占位物、1 变化事件和噪声事件先行验证。
+- P2/P3 前置死亡学习反馈最低版：`RuleResource.learnable_hint` 字段在规则阶段填入，死亡复活流程负责显示。
+- P7-1 调整为死亡复盘演出和文案打磨，不再承担最低功能首次实现。
+- P8-3 增加下一阶段扩展清单复核，所有延后项必须可追踪。
 
 ### v2.4.1 - 2026-05-14
 

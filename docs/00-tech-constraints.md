@@ -1,7 +1,7 @@
 # 技术选型与底基约束 Tech Constraints
 
-版本：v1.3.0
-关联总设定版本：v0.8.1
+版本：v1.3.1
+关联总设定版本：v0.8.2
 创建日期：2026-05-14
 最后更新：2026-05-14
 
@@ -51,7 +51,7 @@
 /assets/             # 美术与音频原始资源（按类型再分子目录）
   /sprites/  /audio/  /fonts/  /shaders/
 /data/               # 数据资源（.tres / .json）：怪物、原形、规则、道具表
-  /monsters/  /origins/  /rules/  /items/  /levels/
+  /monsters/  /origins/  /rules/  /items/  /levels/  /manifest/
 /scenes/             # 场景文件 .tscn，按模块组织
   /player/  /monster/  /dungeon/  /base/  /ui/
 /scripts/            # GDScript，与 scenes 目录一一对应
@@ -63,6 +63,7 @@
 
 - 一个场景 = 一个目录 = 一个根脚本，命名同名（`player.tscn` + `player.gd`）。
 - 业务数据**禁止**进 `scripts/`，必须进 `data/`。
+- 运行时可复用资源必须逐步纳入 `/data/manifest/` 或等价 Resource 清单；玩法逻辑引用稳定 `resource_id` / manifest key，不把裸文件路径当作长期 API。
 
 ---
 
@@ -82,6 +83,8 @@
 4. **怪物异常规则**：每条规则一个 `RuleResource (.tres)`，包含触发条件、效果、可学习线索字段。规则由 `RuleEngine` 统一评估，**不**写死在怪物脚本里。
 5. **地图**：第一阶段为手工关卡，使用场景嵌套 + `Node2D` / `Sprite2D` / `Parallax2D` / `CollisionShape2D` / `NavigationRegion2D` 组织 2.5D Live 场景。`TileMap` 仅允许作为灰盒/blockout 或碰撞参考，不作为最终画面瓦片方案。
 6. **存档**：使用 Godot `ResourceSaver` 保存自定义 Resource，或 JSON。**禁止**使用 Pickle/二进制不可读格式（一人调试需要可读性）。
+7. **输入动作映射**：玩家控制代码只能读取 Input Map action，不允许硬编码物理按键。P1-1 前必须在 `project.godot` 中定义：`move_left`、`move_right`、`move_up`、`move_down`、`run`、`crouch`、`flashlight`、`interact`、`hide`、`pause`。
+8. **资源清单与稳定 ID**：怪物、规则、线索、物品、关卡和可复用音频/美术占位资源必须拥有稳定 `id`。系统间传递 `id` 或 manifest key；文件路径仅作为 Resource 内部加载细节，不能成为结算、存档、规则或线索逻辑的公共契约。
 
 ---
 
@@ -106,7 +109,7 @@
 
 ## 六、美术与音频技术约束
 
-1. **风格**：2.5D Live 表现 + 厚涂精美二次元风格，固定镜头（已在概念文档 v0.8.1 与 [`00-art-direction.md`](00-art-direction.md) v1.0.0 确认）。美术风格服务"看不清但能感到危险"的恐怖叙事，强调体积、光影、材质、角色魅力和异常变形；不使用像素风或低多边形手绘作为主风格。
+1. **风格**：2.5D Live 表现 + 厚涂精美二次元风格，固定镜头（已在概念文档 v0.8.2 与 [`00-art-direction.md`](00-art-direction.md) v1.0.0 确认）。美术风格服务"看不清但能感到危险"的恐怖叙事，强调体积、光影、材质、角色魅力和异常变形；不使用像素风或低多边形手绘作为主风格。
 2. **分辨率基准**：1080p 内部渲染，UI 9-slice，禁止使用未压缩 4K 贴图。
 3. **2.5D Live 资产**：角色 / 拟人原形 / 怪物现形使用高分辨率分层透明图，优先以 `Sprite2D`、`AnimationPlayer`、`Skeleton2D` / `Bone2D` / `Polygon2D`、网格变形和 Shader 做呼吸、凝视、衣摆、阴影和异常扰动等细微动态。场景按前景 / 中景 / 背景 / 遮挡层 / 光影层拆分，使用 `Parallax2D` 和固定镜头构建纵深。禁止把 32×32 / 64×64 像素瓦片作为全局资产基准。
 4. **外部动画运行时边界**：第一阶段不以 Live2D Cubism 或 Spine 作为底基。Live2D 官方 SDK 平台不直接包含 Godot，Godot 接入通常依赖非官方扩展或原生适配；Spine 虽有官方 Godot runtime，但会引入额外授权与导入流程。两者仅可在第二阶段后按插件采纳门槛重新评估。
@@ -208,6 +211,12 @@
 ---
 
 ## 版本记录
+
+### v1.3.1 - 2026-05-14
+
+- 同步 `game-concept.md` v0.8.2。
+- 新增 Input Map 约束：P1-1 前必须定义移动、奔跑、蹲伏、手电、互动、躲藏和暂停动作；玩法脚本不得硬编码物理按键。
+- 新增 `/data/manifest/` 与稳定 `resource_id` / manifest key 规则，避免文件路径成为玩法公共 API。
 
 ### v1.3.0 - 2026-05-14
 

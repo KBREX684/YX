@@ -1,8 +1,8 @@
 # 系统模块文档索引
 
-版本：v0.5.1
-关联总设定版本：v0.8.1
-状态：美术底基口径同步
+版本：v0.5.2
+关联总设定版本：v0.8.2
+状态：微切片与延后项口径同步
 创建日期：2026-05-14
 最后更新：2026-05-14
 
@@ -19,9 +19,11 @@
 | [Design Pillars](../00-design-pillars.md) | 2 条设计支柱，所有模块裁决依据 |
 | [术语表 Glossary](../00-glossary.md) | 核心术语定义，模块文档直接引用 |
 | [美术风格与制作底基 Art Direction](../00-art-direction.md) | 视觉最高规约：2.5D Live、厚涂精美二次元、动画管线与外包验收 |
+| [技术选型与底基约束 Tech Constraints](../00-tech-constraints.md) | 工程最高规约：引擎、目录、架构、Input Map、manifest 与禁止事项 |
 | [风险登记 Risk Register](../00-risk-register.md) | 已识别设计与工程风险及缓解策略 |
 | [设计决策与开放问题 Open Questions](../00-open-questions.md) | 集中管理已定案设计问题与后续阶段问题；当前无用户待确认阻塞项 |
 | [垂直切片验收清单](../00-vertical-slice.md) | 第一阶段原型的完成边界与验收标准 |
+| [下一阶段扩展清单 Next-Stage Expansions](../00-next-stage-expansions.md) | 第一阶段暂缓项、延后原因与回归条件 |
 
 ## 模块列表
 
@@ -61,6 +63,12 @@
 17. 版本记录
 
 ## 版本记录
+
+### v0.5.2 - 2026-05-14
+
+- 同步总设定版本至 v0.8.2。
+- 顶层索引新增 `00-next-stage-expansions.md`，用于集中管理第一阶段延后项。
+- 顶层索引补入 `00-tech-constraints.md`，避免模块入口漏掉工程最高规约。
 
 ### v0.5.1 - 2026-05-14
 

@@ -1,7 +1,7 @@
 # 风险登记 Risk Register
 
-版本：v1.1.0
-关联总设定版本：v0.8.1
+版本：v1.2.0
+关联总设定版本：v0.8.2
 创建日期：2026-05-14
 最后更新：2026-05-14
 
@@ -155,8 +155,18 @@
 - **等级：** 🟠 高
 - **来源模块：** 00-art-direction / 00-tech-constraints
 - **描述：** 如果第一阶段过早把 Live2D Cubism、Spine 或其他外部动画运行时作为底基，会引入授权、导入、插件兼容、GDExtension 维护和外包资产格式锁定风险，拖慢垂直切片。
-- **缓解策略：** 已在 `00-art-direction.md` v1.0.0 与 `00-tech-constraints.md` v1.3.0 中定案：第一阶段使用 Godot 原生 2D Live 管线；Live2D Cubism 与 Spine 仅在第二阶段后、并通过插件采纳门槛时评估。
+- **缓解策略：** 已在 `00-art-direction.md` v1.0.0 与 `00-tech-constraints.md` v1.3.1 中定案：第一阶段使用 Godot 原生 2D Live 管线；Live2D Cubism 与 Spine 仅在第二阶段后、并通过插件采纳门槛时评估。
 - **状态：** 已缓解（v1.1.0）
+
+---
+
+### R-15 首个可玩切片范围过大
+
+- **等级：** 🟠 高
+- **来源模块：** 00-implementation-plan / 00-engineering-tasks / 01-player-control-exploration / 02-dungeon-generation-map
+- **描述：** 如果 P1 一开始就制作完整破败校园、完整美术和完整交互，很容易在核心动词、输入映射、噪声事件和地图变化尚未验证前耗尽产能，导致可玩性风险被美术/关卡工作量掩盖。
+- **缓解策略：** 已在 `00-vertical-slice.md` v1.0.4 与 `00-implementation-plan.md` v2.5.0 中引入"微切片门禁"：先完成走廊 + 2 房间 + 1 躲藏点 + 1 变化事件 + 输入动作映射 + 噪声事件 + `learnable_hint` 占位，再扩展完整 4–6 房间破败校园。延后事项统一进入 `00-next-stage-expansions.md`，不得无记录扩大范围。
+- **状态：** 缓解中，需在 P1 开始前强制执行
 
 ---
 
@@ -167,6 +177,11 @@
 ---
 
 ## 版本记录
+
+### v1.2.0 - 2026-05-14
+
+- 同步总设定 v0.8.2、`00-vertical-slice.md` v1.0.4 与 `00-next-stage-expansions.md` v1.0.0。
+- 新增 R-15 首个可玩切片范围过大风险，并以微切片门禁、输入映射、稳定资源 ID 和延后项清单作为缓解策略。
 
 ### v1.1.0 - 2026-05-14
 

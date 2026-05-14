@@ -1,6 +1,6 @@
 # 无限流异常副本游戏设想
 
-版本：v0.8.1
+版本：v0.8.2
 状态：初期设想
 创建日期：2026-05-14
 最后更新：2026-05-14
@@ -26,12 +26,13 @@
 | 文档 | 内容 |
 |---|---|
 | [Design Pillars](00-design-pillars.md) | 2 条设计支柱，所有模块裁决依据 |
-| [术语表 Glossary](00-glossary.md) | 核心术语定义，22 个词条 |
+| [术语表 Glossary](00-glossary.md) | 核心术语定义，24 个词条 |
 | [美术风格与制作底基 Art Direction](00-art-direction.md) | 视觉最高规约：2.5D Live、厚涂精美二次元、动画管线与外包验收 |
-| [风险登记 Risk Register](00-risk-register.md) | 14 条已识别设计与工程风险 |
+| [风险登记 Risk Register](00-risk-register.md) | 15 条已识别设计与工程风险 |
 | [设计决策与开放问题 Open Questions](00-open-questions.md) | 集中管理已定案设计问题与后续阶段问题；当前无用户待确认阻塞项 |
 | [垂直切片验收清单](00-vertical-slice.md) | 第一阶段原型完成边界（40+ 验收标准） |
 | [技术选型与底基约束 Tech Constraints](00-tech-constraints.md) | 工程层最高规约：引擎、目录、架构、工具链与禁止事项 |
+| [下一阶段扩展清单 Next-Stage Expansions](00-next-stage-expansions.md) | 第一阶段暂缓项、延后原因与回归条件 |
 
 ## Design Pillars
 
@@ -73,6 +74,10 @@
 - 美术方向确定为 **2.5D Live 表现 + 厚涂精美二次元风格**；不使用像素风或低多边形手绘作为主风格。
 - 第一阶段制作底基确定为 **Godot 原生 2D Live 管线**：分层厚涂 PNG + `AnimationPlayer` + `Skeleton2D` / `Bone2D` / `Polygon2D` + `Sprite2D` / `Parallax2D` + Shader / Light2D。Live2D Cubism 与 Spine 不作为第一阶段底基，只保留为第二阶段后评估项。
 - 玩家没有直接攻击动作，对抗主要通过道具、仪式、弱点、原形和异常规则完成。
+- 第一阶段可玩验证采用"微切片优先"：先验证输入动作映射、玩家基础动词、手电/噪声事件、走廊 + 2 个房间 + 1 个躲藏点 + 1 次地图变化，再扩展到完整破败校园垂直切片。
+- 第一阶段必须建立稳定资源 ID / manifest 口径：运行时玩法逻辑引用 `resource_id` 或 manifest key，不把裸文件路径当作长期玩法 API。
+- 死亡或失败后的学习反馈最低版前置到 P2/P3：由 `RuleResource.learnable_hint` 提供一条可学习提示；P7 只负责复盘演出和文案打磨。
+- 第一阶段不做但未来保留的内容统一进入 [`00-next-stage-expansions.md`](00-next-stage-expansions.md)，不得在 P1~P6 期间无记录地扩大范围。
 
 ### 副本与结算
 
@@ -508,6 +513,13 @@
 当前建议是：以恐怖求生和异常规则探索作为主体验，以原形养成作为长期奖励和策略扩展。养成系统不应完全安全化、萌化或数值化异常，否则会削弱恐怖基调。
 
 ## 版本记录
+
+### v0.8.2 - 2026-05-14
+
+- 根据 Game Studio 复查建议，新增"微切片优先"的第一阶段验证口径：先完成走廊 + 2 房间 + 1 躲藏点 + 1 变化事件，再扩展完整破败校园。
+- 明确输入动作映射、稳定资源 ID / manifest、死亡学习反馈最低版必须前置到第一阶段。
+- 新增 `docs/00-next-stage-expansions.md`，集中标注第一阶段延后事项、延后原因和后续回归条件。
+- 同步术语表至 v1.4.0、风险登记至 v1.2.0。
 
 ### v0.8.1 - 2026-05-14
 
