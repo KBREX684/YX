@@ -1,11 +1,16 @@
-[gd_scene load_steps=5 format=3 uid="uid://yx_player_p1_placeholder"]
+[gd_scene load_steps=8 format=3 uid="uid://yx_player_p1_placeholder"]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1_player_script"]
 [ext_resource type="Resource" path="res://data/items/flashlight.tres" id="2_flashlight"]
 [ext_resource type="Script" path="res://scripts/player/states/player_limbo_state.gd" id="3_state_script"]
+[ext_resource type="Script" path="res://scripts/player/player_interaction_sensor.gd" id="4_interaction_sensor"]
+[ext_resource type="Script" path="res://scripts/player/player_feedback_view.gd" id="5_feedback_view"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_player"]
 size = Vector2(32, 56)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_interaction_sensor"]
+radius = 64.0
 
 [node name="Player" type="CharacterBody2D"]
 collision_layer = 2
@@ -65,7 +70,32 @@ color = Color(1, 0.94, 0.76, 1)
 energy = 0.0
 texture_scale = 2.0
 
+[node name="FlashlightBeam" type="Polygon2D" parent="."]
+visible = false
+position = Vector2(18, -30)
+polygon = PackedVector2Array(0, -8, 178, -54, 178, 36)
+color = Color(1, 0.88, 0.48, 0.28)
+
 [node name="FollowCamera" type="Camera2D" parent="."]
 enabled = true
 position_smoothing_enabled = true
 position_smoothing_speed = 8.0
+
+[node name="FeedbackLabel" type="Label" parent="."]
+offset_left = -150.0
+offset_top = -104.0
+offset_right = 150.0
+offset_bottom = -68.0
+text = "WASD移动  F手电  C蹲伏  E交互  H躲藏"
+horizontal_alignment = 1
+
+[node name="FeedbackView" type="Node" parent="."]
+script = ExtResource("5_feedback_view")
+
+[node name="InteractionSensor" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 1
+script = ExtResource("4_interaction_sensor")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InteractionSensor"]
+shape = SubResource("CircleShape2D_interaction_sensor")

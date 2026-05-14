@@ -1,13 +1,20 @@
-[gd_scene load_steps=5 format=3 uid="uid://yx_micro_school_blockout"]
+[gd_scene load_steps=10 format=3 uid="uid://yx_micro_school_blockout"]
 
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="1_player"]
 [ext_resource type="Script" path="res://scripts/dungeon/map_change_event.gd" id="2_map_event"]
+[ext_resource type="Script" path="res://scripts/dungeon/playtest_interactable.gd" id="3_playtest_interactable"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hide"]
 size = Vector2(48, 36)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_interact"]
 size = Vector2(40, 40)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_horizontal_bounds"]
+size = Vector2(900, 32)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vertical_bounds"]
+size = Vector2(32, 560)
 
 [node name="MicroSchoolBlockout" type="Node2D"]
 
@@ -64,9 +71,17 @@ horizontal_alignment = 1
 
 [node name="HidingSpot" type="Area2D" parent="World"]
 position = Vector2(-235, -12)
+script = ExtResource("3_playtest_interactable")
+interactable_id = &"hide_locker_micro"
+interaction_result = "hidden"
+note_text = "躲藏柜：按 H 躲入，再按 H 退出。"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="World/HidingSpot"]
 shape = SubResource("RectangleShape2D_hide")
+
+[node name="PlaceholderVisual" type="Polygon2D" parent="World/HidingSpot"]
+polygon = PackedVector2Array(-26, -22, 26, -22, 22, 22, -22, 22)
+color = Color(0.2, 0.34, 0.4, 0.95)
 
 [node name="PlaceholderAssetLabel" type="Label" parent="World/HidingSpot"]
 offset_left = -72.0
@@ -78,9 +93,18 @@ horizontal_alignment = 1
 
 [node name="InteractionStub" type="Area2D" parent="World"]
 position = Vector2(0, -8)
+script = ExtResource("3_playtest_interactable")
+interactable_id = &"note_doorplate_micro"
+interaction_result = "read"
+note_id = &"note_doorplate_micro"
+note_text = "纸条/门牌：这里是 E 键交互占位，正式线索会在 P3/P7 继续替换演出。"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="World/InteractionStub"]
 shape = SubResource("RectangleShape2D_interact")
+
+[node name="PlaceholderVisual" type="Polygon2D" parent="World/InteractionStub"]
+polygon = PackedVector2Array(-22, -18, 22, -18, 22, 18, -22, 18)
+color = Color(0.55, 0.46, 0.25, 0.95)
 
 [node name="PlaceholderAssetLabel" type="Label" parent="World/InteractionStub"]
 offset_left = -100.0
@@ -97,6 +121,26 @@ offset = Vector2(120, 0)
 
 [node name="EscapePath" type="Marker2D" parent="World"]
 position = Vector2(300, 0)
+
+[node name="WorldBounds" type="StaticBody2D" parent="World"]
+collision_layer = 1
+collision_mask = 0
+
+[node name="TopWall" type="CollisionShape2D" parent="World/WorldBounds"]
+position = Vector2(0, -270)
+shape = SubResource("RectangleShape2D_horizontal_bounds")
+
+[node name="BottomWall" type="CollisionShape2D" parent="World/WorldBounds"]
+position = Vector2(0, 270)
+shape = SubResource("RectangleShape2D_horizontal_bounds")
+
+[node name="LeftWall" type="CollisionShape2D" parent="World/WorldBounds"]
+position = Vector2(-450, 0)
+shape = SubResource("RectangleShape2D_vertical_bounds")
+
+[node name="RightWall" type="CollisionShape2D" parent="World/WorldBounds"]
+position = Vector2(450, 0)
+shape = SubResource("RectangleShape2D_vertical_bounds")
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
 

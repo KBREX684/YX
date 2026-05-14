@@ -41,11 +41,19 @@ func test_micro_school_blockout_has_required_micro_slice_nodes() -> void:
 		"World/InteractionStub",
 		"World/MapChangeEvent",
 		"World/EscapePath",
+		"World/WorldBounds",
 		"NavigationRegion2D",
 		"PlayerSpawn",
 		"Player",
 	]:
 		assert_not_null(level.get_node_or_null(path), "Expected node %s." % path)
+
+	for path in ["World/HidingSpot", "World/InteractionStub"]:
+		var node := level.get_node(path)
+		assert_true(node.has_method("interact"), "%s should be interactable during playtest." % path)
+		assert_not_null(node.get_node_or_null("PlaceholderVisual"), "%s should have visible placeholder geometry." % path)
+
+	assert_eq(level.get_node("World/WorldBounds").get_child_count(), 4)
 
 
 func test_micro_map_change_event_is_triggerable_and_keeps_escape_path() -> void:
