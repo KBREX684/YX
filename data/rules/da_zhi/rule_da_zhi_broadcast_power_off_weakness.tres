@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="RuleResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/systems/resources/rule_resource.gd" id="1_rule"]
+
+[resource]
+script = ExtResource("1_rule")
+id = "rule_da_zhi_broadcast_power_off_weakness"
+trigger_conditions = [{
+"type": "zone",
+"zone_id": "broadcast_room"
+}, {
+"type": "has_item",
+"item_id": "item_broadcast_room_key"
+}, {
+"type": "flag",
+"key": "broadcast_power_off",
+"value": true
+}]
+effect = {
+"type": "weakness_window",
+"target_id": "da_zhi",
+"window_id": "broadcast_silence",
+"duration": 45.0
+}
+clue_unlock_id = "clue_broadcast_dependency"
+learnable_hint = "广播停下时，它会短暂失去方向感；最后的声源会变得很危险，也很有用。"

@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="RuleResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/systems/resources/rule_resource.gd" id="1_rule"]
+
+[resource]
+script = ExtResource("1_rule")
+id = "rule_da_zhi_corridor_run"
+trigger_conditions = [{
+"type": "player_action",
+"action": "run"
+}, {
+"type": "zone",
+"zone_id": "main_corridor"
+}, {
+"type": "noise_level_min",
+"min": 3
+}]
+effect = {
+"type": "phase_change",
+"target_id": "da_zhi",
+"phase": "search",
+"is_critical_failure": true
+}
+clue_unlock_id = ""
+learnable_hint = "走廊里不要奔跑——它会把多出来的脚步声接到你身后。"

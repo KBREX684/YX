@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="RuleResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/systems/resources/rule_resource.gd" id="1_rule"]
+
+[resource]
+script = ExtResource("1_rule")
+id = "rule_da_zhi_first_manifestation"
+trigger_conditions = [{
+"type": "flag",
+"key": "entered_main_corridor",
+"value": true
+}, {
+"type": "flag",
+"key": "first_visit",
+"value": true
+}]
+effect = {
+"type": "manifestation",
+"target_id": "da_zhi",
+"manifestation_id": "first_corridor_silhouette",
+"duration": 2.5
+}
+clue_unlock_id = ""
+learnable_hint = "主走廊第一次变暗时，尽量停下观察轮廓，不要追过去。"
