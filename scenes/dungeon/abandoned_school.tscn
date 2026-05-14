@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://yx_abandoned_school"]
+[gd_scene load_steps=21 format=3 uid="uid://yx_abandoned_school"]
 
 [ext_resource type="PackedScene" path="res://scenes/dungeon/rooms/classroom_a.tscn" id="1_classroom"]
 [ext_resource type="PackedScene" path="res://scenes/dungeon/rooms/storage_a.tscn" id="2_storage"]
@@ -17,6 +17,8 @@
 [ext_resource type="Script" path="res://scripts/systems/clue_book.gd" id="15_clue_book"]
 [ext_resource type="Script" path="res://scripts/systems/objective_resolver.gd" id="16_objective_resolver"]
 [ext_resource type="Script" path="res://scripts/dungeon/ritual_step_trigger.gd" id="17_ritual_trigger"]
+[ext_resource type="Script" path="res://scripts/systems/settlement_calculator.gd" id="18_settlement_calculator"]
+[ext_resource type="PackedScene" path="res://scenes/ui/settlement_screen.tscn" id="19_settlement_screen"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ritual_trigger"]
 size = Vector2(54, 54)
@@ -28,6 +30,11 @@ script = ExtResource("15_clue_book")
 
 [node name="ObjectiveResolver" type="Node" parent="."]
 script = ExtResource("16_objective_resolver")
+
+[node name="SettlementCalculator" type="Node" parent="."]
+script = ExtResource("18_settlement_calculator")
+
+[node name="SettlementScreen" parent="." instance=ExtResource("19_settlement_screen")]
 
 [node name="RitualTriggers" type="Node2D" parent="."]
 

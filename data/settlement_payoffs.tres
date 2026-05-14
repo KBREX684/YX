@@ -1,0 +1,34 @@
+[gd_resource type="Resource" script_class="SettlementPayoffResource" load_steps=2 format=3 uid="uid://yx_settlement_payoffs"]
+
+[ext_resource type="Script" path="res://scripts/systems/resources/settlement_payoff_resource.gd" id="1_payoff"]
+
+[resource]
+script = ExtResource("1_payoff")
+escape_material_multiplier = 1.0
+kill_material_multiplier = 0.75
+contain_material_multiplier = 0.5
+miscontain_material_multiplier = 0.25
+escape_archive_entries = 1
+kill_archive_entries = 2
+contain_archive_entries = 4
+miscontain_archive_entries = 1
+escape_archive_completion_percent = 25
+kill_archive_completion_percent = 55
+contain_archive_completion_percent = 85
+miscontain_archive_completion_percent = 35
+kill_origin_quality = "medium"
+kill_origin_stability = "low"
+contain_origin_quality = "high"
+contain_origin_stability = "stable"
+miscontain_origin_quality = "unstable"
+miscontain_origin_stability = "volatile"
+light_error_loss_pct = 0.05
+light_error_loss_cap = 3
+light_error_invasion_chance = 0.1
+medium_error_loss_pct = 0.1
+medium_error_loss_cap = 8
+medium_error_invasion_chance = 0.3
+heavy_error_loss_pct = 0.15
+heavy_error_loss_cap = 15
+heavy_error_invasion_chance = 0.6
+death_resource_return_ratio = 0.0
