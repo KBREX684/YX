@@ -1,9 +1,13 @@
-[gd_scene load_steps=5 format=3 uid="uid://yx_abandoned_school"]
+[gd_scene load_steps=9 format=3 uid="uid://yx_abandoned_school"]
 
 [ext_resource type="PackedScene" path="res://scenes/dungeon/rooms/classroom_a.tscn" id="1_classroom"]
 [ext_resource type="PackedScene" path="res://scenes/dungeon/rooms/storage_a.tscn" id="2_storage"]
 [ext_resource type="PackedScene" path="res://scenes/dungeon/rooms/restroom_a.tscn" id="3_restroom"]
 [ext_resource type="PackedScene" path="res://scenes/dungeon/rooms/office_a.tscn" id="4_office"]
+[ext_resource type="PackedScene" path="res://scenes/objects/door.tscn" id="5_door"]
+[ext_resource type="PackedScene" path="res://scenes/objects/pickup.tscn" id="6_pickup"]
+[ext_resource type="PackedScene" path="res://scenes/objects/note.tscn" id="7_note"]
+[ext_resource type="PackedScene" path="res://scenes/objects/hiding_spot.tscn" id="8_hiding"]
 
 [node name="AbandonedSchool" type="Node2D"]
 
@@ -81,5 +85,34 @@ position = Vector2(160, 170)
 
 [node name="OfficeA" parent="CandidateRooms" instance=ExtResource("4_office")]
 position = Vector2(340, -170)
+
+[node name="Interactables" type="Node2D" parent="."]
+
+[node name="EntranceDoor" parent="Interactables" instance=ExtResource("5_door")]
+position = Vector2(-430, 0)
+interactable_id = &"door_entrance_a"
+
+[node name="ExitDoor" parent="Interactables" instance=ExtResource("5_door")]
+position = Vector2(430, 0)
+interactable_id = &"door_exit_a"
+is_locked = true
+
+[node name="BatteryPickup" parent="Interactables" instance=ExtResource("6_pickup")]
+position = Vector2(-80, 105)
+interactable_id = &"pickup_battery_a"
+item_id = &"item_battery_aa"
+amount = 1
+
+[node name="RuleNote" parent="Interactables" instance=ExtResource("7_note")]
+position = Vector2(-260, -105)
+interactable_id = &"note_escape_notice_a"
+note_id = &"clue_escape_notice_a"
+dialogic_timeline_id = &"dlg_p1_note_escape_notice"
+note_text = "保健室后门的锁遇到强光会卡死，等脚步声远离再开。"
+
+[node name="LockerHidingSpot" parent="Interactables" instance=ExtResource("8_hiding")]
+position = Vector2(-300, -155)
+interactable_id = &"hide_locker_a"
+spot_id = &"hide_locker_a"
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
