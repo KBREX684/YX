@@ -1,6 +1,6 @@
 # 工程任务书 Engineering Tasks
 
-版本：v1.5.0
+版本：v1.5.1
 关联实施计划：[`00-implementation-plan.md`](00-implementation-plan.md) v2.5.0
 关联技术规约：[`00-tech-constraints.md`](00-tech-constraints.md) v1.3.1
 关联垂直切片：[`00-vertical-slice.md`](00-vertical-slice.md) v1.0.4
@@ -271,7 +271,15 @@
   - [ ] `player.gd` 不出现 3 层及以上 if/else（grep `if .* and .*:` 配合人工核对）。
 - **关联 VS**：§1 第 1、3 项；§1 第 2 项的"噪声广播接口"在此实现，"行为差异导致怪物判断不同"的验收推迟至 P2-2。
 - **关联模块**：[`modules/01-player-control-exploration.md`](modules/01-player-control-exploration.md)。
-- **状态**：TODO（P0 已完成，可进入 P1）
+- **状态**：DONE（实现提交：`a28dbf7`）
+
+#### TASK-P1-1 完成记录（2026-05-14）
+
+- 实现提交：`a28dbf7 feat(TASK-P1-1): add player controller prototype`。
+- 设计：按 `docs/modules/01-player-control-exploration.md` v0.3.4 收束为 Input Map、玩家基础动词、手电资源和噪声事件接口，不扩展地图、怪物或结算。
+- 搭建：新增 `scenes/player/player.tscn`、`scripts/player/player.gd`、`scripts/player/states/player_limbo_state.gd`、`data/items/flashlight.tres` 与 `FlashlightResource`；玩家美术使用 `PlaceholderBody` + `PlaceholderAssetLabel` 标注“玩家 2.5D Live 分层立绘”占位。
+- 审计修复：`player.gd` 195 行；玩家脚本未出现物理按键硬编码；GoPeak `resource_dependencies` 检查玩家场景无循环依赖。
+- 验收：`test_player_controller.gd` 5/5 通过；全量 GUT 6/6 通过；schema 校验 5 个资源通过（`FlashlightResource` 当前按 P8 schema 加固前规则跳过强制校验）；项目与玩家场景均可 headless 启动。
 
 ---
 
@@ -883,7 +891,7 @@
 | TASK-P0-4-plugins-install | P0 | DONE | — |
 | TASK-P0-5-gut-bootstrap | P0 | DONE | — |
 | TASK-P0-6-schema-skeletons | P0 | DONE | — |
-| TASK-P1-1-player-controller | P1 | TODO（P0 已完成） | — |
+| TASK-P1-1-player-controller | P1 | DONE | `a28dbf7` |
 | TASK-P1-2-dungeon-handmade | P1 | TODO | — |
 | TASK-P1-3-interactables-stub | P1 | TODO | — |
 | TASK-P1-4-phase-exit-review | P1 | TODO | — |
@@ -920,6 +928,11 @@
 ---
 
 ## 版本记录
+
+### v1.5.1 - 2026-05-14
+
+- 完成 TASK-P1-1：新增玩家控制器、Input Map、手电资源、LimboHSM 状态骨架、噪声事件 action id 与 GUT 覆盖。
+- 记录 P1-1 设计、搭建、审计修复和验收结果；状态跟踪表写入实现提交 `a28dbf7`。
 
 ### v1.5.0 - 2026-05-14
 
