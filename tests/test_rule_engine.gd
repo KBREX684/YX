@@ -7,6 +7,11 @@ const DA_ZHI_RULE_FILES := [
 	"res://data/rules/da_zhi/rule_da_zhi_broadcast_power_off_weakness.tres",
 	"res://data/rules/da_zhi/rule_da_zhi_containment_roster_step.tres",
 ]
+const DA_ZHI_CLUE_RULE_FILES := [
+	"res://data/rules/da_zhi/clue_da_zhi_corridor_echo.tres",
+	"res://data/rules/da_zhi/clue_da_zhi_broadcast_dependency.tres",
+	"res://data/rules/da_zhi/clue_da_zhi_full_roster.tres",
+]
 
 
 func test_rule_engine_script_and_da_zhi_rule_data_exist() -> void:
@@ -126,6 +131,29 @@ func test_da_zhi_data_contains_required_rule_types_and_failure_hints() -> void:
 	assert_true(effect_types.has("manifestation"))
 	assert_true(effect_types.has("weakness_window"))
 	assert_true(effect_types.has("containment_step"))
+
+
+func test_da_zhi_clue_stub_rules_are_ready_for_p3() -> void:
+	for path in DA_ZHI_CLUE_RULE_FILES:
+		assert_true(ResourceLoader.exists(path), "%s should exist." % path)
+		if not ResourceLoader.exists(path):
+			continue
+		var rule: Resource = load(path)
+		var clue_id := String(rule.get("clue_unlock_id"))
+		var effect: Dictionary = rule.get("effect")
+
+		assert_string_starts_with(rule.get("id"), "clue_da_zhi_")
+		assert_string_starts_with(clue_id, "clue_")
+		assert_eq(effect.get("type", ""), "clue_stub")
+		assert_eq(effect.get("target_id", ""), "da_zhi")
+		assert_eq(effect.get("clue_id", ""), clue_id)
+		assert_false(effect.has("dialogic_timeline_id"))
+		assert_false(effect.has("note_text"))
+
+	var profile: Resource = load("res://data/monsters/da_zhi.tres")
+	for path in DA_ZHI_CLUE_RULE_FILES:
+		var rule: Resource = load(path)
+		assert_has(profile.get("rule_ids"), rule.get("id"))
 
 
 func _engine_exists() -> bool:

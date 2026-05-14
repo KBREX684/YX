@@ -6,6 +6,6 @@
 script = ExtResource("1_monster")
 id = "da_zhi"
 name = "大只"
-rule_ids = PackedStringArray("rule_da_zhi_corridor_run", "rule_da_zhi_first_manifestation", "rule_da_zhi_broadcast_power_off_weakness", "rule_da_zhi_containment_roster_step")
+rule_ids = PackedStringArray("rule_da_zhi_corridor_run", "rule_da_zhi_first_manifestation", "rule_da_zhi_broadcast_power_off_weakness", "rule_da_zhi_containment_roster_step", "clue_da_zhi_corridor_echo", "clue_da_zhi_broadcast_dependency", "clue_da_zhi_full_roster")
 weakness_rule_id = "rule_da_zhi_broadcast_power_off_weakness"
 containment_rule_ids = PackedStringArray("rule_da_zhi_containment_roster_step")
