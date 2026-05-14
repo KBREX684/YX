@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="RuleResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/systems/resources/rule_resource.gd" id="1_rule_script"]
+
+[resource]
+script = ExtResource("1_rule_script")
+id = "rule_corridor_dont_run"
+trigger_conditions = [{
+"type": "player_action",
+"action": "run"
+}, {
+"type": "zone",
+"zone_id": "main_corridor"
+}]
+effect = {
+"type": "monster_phase",
+"monster_id": "big",
+"phase": "hunt"
+}
+clue_unlock_id = ""
+learnable_hint = "走廊里不要奔跑——它能听见你。"

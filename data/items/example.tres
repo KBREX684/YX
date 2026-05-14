@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ItemResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/systems/resources/item_resource.gd" id="1_item_script"]
+
+[resource]
+script = ExtResource("1_item_script")
+id = "item_battery_aa"
+category = 0
+stack_max = 8
+rarity = 0
+spawn_zone_ids = PackedStringArray("main_corridor", "room_classroom_a")

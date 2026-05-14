@@ -105,7 +105,7 @@
   - [ ] `.gitignore` 已忽略 `.godot/` `*.import` `export/`；`git status` 不出现 Godot 缓存。
 - **关联 VS**：—
 - **关联模块**：[`00-tech-constraints.md`](00-tech-constraints.md) §三、§八。
-- **状态**：TODO
+- **状态**：DONE（待用户本地 `godot --headless --path . --quit` 复核）
 
 ---
 
@@ -153,7 +153,7 @@
   - [ ] 任意 Autoload 的 `.gd` 文件 ≤ 100 行。
 - **关联 VS**：—
 - **关联模块**：[`00-tech-constraints.md`](00-tech-constraints.md) §四.1。
-- **状态**：TODO
+- **状态**：DONE（待用户本地启动 Godot 编辑器复核 5 个 Autoload 无红字）
 
 ---
 
@@ -224,7 +224,7 @@
   - [ ] 故意把某 `.tres` 字段清空，校验脚本能精确报错（行号 / 字段名）。
 - **关联 VS**：—
 - **关联模块**：[`modules/03-monster-anomaly-rules.md`](modules/03-monster-anomaly-rules.md)、[`modules/07-looting-resources.md`](modules/07-looting-resources.md)、[`modules/08-origin-acquisition-growth.md`](modules/08-origin-acquisition-growth.md)。
-- **状态**：TODO
+- **状态**：DONE（待用户在编辑器内运行 `tools/validate_schemas.gd` 复核示例 .tres 通过 + 故意置空字段能精确报错）
 
 ---
 
@@ -840,12 +840,12 @@
 
 | TASK ID | 阶段 | 状态 | 完成 SHA |
 |---|---|---|---|
-| TASK-P0-1-repo-skeleton | P0 | TODO | — |
+| TASK-P0-1-repo-skeleton | P0 | DONE（待用户本地 `godot --headless --quit` 复核） | — |
 | TASK-P0-2-config-decisions | P0 | BLOCKED（Q-13~Q-18） | — |
-| TASK-P0-3-autoloads | P0 | TODO | — |
+| TASK-P0-3-autoloads | P0 | DONE（待用户本地启动复核） | — |
 | TASK-P0-4-plugins-install | P0 | BLOCKED（Q-16） | — |
-| TASK-P0-5-gut-bootstrap | P0 | TODO | — |
-| TASK-P0-6-schema-skeletons | P0 | TODO | — |
+| TASK-P0-5-gut-bootstrap | P0 | TODO（依赖 P0-4） | — |
+| TASK-P0-6-schema-skeletons | P0 | DONE（待用户在编辑器内运行 `tools/validate_schemas.gd` 复核） | — |
 | TASK-P1-1-player-controller | P1 | BLOCKED（Q-16） | — |
 | TASK-P1-2-dungeon-handmade | P1 | TODO | — |
 | TASK-P1-3-interactables-stub | P1 | TODO | — |

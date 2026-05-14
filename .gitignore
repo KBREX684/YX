@@ -1,0 +1,32 @@
+# Godot 4 项目通用忽略规则
+# 参考：https://github.com/github/gitignore/blob/main/Godot.gitignore
+
+# Godot 4+ 导入缓存与项目临时目录
+.godot/
+.import/
+
+# 旧版 Godot 3 导入缓存（保留以防误提交）
+*.import
+
+# 导出产物
+export/
+build/
+*.exe
+*.pck
+*.zip
+
+# 系统与编辑器缓存
+.tmp
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE 配置（保持仓库纯净）
+.vscode/
+.idea/
+
+# 性能日志与 GUT 测试报告
+*.log
+gut_results/
