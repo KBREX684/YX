@@ -1,7 +1,7 @@
 # 工程任务书 Engineering Tasks
 
-版本：v1.5.7
-关联实施计划：[`00-implementation-plan.md`](00-implementation-plan.md) v2.5.4
+版本：v1.5.8
+关联实施计划：[`00-implementation-plan.md`](00-implementation-plan.md) v2.5.5
 关联技术规约：[`00-tech-constraints.md`](00-tech-constraints.md) v1.3.1
 关联垂直切片：[`00-vertical-slice.md`](00-vertical-slice.md) v1.0.4
 创建日期：2026-05-14
@@ -483,10 +483,18 @@
   1. 为后续 P3-1 提供"已存在的线索规则池"，避免 P3 阶段一次性新增过多 `.tres` 导致 schema 漂移。
   2. 每条线索规则仅填字段、不绑定具体笔记内容（笔记本体由 P3-1 Dialogic 提供）。
 - **验收**：
-  - [ ] `validate_schemas.gd` 对新加 `.tres` 全部通过。
+  - [x] `validate_schemas.gd` 对新加 `.tres` 全部通过。
 - **关联 VS**：—
 - **关联模块**：[`modules/05-clues-puzzles-rule-deduction.md`](modules/05-clues-puzzles-rule-deduction.md)。
-- **状态**：TODO
+- **状态**：DONE
+
+**完成记录（2026-05-14）**
+
+- 设计：新增 3 条线索规则占位，分别覆盖走廊回声行为观察、广播依赖击杀线索、完整名单收容线索；只登记稳定 `clue_unlock_id` 和规则元数据，不绑定 Dialogic timeline 或笔记正文。
+- 搭建：新增 `clue_da_zhi_corridor_echo.tres`、`clue_da_zhi_broadcast_dependency.tres`、`clue_da_zhi_full_roster.tres`，并把 3 条规则 ID 登记到 `data/monsters/da_zhi.tres`。
+- 占位资源：当前没有新增美术/文本资产；3 条 `.tres` 仅是 P3-1 线索对象和 Dialogic 笔记的稳定数据锚点。
+- 审计修复：新增 GUT 用例验证 clue stub 存在、`clue_unlock_id` 非空、effect 为 `clue_stub`、不含 `dialogic_timeline_id` / `note_text`；GoPeak `resource_dependencies` 检查 3 条线索规则和 profile 无循环依赖。
+- 验收：GUT `42/42` 通过；schema 校验 16 个资源通过或按 P8 前 schema 口径 SKIP；实现提交 `b52b51c`。
 
 ---
 
@@ -948,7 +956,7 @@
 | TASK-P2-1-rule-engine | P2 | DONE | `9acd9d8` |
 | TASK-P2-2-da-zhi-ai | P2 | DONE | `ad22a25` |
 | TASK-P2-3-pressure-feedback | P2 | DONE | `a5820a2` |
-| TASK-P2-4-monster-clue-stubs | P2 | TODO | — |
+| TASK-P2-4-monster-clue-stubs | P2 | DONE | `b52b51c` |
 | TASK-P2-5-phase-exit-review | P2 | TODO | — |
 | TASK-P3-1-clue-system | P3 | TODO | — |
 | TASK-P3-2-weakness-containment | P3 | TODO | — |
@@ -973,11 +981,17 @@
 | TASK-P8-2-schema-validation-ci | P8 | TODO | — |
 | TASK-P8-3-docs-closeout | P8 | TODO | — |
 
-合计：**37 条 TASK**，P0、P1 与 P2-1/P2-2/P2-3 已完成并通过命令行复核；当前可进入 TASK-P2-4 怪物线索占位规则池。当前没有因开放问题阻塞的 TASK。
+合计：**37 条 TASK**，P0、P1 与 P2-1/P2-2/P2-3/P2-4 已完成并通过命令行复核；当前可进入 TASK-P2-5 阶段出口走查。当前没有因开放问题阻塞的 TASK。
 
 ---
 
 ## 版本记录
+
+### v1.5.8 - 2026-05-14
+
+- 完成 TASK-P2-4：新增 3 条大只线索规则占位 `.tres`，覆盖行为观察、击杀线索和收容线索。
+- 记录 P2-4 设计、搭建、占位边界、审计修复和验收结果；状态跟踪表写入实现提交 `b52b51c`。
+- 同步实施计划 v2.5.5、线索解谜模块 v0.3.4、Monster Bible v0.2.5 与术语表 v1.4.6。
 
 ### v1.5.7 - 2026-05-14
 

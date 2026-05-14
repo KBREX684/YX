@@ -1,6 +1,6 @@
 # 大只 — Monster Bible
 
-版本：v0.2.4
+版本：v0.2.5
 关联总设定版本：v0.8.2
 关联副本主题：破败校园
 状态：Demo 规则口径确认
@@ -229,7 +229,7 @@ P2-2 不写具体规则 ID；大只只读取 `RuleEngine` 注入的 `rule_effect
 | P4 | 禁止类 | 广播室开灯超过 5 秒，立即触发大只进入搜索 | 广播室门口警告纸条 |
 | P5 | 感知欺骗类 | 大只会制造"走廊末端有脚步声"的假声源，玩家奔跑去查看时正好触发 P1 | 行为观察（多次验证后可学习） |
 
-### P2-1 RuleResource 映射
+### P2-1 / P2-4 RuleResource 映射
 
 | 资源 ID | 对应设计 | 当前用途 |
 |---|---|---|
@@ -237,6 +237,9 @@ P2-2 不写具体规则 ID；大只只读取 `RuleEngine` 注入的 `rule_effect
 | `rule_da_zhi_first_manifestation` | 首次进入主走廊强制现形 | 首次现形条件，占位时长 2.5 秒 |
 | `rule_da_zhi_broadcast_power_off_weakness` | 广播断电后失向弱点窗口 | 击杀链弱点窗口，需 `clue_broadcast_dependency` 解锁 |
 | `rule_da_zhi_containment_roster_step` | 收容步骤 1：名单确认 | 收容链第 1 步，需 `clue_full_roster` 解锁 |
+| `clue_da_zhi_corridor_echo` | 奔跑后额外脚步声行为观察 | P3-1 线索对象占位，稳定 ID 为 `clue_corridor_echo` |
+| `clue_da_zhi_broadcast_dependency` | 广播依赖弱点线索 | P3-1 击杀线索占位，稳定 ID 为 `clue_broadcast_dependency` |
+| `clue_da_zhi_full_roster` | 完整名单收容步骤线索 | P3-1 收容线索占位，稳定 ID 为 `clue_full_roster` |
 
 ---
 
@@ -263,6 +266,11 @@ P2-2 不写具体规则 ID；大只只读取 `RuleEngine` 注入的 `rule_effect
 ---
 
 ## 版本记录
+
+### v0.2.5 - 2026-05-14
+
+- 将 P2-4 新增的 3 条 clue stub 规则纳入 RuleResource 映射表和 MonsterProfile `rule_ids`。
+- 记录线索占位资源与后续 P3-1 Dialogic 线索对象的对应关系。
 
 ### v0.2.4 - 2026-05-14
 
