@@ -1,8 +1,8 @@
 # P1 阶段出口走查记录
 
-版本：v0.1.0
-关联实施计划：[`../00-implementation-plan.md`](../00-implementation-plan.md) v2.5.0
-关联工程任务书：[`../00-engineering-tasks.md`](../00-engineering-tasks.md) v1.5.3
+版本：v0.1.1
+关联实施计划：[`../00-implementation-plan.md`](../00-implementation-plan.md) v2.5.1
+关联工程任务书：[`../00-engineering-tasks.md`](../00-engineering-tasks.md) v1.5.4
 创建日期：2026-05-14
 最后更新：2026-05-14
 状态：通过
@@ -83,6 +83,10 @@ P1 的设计边界保持收敛：只验证"人在图中"和基础探索动词，
 ---
 
 ## 版本记录
+
+### v0.1.1 - 2026-05-14
+
+- 同步关联实施计划与工程任务书版本至 P1 出口记录完成后的版本。
 
 ### v0.1.0 - 2026-05-14
 

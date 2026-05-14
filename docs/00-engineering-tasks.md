@@ -1,7 +1,7 @@
 # 工程任务书 Engineering Tasks
 
-版本：v1.5.3
-关联实施计划：[`00-implementation-plan.md`](00-implementation-plan.md) v2.5.0
+版本：v1.5.4
+关联实施计划：[`00-implementation-plan.md`](00-implementation-plan.md) v2.5.1
 关联技术规约：[`00-tech-constraints.md`](00-tech-constraints.md) v1.3.1
 关联垂直切片：[`00-vertical-slice.md`](00-vertical-slice.md) v1.0.4
 创建日期：2026-05-14
@@ -358,11 +358,19 @@
   2. 记录已发现但延后处理的 issue 列表（指向后续 TASK）。
   3. 让 P2 入口前置任务 `block_until_p1_done` 解除。
 - **验收**：
-  - [ ] P1 全部门禁条件勾选 ✅。
-  - [ ] 出口走查记录已提交。
+  - [x] P1 全部门禁条件勾选 ✅。
+  - [x] 出口走查记录已提交。
 - **关联 VS**：§1 第 1、3 项 + §3。
 - **关联模块**：[`00-implementation-plan.md`](00-implementation-plan.md) §十三。
-- **状态**：TODO
+- **状态**：DONE
+
+#### TASK-P1-4 完成记录（2026-05-14）
+
+- 实现提交：`f81dbb9 docs(TASK-P1-4): add P1 exit review`。
+- 设计：P1 出口只判定无怪物阶段的基础探索动词与地图结构，不提前接入怪物、死亡复活、正式线索、正式搜刮或最终美术。
+- 搭建：新增 `docs/perf/p1-review.md`，逐项记录微切片门禁、VS §1 第 1/3 项、VS §3 和 P1 延后项。
+- 审计修复：记录 `player.gd` 行数收束、交互物脚本行数、GoPeak bridge 端口占用和资源依赖无循环结论。
+- 验收：P1 全部门禁已在走查表勾选；GUT `17/17`、schema 校验、headless 场景加载和 GoPeak `resource_dependencies` 均通过或有明确非阻塞说明。
 
 ---
 
@@ -911,7 +919,7 @@
 | TASK-P1-1-player-controller | P1 | DONE | `a28dbf7` |
 | TASK-P1-2-dungeon-handmade | P1 | DONE | `42f9796` |
 | TASK-P1-3-interactables-stub | P1 | DONE | `ca89401` |
-| TASK-P1-4-phase-exit-review | P1 | TODO | — |
+| TASK-P1-4-phase-exit-review | P1 | DONE | `f81dbb9` |
 | TASK-P2-1-rule-engine | P2 | TODO | — |
 | TASK-P2-2-da-zhi-ai | P2 | TODO（Q-16 已定案） | — |
 | TASK-P2-3-pressure-feedback | P2 | TODO | — |
@@ -940,11 +948,17 @@
 | TASK-P8-2-schema-validation-ci | P8 | TODO | — |
 | TASK-P8-3-docs-closeout | P8 | TODO | — |
 
-合计：**37 条 TASK**，P0 已完成并通过命令行复核；P1 已完成玩家控制、手工副本灰盒与交互物占位，当前可进入 TASK-P1-4 阶段出口走查。当前没有因开放问题阻塞的 TASK。
+合计：**37 条 TASK**，P0 与 P1 已完成并通过命令行复核；当前可进入 TASK-P2-1 RuleEngine 与怪物异常规则。当前没有因开放问题阻塞的 TASK。
 
 ---
 
 ## 版本记录
+
+### v1.5.4 - 2026-05-14
+
+- 完成 TASK-P1-4：新增 `docs/perf/p1-review.md`，记录 P1 阶段出口走查、验收命令、GoPeak 资源依赖审计和后续延后项。
+- P1 阶段全部 TASK 标记为 DONE，当前入口推进至 TASK-P2-1。
+- 同步实施计划 v2.5.1。
 
 ### v1.5.3 - 2026-05-14
 
