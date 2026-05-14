@@ -1,7 +1,7 @@
 # 工程任务书 Engineering Tasks
 
-版本：v1.5.4
-关联实施计划：[`00-implementation-plan.md`](00-implementation-plan.md) v2.5.1
+版本：v1.5.5
+关联实施计划：[`00-implementation-plan.md`](00-implementation-plan.md) v2.5.2
 关联技术规约：[`00-tech-constraints.md`](00-tech-constraints.md) v1.3.1
 关联垂直切片：[`00-vertical-slice.md`](00-vertical-slice.md) v1.0.4
 创建日期：2026-05-14
@@ -391,13 +391,21 @@
   5. **禁止**在引擎中写任何怪物专属硬编码字段——所有判定都从 `RuleResource.trigger_conditions` 解析。
   6. GUT 用例覆盖：a) 单条规则触发；b) 多条规则同帧；c) 触发条件不满足时不发信号；d) 重复触发去重；e) 关键失败规则 `learnable_hint` 非空。
 - **验收**：
-  - [ ] `test_rule_engine.gd` 中至少 6 个用例 100% 通过。
-  - [ ] 在编辑器内替换 `RuleEngine` 加载的 `.tres` 列表，可观察到不同的 `rule_triggered` 信号序列。
-  - [ ] 会导致死亡、失败或错误收容的规则均有非空 `learnable_hint`。
-  - [ ] `rule_engine.gd` ≤ 300 行；无 `monster_*` 命名字段。
+  - [x] `test_rule_engine.gd` 中至少 6 个用例 100% 通过。
+  - [x] 在编辑器内替换 `RuleEngine` 加载的 `.tres` 列表，可观察到不同的 `rule_triggered` 信号序列。
+  - [x] 会导致死亡、失败或错误收容的规则均有非空 `learnable_hint`。
+  - [x] `rule_engine.gd` ≤ 300 行；无 `monster_*` 命名字段。
 - **关联 VS**：—（为 §4 §5 提供基础）
 - **关联模块**：[`modules/03-monster-anomaly-rules.md`](modules/03-monster-anomaly-rules.md)、[`monsters/001-da-zhi.md`](monsters/001-da-zhi.md)。
-- **状态**：TODO
+- **状态**：DONE
+
+#### TASK-P2-1 完成记录（2026-05-14）
+
+- 实现提交：`9acd9d8 feat(TASK-P2-1): add rule engine`。
+- 设计：`RuleEngine` 是普通 `Node`，不进入 Autoload；通过 Inspector 可替换 `Array[RuleResource]`，规则判断全部由 `trigger_conditions` 解析。
+- 搭建：新增 `scripts/systems/rule_engine.gd`、`tests/test_rule_engine.gd` 和 4 条大只 P2-1 最低规则资源：走廊奔跑、首次现形、广播断电弱点窗口、名单确认收容步骤。
+- 审计修复：GUT RED-GREEN 后清理了 5 个 orphan Node；`rule_engine.gd` 145 行，无 `monster_*` 命名字段；GoPeak `resource_dependencies` 检查 RuleEngine 与规则资源无循环依赖。
+- 验收：GUT `25/25` 通过；schema 校验 11 个资源通过；关键失败规则 `rule_da_zhi_corridor_run` 已填 `learnable_hint`。
 
 ---
 
@@ -920,7 +928,7 @@
 | TASK-P1-2-dungeon-handmade | P1 | DONE | `42f9796` |
 | TASK-P1-3-interactables-stub | P1 | DONE | `ca89401` |
 | TASK-P1-4-phase-exit-review | P1 | DONE | `f81dbb9` |
-| TASK-P2-1-rule-engine | P2 | TODO | — |
+| TASK-P2-1-rule-engine | P2 | DONE | `9acd9d8` |
 | TASK-P2-2-da-zhi-ai | P2 | TODO（Q-16 已定案） | — |
 | TASK-P2-3-pressure-feedback | P2 | TODO | — |
 | TASK-P2-4-monster-clue-stubs | P2 | TODO | — |
@@ -948,11 +956,17 @@
 | TASK-P8-2-schema-validation-ci | P8 | TODO | — |
 | TASK-P8-3-docs-closeout | P8 | TODO | — |
 
-合计：**37 条 TASK**，P0 与 P1 已完成并通过命令行复核；当前可进入 TASK-P2-1 RuleEngine 与怪物异常规则。当前没有因开放问题阻塞的 TASK。
+合计：**37 条 TASK**，P0、P1 与 P2-1 已完成并通过命令行复核；当前可进入 TASK-P2-2 大只 AI 四阶段行为。当前没有因开放问题阻塞的 TASK。
 
 ---
 
 ## 版本记录
+
+### v1.5.5 - 2026-05-14
+
+- 完成 TASK-P2-1：新增 RuleEngine、8 个 GUT 用例和 4 条大只最低规则资源。
+- 记录 P2-1 设计、搭建、审计修复和验收结果；状态跟踪表写入实现提交 `9acd9d8`。
+- 同步实施计划 v2.5.2、怪物规则模块 v0.3.4、Monster Bible v0.2.2 与术语表 v1.4.4。
 
 ### v1.5.4 - 2026-05-14
 
