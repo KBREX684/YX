@@ -1,6 +1,6 @@
 # 工程任务书 Engineering Tasks
 
-版本：v1.5.1
+版本：v1.5.2
 关联实施计划：[`00-implementation-plan.md`](00-implementation-plan.md) v2.5.0
 关联技术规约：[`00-tech-constraints.md`](00-tech-constraints.md) v1.3.1
 关联垂直切片：[`00-vertical-slice.md`](00-vertical-slice.md) v1.0.4
@@ -309,7 +309,15 @@
   - [ ] `level_manifest.tres` 或等价 manifest 中存在关卡、房间、地图事件稳定 ID。
 - **关联 VS**：§3。
 - **关联模块**：[`modules/02-dungeon-generation-map.md`](modules/02-dungeon-generation-map.md)、[`00-art-direction.md`](00-art-direction.md)。
-- **状态**：TODO
+- **状态**：DONE（实现提交：`42f9796`）
+
+#### TASK-P1-2 完成记录（2026-05-14）
+
+- 实现提交：`42f9796 feat(TASK-P1-2): add dungeon blockout slice`。
+- 设计：按 `docs/modules/02-dungeon-generation-map.md` v0.3.5 收束为手工灰盒微切片 + 固定候选房间池；没有引入程序化大地图或最终 TileMap 方案。
+- 搭建：新增 `micro_school_blockout.tscn`、`abandoned_school.tscn`、4 个候选房间子场景、`RoomPool`、`MapChangeEvent`、`LevelResource` 和 `ManifestResource`；所有场景占位 Label 标注后续替换的破败校园分层美术内容。
+- 审计修复：`RoomPool`、`MapChangeEvent`、`LevelResource`、`ManifestResource` 均小于 40 行；GoPeak `resource_dependencies` 检查微切片与完整校园场景均无循环依赖；未检出 `TileMap` 或程序化大地图实现。
+- 验收：`test_dungeon_blockout.gd` 5/5 通过；全量 GUT 11/11 通过；schema 校验 7 个资源通过（P1 新增资源在 P8 schema 加固前跳过强制校验）；微切片与完整校园场景均可 headless 加载。
 
 ---
 
@@ -892,7 +900,7 @@
 | TASK-P0-5-gut-bootstrap | P0 | DONE | — |
 | TASK-P0-6-schema-skeletons | P0 | DONE | — |
 | TASK-P1-1-player-controller | P1 | DONE | `a28dbf7` |
-| TASK-P1-2-dungeon-handmade | P1 | TODO | — |
+| TASK-P1-2-dungeon-handmade | P1 | DONE | `42f9796` |
 | TASK-P1-3-interactables-stub | P1 | TODO | — |
 | TASK-P1-4-phase-exit-review | P1 | TODO | — |
 | TASK-P2-1-rule-engine | P2 | TODO | — |
@@ -928,6 +936,11 @@
 ---
 
 ## 版本记录
+
+### v1.5.2 - 2026-05-14
+
+- 完成 TASK-P1-2：新增微切片灰盒场景、完整破败校园灰盒、4 个候选房间、确定性房间池、关卡资源与 level manifest。
+- 记录 P1-2 设计、搭建、审计修复和验收结果；状态跟踪表写入实现提交 `42f9796`。
 
 ### v1.5.1 - 2026-05-14
 
