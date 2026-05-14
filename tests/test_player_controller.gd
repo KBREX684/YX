@@ -1,6 +1,7 @@
 extends GutTest
 
 const PLAYER_SCENE_PATH := "res://scenes/player/player.tscn"
+const MAIN_MENU_SCENE_PATH := "res://scenes/ui/main_menu.tscn"
 const FLASHLIGHT_RESOURCE_PATH := "res://data/items/flashlight.tres"
 const REQUIRED_ACTIONS := [
 	"move_left",
@@ -43,9 +44,25 @@ func test_player_scene_has_required_runtime_nodes() -> void:
 	assert_not_null(player.get_node_or_null("CollisionShape2D"))
 	assert_not_null(player.get_node_or_null("Visual"))
 	assert_not_null(player.get_node_or_null("Flashlight"))
+	assert_not_null(player.get_node_or_null("FollowCamera"))
 	assert_not_null(player.get_node_or_null("StateMachine"))
 	assert_true(player.has_method("apply_movement_intent"))
 	assert_true(player.has_method("set_flashlight_enabled"))
+	var camera := player.get_node("FollowCamera") as Camera2D
+	assert_true(camera.enabled, "Player camera should be enabled so F6 playtest centers on the spawn.")
+
+
+func test_main_menu_can_enter_playtest_scene() -> void:
+	assert_true(ResourceLoader.exists(MAIN_MENU_SCENE_PATH), "main_menu.tscn should exist.")
+	if not ResourceLoader.exists(MAIN_MENU_SCENE_PATH):
+		return
+
+	var scene: PackedScene = load(MAIN_MENU_SCENE_PATH)
+	var menu := scene.instantiate()
+	add_child_autofree(menu)
+
+	assert_not_null(menu.get_node_or_null("StartPlaytestButton"))
+	assert_true(ResourceLoader.exists(menu.get("playtest_scene_path")))
 
 
 func test_player_movement_state_emits_noise_with_action_id() -> void:
