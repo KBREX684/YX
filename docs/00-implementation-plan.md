@@ -1,7 +1,7 @@
 # 项目实施计划 Implementation Plan
 
-版本：v2.6.2
-关联总设定版本：v0.8.5
+版本：v2.6.3
+关联总设定版本：v0.8.6
 关联技术规约版本：[`00-tech-constraints.md`](00-tech-constraints.md) v1.3.1
 关联垂直切片版本：[`00-vertical-slice.md`](00-vertical-slice.md) v1.0.4
 创建日期：2026-05-14
@@ -258,7 +258,7 @@
 
 **阶段目标**：玩家能在副本中收集线索、推理出三条路径（逃离/击杀/收容），并触发对应结算屏幕。本阶段的"通关"还不依赖原形养成，只验证"单次副本的信息闭环"。
 
-**当前状态（2026-05-14）**：P3-1 线索信息层、P3-2 弱点/收容执行链与 P3-3 结算计算器已完成：11 条 `ClueResource`、Dialogic `.dtl` 时间线占位、`ClueBook`、`ObjectiveResolver`、5 条大只执行规则、仪式占位触发节点、`SettlementCalculator`、`SettlementPayoffResource`、`SettlementScreen` 与结算数值表已接入；当前可进入 P3-4 死亡、失败与撤离规则施工。
+**当前状态（2026-05-14）**：P3-1 线索信息层、P3-2 弱点/收容执行链、P3-3 结算计算器与 P3-4 死亡复活流程已完成：11 条 `ClueResource`、Dialogic `.dtl` 时间线占位、`ClueBook`、`ObjectiveResolver`、5 条大只执行规则、仪式占位触发节点、`SettlementCalculator`、`SettlementPayoffResource`、`SettlementScreen`、结算数值表、`DeathFeedbackResolver` 与基地占位复活场景已接入；当前可进入 P3-5 阶段出口走查。
 
 ---
 
@@ -615,6 +615,12 @@ P7-1 不再因 Q-01 阻塞；其前置仍为 P6-4。
 ---
 
 ## 版本记录
+
+### v2.6.3 - 2026-05-14
+
+- 完成 P3-4 玩家死亡与复活流程：`GameState` 订阅 `EventBus.player_died`，通过 `respawn_at_base()` 回到 `base_placeholder.tscn` 并清理副本状态。
+- 新增 `DeathFeedbackResolver`，从 `RuleResource.learnable_hint` 输出最低学习提示；当前实施入口推进至 P3-5 阶段出口走查。
+- 保持小阶段只做快速自测，正式 P3 阶段审计修复与 VS 出口验收收束到 P3-5。
 
 ### v2.6.2 - 2026-05-14
 

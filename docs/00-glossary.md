@@ -1,7 +1,7 @@
 # 术语表 Glossary
 
-版本：v1.5.2
-关联总设定版本：v0.8.5
+版本：v1.5.3
+关联总设定版本：v0.8.6
 创建日期：2026-05-14
 最后更新：2026-05-14
 
@@ -261,6 +261,30 @@
 
 ---
 
+### 死亡反馈解析器（DeathFeedbackResolver）
+
+**定义：** 普通系统脚本，负责根据死亡 payload 中的 `rule_id` 查找对应 `RuleResource.learnable_hint`。
+
+**补充说明：** P3-4 起使用 `scripts/systems/death_feedback_resolver.gd`。它不进入 Autoload 白名单，找不到规则或提示为空时返回 fallback，并由 `GameState` 记录缺失 rule id。
+
+---
+
+### 基地复活占位场景（Base Placeholder）
+
+**定义：** P3-4 的基地占位场景，用于承接死亡复活后的最低可见反馈。
+
+**补充说明：** 当前路径为 `scenes/base/base_placeholder.tscn`，显示死亡学习提示和资源损失占位值。它带有 `placeholder_asset_note`，P5 会替换为正式基地场景和厚涂 2.5D Live 分层资产。
+
+---
+
+### 基地复活入口（Respawn At Base）
+
+**定义：** `GameState.respawn_at_base(payload, change_scene)`，负责死亡后清空副本态、计算占位损失、切回基地并发出场景变化事件。
+
+**补充说明：** 当前事件链为 `EventBus.player_died` → `GameState.respawn_at_base()` → `EventBus.scene_changed("dungeon", "base")`。P4 会接入正式拾取返还率，P5 会接入正式基地状态。
+
+---
+
 ### 线索规则占位（Clue Rule Stub）
 
 **定义：** P2 阶段先行创建、供 P3 线索系统接管的 `RuleResource` 数据锚点。
@@ -382,6 +406,11 @@
 ---
 
 ## 版本记录
+
+### v1.5.3 - 2026-05-14
+
+- 新增 3 个 P3-4 工程术语：死亡反馈解析器、基地复活占位场景、基地复活入口。
+- 同步总设定 v0.8.6、玩家控制与探索模块 v0.3.6、实施计划 v2.6.3 与工程任务书 v1.6.3。
 
 ### v1.5.2 - 2026-05-14
 

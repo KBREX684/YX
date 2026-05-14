@@ -1,7 +1,7 @@
 # 工程任务书 Engineering Tasks
 
-版本：v1.6.2
-关联实施计划：[`00-implementation-plan.md`](00-implementation-plan.md) v2.6.2
+版本：v1.6.3
+关联实施计划：[`00-implementation-plan.md`](00-implementation-plan.md) v2.6.3
 关联技术规约：[`00-tech-constraints.md`](00-tech-constraints.md) v1.3.1
 关联垂直切片：[`00-vertical-slice.md`](00-vertical-slice.md) v1.0.4
 创建日期：2026-05-14
@@ -616,12 +616,18 @@
   3. 复活时清空副本状态，重置 `RuleEngine` 内部计数器。
   4. 读取本次死亡关联 `RuleResource.learnable_hint` 并显示；无法定位规则时显示通用提示并把缺失 rule id 记入调试日志。
 - **验收**：
-  - [ ] VS §1 第 4 项可勾选。
-  - [ ] 死亡 → 复活 → 再次进入副本全流程无脚本红字。
-  - [ ] 死亡后至少出现一条可学习提示；提示来自 `learnable_hint` 或明确记录 fallback 原因。
+  - [ ] VS §1 第 4 项正式验收收束到 TASK-P3-5 阶段出口。
+  - [x] 死亡 → 基地占位复活工程链路无脚本红字，完整再次进入副本验收收束到 TASK-P3-5。
+  - [x] 死亡后至少出现一条可学习提示；提示来自 `learnable_hint` 或明确记录 fallback 原因。
 - **关联 VS**：§1 第 4 项。
 - **关联模块**：[`modules/01-player-control-exploration.md`](modules/01-player-control-exploration.md)。
-- **状态**：TODO
+- **状态**：DONE
+
+**完成记录（2026-05-14）**
+
+- 设计：`GameState` 订阅 `EventBus.player_died`，通过 `respawn_at_base()` 清空副本态并回到基地；`DeathFeedbackResolver` 负责从 `RuleResource.learnable_hint` 读取最低学习提示，避免把规则扫描逻辑塞进 Autoload。
+- 搭建：新增 `base_placeholder.tscn`、`base_placeholder.gd`、`death_feedback_resolver.gd` 与 `test_death_respawn.gd`；基地占位场景带 `placeholder_asset_note`，用于后续替换为 P5 厚涂 2.5D Live 基地分层资产。
+- 快速自测：`test_death_respawn.gd` 6/6 通过；全量 GUT 73/73 通过；schema 校验 35 个资源通过或按既定 P8 口径 SKIP；`base_placeholder.tscn` headless check-only 通过；`GameState.gd` 保持 100 行；GoPeak 资源依赖检查无循环引用，编辑器桥接仍因 6506 端口占用未连接。
 
 ---
 
@@ -988,7 +994,7 @@
 | TASK-P3-1-clue-system | P3 | DONE | `4840f2a` |
 | TASK-P3-2-weakness-containment | P3 | DONE | `95b3d9f` |
 | TASK-P3-3-settlement-calculator | P3 | DONE | `8029341` |
-| TASK-P3-4-death-respawn | P3 | TODO | — |
+| TASK-P3-4-death-respawn | P3 | DONE | `ac46b9c` |
 | TASK-P3-5-phase-exit-review | P3 | TODO | — |
 | TASK-P4-1-loot-system | P4 | TODO | — |
 | TASK-P4-2-origin-growth | P4 | TODO | — |
@@ -1008,11 +1014,17 @@
 | TASK-P8-2-schema-validation-ci | P8 | TODO | — |
 | TASK-P8-3-docs-closeout | P8 | TODO | — |
 
-合计：**37 条 TASK**，P0、P1、P2 与 P3-1~P3-3 已完成并通过命令行复核；当前可进入 TASK-P3-4 死亡、失败与撤离规则。当前没有因开放问题阻塞的 TASK。
+合计：**37 条 TASK**，P0、P1、P2 与 P3-1~P3-4 已完成并通过命令行复核；当前可进入 TASK-P3-5 阶段出口走查。当前没有因开放问题阻塞的 TASK。
 
 ---
 
 ## 版本记录
+
+### v1.6.3 - 2026-05-14
+
+- 完成 TASK-P3-4：新增基地占位复活场景、死亡反馈解析器、`GameState.respawn_at_base()` 与死亡复活 GUT。
+- 记录 P3-4 设计与搭建结果；状态跟踪表写入实现提交 `ac46b9c`，当前入口推进至 TASK-P3-5 阶段出口走查。
+- 同步实施计划 v2.6.3、玩家控制与探索模块 v0.3.6、术语表 v1.5.3 与总设定 v0.8.6。
 
 ### v1.6.2 - 2026-05-14
 

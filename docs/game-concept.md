@@ -1,6 +1,6 @@
 # 无限流异常副本游戏设想
 
-版本：v0.8.5
+版本：v0.8.6
 状态：初期设想
 创建日期：2026-05-14
 最后更新：2026-05-14
@@ -85,6 +85,7 @@
 - 怪物可以跨房间追踪，但必须遵循固定行为逻辑。
 - 玩家被抓后触发恐怖动画，并在基地复活。
 - 死亡后损失资源，没有永久死亡。
+- P3-4 起，`GameState.respawn_at_base()` 处理死亡后回到基地占位场景、清空副本态和资源损失占位计算；`DeathFeedbackResolver` 从 `RuleResource.learnable_hint` 读取最低学习提示。
 - 结算结果收束为：收容成功、击杀、逃离、错误收容。
 - P3-2 起，击杀、收容成功和错误收容通过 `ObjectiveResolver` 转换为 `EventBus.objective_completed(objective_type, payload)`；P3-3 起，`SettlementCalculator` 订阅该事件并根据 `data/settlement_payoffs.tres` 输出资源、原形、档案、基地占位扣减与污染变化。
 - 逃离无法获得原形残片。
@@ -517,6 +518,12 @@
 当前建议是：以恐怖求生和异常规则探索作为主体验，以原形养成作为长期奖励和策略扩展。养成系统不应完全安全化、萌化或数值化异常，否则会削弱恐怖基调。
 
 ## 版本记录
+
+### v0.8.6 - 2026-05-14
+
+- 同步 P3-4 死亡复活流程：`GameState.respawn_at_base()`、`DeathFeedbackResolver` 与 `base_placeholder.tscn` 已接入。
+- 明确死亡学习反馈来自 `RuleResource.learnable_hint`，无法定位规则时显示 fallback 并记录缺失 rule id。
+- 同步实施计划 v2.6.3、工程任务书 v1.6.3、玩家控制与探索模块 v0.3.6 与术语表 v1.5.3。
 
 ### v0.8.5 - 2026-05-14
 
