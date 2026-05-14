@@ -120,8 +120,11 @@ func _emit_rule(rule: RuleResource, context: Dictionary) -> void:
 		return
 	if event_key != "":
 		_emitted_event_keys[event_key] = true
-	rule_triggered.emit(rule.id, context)
-	EventBus.rule_triggered.emit(rule.id, context)
+	var output_context := context.duplicate(true)
+	output_context["rule_id"] = rule.id
+	output_context["rule_effect"] = rule.effect
+	rule_triggered.emit(rule.id, output_context)
+	EventBus.rule_triggered.emit(rule.id, output_context)
 	_emit_effect_outputs(rule.effect)
 
 
