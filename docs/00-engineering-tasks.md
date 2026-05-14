@@ -1,7 +1,7 @@
 # 工程任务书 Engineering Tasks
 
-版本：v1.6.0
-关联实施计划：[`00-implementation-plan.md`](00-implementation-plan.md) v2.6.0
+版本：v1.6.1
+关联实施计划：[`00-implementation-plan.md`](00-implementation-plan.md) v2.6.1
 关联技术规约：[`00-tech-constraints.md`](00-tech-constraints.md) v1.3.1
 关联垂直切片：[`00-vertical-slice.md`](00-vertical-slice.md) v1.0.4
 创建日期：2026-05-14
@@ -560,11 +560,18 @@
   2. 收容三步仪式：每步一个 `RuleResource`，前一步成功是后一步触发的前置条件之一。
   3. 击杀 / 收容成功时 `EventBus.objective_completed(type: int)`，供 P3-3 结算系统订阅。
 - **验收**：
-  - [ ] VS §4 后 3 项可勾选。
-  - [ ] 通过线索推理（不查文档）能在 ≤ 3 分钟内完成击杀；在 ≤ 全部 5 条收容线索集齐后能合理推出三步仪式。
+  - [x] 工程契约可勾选：弱点执行、三步收容顺序、错误收容与 `objective_completed` 事件均有 GUT 覆盖。
+  - [ ] VS §4 后 3 项的非开发者推理/实玩验收收束到 TASK-P3-5 阶段出口；P3-2 仅验证执行链可用。
 - **关联 VS**：§4 后 3 项。
 - **关联模块**：[`monsters/001-da-zhi.md`](monsters/001-da-zhi.md)。
-- **状态**：TODO
+- **状态**：DONE
+
+**完成记录（2026-05-14）**
+
+- 设计：`RuleEngine` 继续保持纯规则判定；新增普通场景节点 `ObjectiveResolver` 订阅 `EventBus.rule_triggered`，把规则效果转换为击杀、收容或错误收容目标完成事件。
+- 搭建：新增 `weakness.tres`、`containment_step_1.tres` ~ `containment_step_3.tres`、`containment_failure.tres`、`ObjectiveResolver`、`RitualStepTrigger` 与仪式触发占位节点；占位节点已标注后续厚涂分层 PNG / 2.5D Live 资产意图。
+- 审计修复：保留 P2 `rule_da_zhi_broadcast_power_off_weakness` 作为弱点窗口规则，新 P3-2 `rule_da_zhi_weakness_execute` 仅负责最终击杀完成；GoPeak 资源依赖审计无循环引用，编辑器桥接因 6506 端口占用未连接。
+- 验收：`test_objective_execution.gd` 8/8 通过；全量 GUT 58/58 通过；schema 校验 34 个资源通过或按既定 P8 口径 SKIP；`abandoned_school.tscn` 与关键对象场景 headless check-only 通过。
 
 ---
 
@@ -973,7 +980,7 @@
 | TASK-P2-4-monster-clue-stubs | P2 | DONE | `b52b51c` |
 | TASK-P2-5-phase-exit-review | P2 | DONE | `5023655` / review doc |
 | TASK-P3-1-clue-system | P3 | DONE | `4840f2a` |
-| TASK-P3-2-weakness-containment | P3 | TODO | — |
+| TASK-P3-2-weakness-containment | P3 | DONE | `95b3d9f` |
 | TASK-P3-3-settlement-calculator | P3 | TODO | — |
 | TASK-P3-4-death-respawn | P3 | TODO | — |
 | TASK-P3-5-phase-exit-review | P3 | TODO | — |
@@ -995,11 +1002,17 @@
 | TASK-P8-2-schema-validation-ci | P8 | TODO | — |
 | TASK-P8-3-docs-closeout | P8 | TODO | — |
 
-合计：**37 条 TASK**，P0、P1、P2 与 P3-1 已完成并通过命令行复核；当前可进入 TASK-P3-2 弱点与收容执行链。当前没有因开放问题阻塞的 TASK。
+合计：**37 条 TASK**，P0、P1、P2 与 P3-1~P3-2 已完成并通过命令行复核；当前可进入 TASK-P3-3 结算系统。当前没有因开放问题阻塞的 TASK。
 
 ---
 
 ## 版本记录
+
+### v1.6.1 - 2026-05-14
+
+- 完成 TASK-P3-2：新增大只弱点执行规则、三步收容规则、错误收容规则、`ObjectiveResolver` 与仪式触发占位节点。
+- 记录 P3-2 设计、搭建、审计修复与验收结果；状态跟踪表写入实现提交 `95b3d9f`，当前入口推进至 TASK-P3-3。
+- 同步实施计划 v2.6.1、怪物规则模块 v0.3.6、线索模块 v0.3.6、目标结算模块 v0.3.3、Monster Bible v0.2.8、术语表 v1.5.1 与总设定 v0.8.4。
 
 ### v1.6.0 - 2026-05-14
 

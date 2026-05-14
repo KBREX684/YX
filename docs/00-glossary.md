@@ -1,7 +1,7 @@
 # 术语表 Glossary
 
-版本：v1.5.0
-关联总设定版本：v0.8.3
+版本：v1.5.1
+关联总设定版本：v0.8.4
 创建日期：2026-05-14
 最后更新：2026-05-14
 
@@ -205,6 +205,30 @@
 
 ---
 
+### 目标解析器（ObjectiveResolver）
+
+**定义：** 副本场景内的普通系统节点，负责把 `RuleResource.effect` 中的目标完成效果转换为统一的 `EventBus.objective_completed(objective_type, payload)` 事件。
+
+**补充说明：** `ObjectiveResolver` 不进入 Autoload 白名单，不硬编码具体怪物规则 ID。P3-2 起它记录收容步骤完成状态，并把击杀、收容成功、错误收容交给 P3-3 结算系统订阅。
+
+---
+
+### 目标完成事件（Objective Completed Event）
+
+**定义：** `EventBus.objective_completed(objective_type, payload)`，表示副本目标路径已经产生可结算结果。
+
+**补充说明：** 当前 `objective_type` 约定为 `0=逃离`、`1=击杀`、`2=收容成功`、`3=错误收容`。事件只表达事实和规则 payload，不直接计算奖励、不显示结算 UI。
+
+---
+
+### 收容步骤触发器（Ritual Step Trigger）
+
+**定义：** 放置在副本场景中的占位交互区域，用于承载收容步骤、触发 zone/action 上下文和后续正式美术资产说明。
+
+**补充说明：** P3-2 默认节点为 `RitualTriggers/RosterStep`、`SoundSealStep`、`AnchorStep` 与 `FailureStep`，均带 `placeholder_asset_note`，后续替换为厚涂分层 PNG 与 2.5D Live 轻动画时必须保留稳定 `step_id`。
+
+---
+
 ### 可学习提示（Learnable Hint）
 
 **定义：** 玩家死亡、失败或错误收容后用于解释最低规则线索的一句话反馈。
@@ -334,6 +358,11 @@
 ---
 
 ## 版本记录
+
+### v1.5.1 - 2026-05-14
+
+- 新增 3 个 P3-2 工程术语：目标解析器、目标完成事件、收容步骤触发器。
+- 同步总设定 v0.8.4、怪物规则模块 v0.3.6、线索模块 v0.3.6、目标结算模块 v0.3.3、Monster Bible v0.2.8 与工程任务书 v1.6.1。
 
 ### v1.5.0 - 2026-05-14
 

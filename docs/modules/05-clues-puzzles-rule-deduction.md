@@ -1,8 +1,8 @@
 # 线索、解谜与规则推理模块
 
-版本：v0.3.5
-关联总设定版本：v0.8.3
-状态：P3-1 线索系统信息层落地
+版本：v0.3.6
+关联总设定版本：v0.8.4
+状态：P3-2 执行链映射同步
 创建日期：2026-05-14
 最后更新：2026-05-14
 
@@ -172,13 +172,13 @@ P3-1 已实现信息层，不提前实现目标执行与结算。线索交互统
 | `escape_power_room_tag.tres` | `clue_escape_power_room_tag` | 逃离 | 物品 | `rule_da_zhi_flashlight_stare_manifestation` | 配电室钥匙牌 |
 | `escape_route_map.tres` | `clue_escape_route_map` | 逃离 | 环境 | `rule_da_zhi_first_manifestation` | 半张疏散图 |
 | `kill_corridor_echo.tres` | `clue_corridor_echo` | 击杀 | 行为 | `rule_da_zhi_corridor_run` / `clue_da_zhi_corridor_echo` | 走廊脚印/回声标记 |
-| `kill_broadcast_dependency.tres` | `clue_broadcast_dependency` | 击杀 | 音频文本 | `rule_da_zhi_broadcast_power_off_weakness` | 旧广播稿和磁带标签 |
+| `kill_broadcast_dependency.tres` | `clue_broadcast_dependency` | 击杀 | 音频文本 | `rule_da_zhi_broadcast_power_off_weakness` / `rule_da_zhi_weakness_execute` | 旧广播稿和磁带标签 |
 | `kill_broadcast_power_cut.tres` | `clue_broadcast_power_cut` | 击杀 | 文本 | `rule_da_zhi_broadcast_power_off_weakness` | 配电箱值班记录 |
-| `contain_full_roster.tres` | `clue_full_roster` | 收容 | 文本 / 行为验证 | `rule_da_zhi_containment_roster_step` / `rule_da_zhi_roster_reaction_verification` | 完整学生名单档案页 |
-| `contain_missing_name.tres` | `clue_missing_name` | 收容 | 环境 | `rule_da_zhi_containment_roster_step` | 黑板座次表缺名区域 |
-| `contain_ritual_cord_left.tres` | `clue_ritual_cord_left` | 收容 | 物品 | `rule_da_zhi_containment_roster_step` | 左侧红绳和喇叭残片 |
-| `contain_ritual_cord_right.tres` | `clue_ritual_cord_right` | 收容 | 物品 | `rule_da_zhi_containment_roster_step` | 右侧红绳和值班铃 |
-| `contain_silence_taboo.tres` | `clue_silence_taboo` | 收容 | 声音 | `rule_da_zhi_corridor_run` / `rule_da_zhi_containment_roster_step` | 录音带/静音警告牌 |
+| `contain_full_roster.tres` | `clue_full_roster` | 收容 | 文本 / 行为验证 | `rule_da_zhi_containment_step_1` / `rule_da_zhi_roster_reaction_verification` | 完整学生名单档案页 |
+| `contain_missing_name.tres` | `clue_missing_name` | 收容 | 环境 | `rule_da_zhi_containment_step_1` | 黑板座次表缺名区域 |
+| `contain_ritual_cord_left.tres` | `clue_ritual_cord_left` | 收容 | 物品 | `rule_da_zhi_containment_step_2` | 左侧红绳和喇叭残片 |
+| `contain_ritual_cord_right.tres` | `clue_ritual_cord_right` | 收容 | 物品 | `rule_da_zhi_containment_step_3` | 右侧红绳和值班铃 |
+| `contain_silence_taboo.tres` | `clue_silence_taboo` | 收容 | 声音 | `rule_da_zhi_containment_step_3` / `rule_da_zhi_containment_failure` | 录音带/静音警告牌 |
 
 ## 验收标准（Acceptance Criteria）
 
@@ -221,6 +221,12 @@ P3-1 已实现信息层，不提前实现目标执行与结算。线索交互统
 - 每条收容关键规则需至少 2 种线索交叉验证。
 
 ## 版本记录
+
+### v0.3.6 - 2026-05-14
+
+- 同步 P3-2 执行链映射：击杀线索指向最终弱点执行规则，收容线索分别指向三步收容和错误收容规则。
+- 明确 P3-1 线索信息层不扩展文本量，P3-2 仅补规则关联，不新增正式美术资产。
+- 同步总设定 v0.8.4、Monster Bible v0.2.8 与工程任务书 v1.6.1。
 
 ### v0.3.5 - 2026-05-14
 

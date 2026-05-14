@@ -1,7 +1,7 @@
 # 怪物与异常规则模块
 
-版本：v0.3.5
-关联总设定版本：v0.8.2
+版本：v0.3.6
+关联总设定版本：v0.8.4
 状态：异常规则原语与反学习机制确认
 创建日期：2026-05-14
 最后更新：2026-05-14
@@ -213,8 +213,8 @@
 - `RuleEngine` 位于 `scripts/systems/rule_engine.gd`，是普通 `Node`，不加入 Autoload 白名单；运行时通过场景或测试实例持有 `Array[RuleResource]`。
 - `evaluate(context: Dictionary) -> Array[RuleResource]` 负责同帧规则评估、规则 ID 去重、本地 `rule_triggered` 信号和 `EventBus.rule_triggered(rule_id, context)` 广播。
 - `RuleEngine` 可自动订阅 `EventBus.noise_emitted`、`EventBus.flashlight_toggled`、`EventBus.clue_collected`，为 P2-2 怪物 AI 和 P3 线索系统提供统一入口。
-- P2-1 支持的条件原语：`always`、`player_action`、`zone`、`noise_level_min`、`light_state`、`has_item`、`flag`、`context_equals`。新增原语必须先补测试，再扩展引擎。
-- 大只最低规则资源位于 `data/rules/da_zhi/`：`rule_da_zhi_corridor_run`、`rule_da_zhi_first_manifestation`、`rule_da_zhi_broadcast_power_off_weakness`、`rule_da_zhi_containment_roster_step`。
+- P2-1 支持的条件原语：`always`、`player_action`、`zone`、`noise_level_min`、`light_state`、`has_item`、`flag`、`context_equals`。P3-2 追加 `collection_has`，用于验证收容步骤顺序。新增原语必须先补测试，再扩展引擎。
+- 大只规则资源位于 `data/rules/da_zhi/`：P2 最低规则包含 `rule_da_zhi_corridor_run`、`rule_da_zhi_first_manifestation`、`rule_da_zhi_broadcast_power_off_weakness`、`rule_da_zhi_containment_roster_step`；P3-2 执行链追加 `rule_da_zhi_weakness_execute`、`rule_da_zhi_containment_step_1`、`rule_da_zhi_containment_step_2`、`rule_da_zhi_containment_step_3`、`rule_da_zhi_containment_failure`。
 - 会导致死亡、失败或错误收容的规则必须在 `learnable_hint` 中提供最低学习反馈；P2-1 已由 GUT 检查关键失败规则非空。
 
 ### P2-2 大只 AI 骨架落地口径
@@ -266,6 +266,12 @@
 - 第一只怪物名为"大只"，主题为破败校园，见 docs/monsters/001-da-zhi.md。
 
 ## 版本记录
+
+### v0.3.6 - 2026-05-14
+
+- P3-2 追加 `collection_has` 条件原语，用于验证收容步骤顺序和已知线索集合。
+- 记录大只弱点执行、三步收容和错误收容规则资源已接入 `data/rules/da_zhi/`，并由 `ObjectiveResolver` 转换为目标完成事件。
+- 同步总设定 v0.8.4、工程任务书 v1.6.1 与目标结算模块 v0.3.3。
 
 ### v0.3.5 - 2026-05-14
 

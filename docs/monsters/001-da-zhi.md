@@ -1,7 +1,7 @@
 # 大只 — Monster Bible
 
-版本：v0.2.7
-关联总设定版本：v0.8.3
+版本：v0.2.8
+关联总设定版本：v0.8.4
 关联副本主题：破败校园
 状态：Demo 规则口径确认
 创建日期：2026-05-14
@@ -229,7 +229,7 @@ P2-2 不写具体规则 ID；大只只读取 `RuleEngine` 注入的 `rule_effect
 | P4 | 禁止类 | 广播室开灯超过 5 秒，立即触发大只进入搜索 | 广播室门口警告纸条 |
 | P5 | 感知欺骗类 | 大只会制造"走廊末端有脚步声"的假声源，玩家奔跑去查看时正好触发 P1 | 行为观察（多次验证后可学习） |
 
-### P2-1 / P2-4 RuleResource 映射
+### P2-1 / P2-4 / P3-2 RuleResource 映射
 
 | 资源 ID | 对应设计 | 当前用途 |
 |---|---|---|
@@ -239,6 +239,11 @@ P2-2 不写具体规则 ID；大只只读取 `RuleEngine` 注入的 `rule_effect
 | `rule_da_zhi_broadcast_power_off_weakness` | 广播断电后失向弱点窗口 | 击杀链弱点窗口，需 `clue_broadcast_dependency` 解锁 |
 | `rule_da_zhi_containment_roster_step` | 收容步骤 1：名单确认 | 收容链第 1 步，需 `clue_full_roster` 解锁 |
 | `rule_da_zhi_roster_reaction_verification` | 完整名单让大只停步 | P3-1 收容线索行为验证规则，验证 `clue_full_roster` |
+| `rule_da_zhi_weakness_execute` | 广播沉默窗口内的仓库封锁击杀 | P3-2 最终击杀完成规则，输出 `objective_type = 1` |
+| `rule_da_zhi_containment_step_1` | 收容步骤 1：名单确认 | P3-2 三步收容执行规则，写入 `roster_confirmation` |
+| `rule_da_zhi_containment_step_2` | 收容步骤 2：熄灯广播封声 | P3-2 三步收容执行规则，要求已完成名单确认 |
+| `rule_da_zhi_containment_step_3` | 收容步骤 3：四锚点实体锁定 | P3-2 收容成功规则，输出 `objective_type = 2` |
+| `rule_da_zhi_containment_failure` | 锚点顺序错误导致错误收容 | P3-2 错误收容规则，输出 `objective_type = 3` 与重度失败等级 |
 | `clue_da_zhi_corridor_echo` | 奔跑后额外脚步声行为观察 | P3-1 线索对象占位，稳定 ID 为 `clue_corridor_echo` |
 | `clue_da_zhi_broadcast_dependency` | 广播依赖弱点线索 | P3-1 击杀线索占位，稳定 ID 为 `clue_broadcast_dependency` |
 | `clue_da_zhi_full_roster` | 完整名单收容步骤线索 | P3-1 收容线索占位，稳定 ID 为 `clue_full_roster` |
@@ -268,6 +273,12 @@ P2-2 不写具体规则 ID；大只只读取 `RuleEngine` 注入的 `rule_effect
 ---
 
 ## 版本记录
+
+### v0.2.8 - 2026-05-14
+
+- P3-2 新增大只最终击杀规则、三步收容执行规则与错误收容规则，并纳入 MonsterProfile `rule_ids` / `containment_rule_ids`。
+- 明确击杀完成输出 `objective_type = 1`、收容成功输出 `objective_type = 2`、错误收容输出 `objective_type = 3`，供 P3-3 结算系统订阅。
+- 同步总设定 v0.8.4、目标结算模块 v0.3.3 与工程任务书 v1.6.1。
 
 ### v0.2.7 - 2026-05-14
 

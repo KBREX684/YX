@@ -1,8 +1,8 @@
 # 副本目标与结算模块
 
-版本：v0.3.2
-关联总设定版本：v0.8.1
-状态：三维奖励结构确认
+版本：v0.3.3
+关联总设定版本：v0.8.4
+状态：目标完成事件接入
 创建日期：2026-05-14
 最后更新：2026-05-14
 
@@ -147,6 +147,25 @@
 
 使用绝对值上限是为了避免早期仓库空时惩罚失效，以及后期仓库满时惩罚过重。
 
+## P3-2 目标完成事件
+
+P3-2 引入 `ObjectiveResolver` 作为副本场景内的普通系统节点。它不进入 Autoload 白名单，只订阅 `EventBus.rule_triggered(rule_id, context)`，读取 `RuleResource.effect` 后输出统一目标完成事件：
+
+```gdscript
+EventBus.objective_completed(objective_type: int, payload: Dictionary)
+```
+
+目标类型暂定为：
+
+| objective_type | 语义 | 当前触发来源 |
+|---|---|---|
+| `0` | 逃离 | P3-3 接入出口目标后使用 |
+| `1` | 击杀 | `rule_da_zhi_weakness_execute` |
+| `2` | 收容成功 | `rule_da_zhi_containment_step_3` |
+| `3` | 错误收容 | `rule_da_zhi_containment_failure` |
+
+`ObjectiveResolver` 同时记录收容步骤完成状态，供后续步骤以 `completed_steps` 条件验证顺序。结算数值、界面和奖励计算仍由 P3-3 `SettlementCalculator` 承担；P3-2 只保证目标完成事实和 payload 可被可靠传递。
+
 ## 数据契约
 
 ### 输入
@@ -154,6 +173,7 @@
 | 字段名 | 类型 | 来源模块 | 说明 |
 |---|---|---|---|
 | completion_type | 枚举 | 本模块（触发判定） | 收容成功/击杀/逃离/错误收容 |
+| objective_completed | 事件 | `ObjectiveResolver` / `EventBus` | P3-2 起的统一目标完成事件，携带 `objective_type` 与规则 payload |
 | clue_completeness | 对象 | 05-clues-puzzles | 各层线索完成度 |
 | disposal_result | 枚举 | 03-monster-anomaly-rules | 怪物处置状态 |
 | player_survival_params | 对象 | 01-player-control | 伤势、污染、理智 |
@@ -260,6 +280,12 @@
 - 结算结果显示明确数值。
 
 ## 版本记录
+
+### v0.3.3 - 2026-05-14
+
+- 接入 P3-2 目标完成事件口径：`ObjectiveResolver` 订阅 `EventBus.rule_triggered`，并输出 `EventBus.objective_completed(objective_type, payload)`。
+- 明确 P3-2 只负责击杀/收容/错误收容事实触发和收容步骤状态，P3-3 负责结算计算、数值展示和奖励落地。
+- 同步总设定 v0.8.4、实施计划 v2.6.1 与工程任务书 v1.6.1。
 
 ### v0.3.2 - 2026-05-14
 

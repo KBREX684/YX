@@ -1,7 +1,7 @@
 # 项目实施计划 Implementation Plan
 
-版本：v2.6.0
-关联总设定版本：v0.8.3
+版本：v2.6.1
+关联总设定版本：v0.8.4
 关联技术规约版本：[`00-tech-constraints.md`](00-tech-constraints.md) v1.3.1
 关联垂直切片版本：[`00-vertical-slice.md`](00-vertical-slice.md) v1.0.4
 创建日期：2026-05-14
@@ -258,7 +258,7 @@
 
 **阶段目标**：玩家能在副本中收集线索、推理出三条路径（逃离/击杀/收容），并触发对应结算屏幕。本阶段的"通关"还不依赖原形养成，只验证"单次副本的信息闭环"。
 
-**当前状态（2026-05-14）**：P3-1 线索系统与规则推理信息层已完成：11 条 `ClueResource`、Dialogic `.dtl` 时间线占位、`ClueBook`、`GameState.known_clue_ids` 与收容行为验证规则已接入；当前可进入 P3-2 弱点与收容执行链施工。
+**当前状态（2026-05-14）**：P3-1 线索信息层与 P3-2 弱点/收容执行链已完成：11 条 `ClueResource`、Dialogic `.dtl` 时间线占位、`ClueBook`、`ObjectiveResolver`、5 条大只执行规则和仪式占位触发节点已接入；当前可进入 P3-3 结算系统施工。
 
 ---
 
@@ -284,7 +284,7 @@
   2. 击杀和收容成功各有明确触发判定，产出不同品质原形（由 P4 接收）。
 - **关联文档**：[`modules/03-monster-anomaly-rules.md`](modules/03-monster-anomaly-rules.md)、[`monsters/001-da-zhi.md`](monsters/001-da-zhi.md)。
 - **关联 Pillar**：Pillar 1。
-- **验收门禁**：[`00-vertical-slice.md`](00-vertical-slice.md) §4 全部 6 项可勾选。
+- **验收门禁**：P3-2 工程门禁为弱点击杀、三步收容、错误收容和 `EventBus.objective_completed(objective_type, payload)` 可被自动化测试验证；[`00-vertical-slice.md`](00-vertical-slice.md) §4 的完整非开发者推理/实玩验收收束到 P3-5 阶段出口。
 - **关联风险**：收容仪式步骤过长或线索太隐晦 → 玩家只走逃离路线。
 
 ---
@@ -615,6 +615,12 @@ P7-1 不再因 Q-01 阻塞；其前置仍为 P6-4。
 ---
 
 ## 版本记录
+
+### v2.6.1 - 2026-05-14
+
+- 完成 P3-2 弱点与收容执行链：新增大只最终击杀规则、三步收容规则、错误收容规则、`ObjectiveResolver` 与仪式触发占位节点。
+- 明确 P3-2 验收边界：本阶段自动化验证执行链，VS §4 的完整非开发者推理/实玩验收收束到 P3-5。
+- 当前实施入口推进至 P3-3 副本目标结算系统施工。
 
 ### v2.6.0 - 2026-05-14
 
