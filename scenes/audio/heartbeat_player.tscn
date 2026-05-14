@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3 uid="uid://yx_heartbeat_player_stub"]
+
+[ext_resource type="Script" path="res://scripts/audio/heartbeat_player.gd" id="1_heartbeat"]
+
+[node name="HeartbeatPlayer" type="Node2D"]
+script = ExtResource("1_heartbeat")
+
+[node name="HeartbeatPlayer2D" type="AudioStreamPlayer2D" parent="."]
+bus = &"Heartbeat"
+volume_db = -36.0
+pitch_scale = 0.75
+max_distance = 900.0
+attenuation = 1.4

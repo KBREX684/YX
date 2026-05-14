@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://yx_abandoned_school"]
+[gd_scene load_steps=14 format=3 uid="uid://yx_abandoned_school"]
 
 [ext_resource type="PackedScene" path="res://scenes/dungeon/rooms/classroom_a.tscn" id="1_classroom"]
 [ext_resource type="PackedScene" path="res://scenes/dungeon/rooms/storage_a.tscn" id="2_storage"]
@@ -8,6 +8,11 @@
 [ext_resource type="PackedScene" path="res://scenes/objects/pickup.tscn" id="6_pickup"]
 [ext_resource type="PackedScene" path="res://scenes/objects/note.tscn" id="7_note"]
 [ext_resource type="PackedScene" path="res://scenes/objects/hiding_spot.tscn" id="8_hiding"]
+[ext_resource type="Script" path="res://scripts/systems/pressure_level.gd" id="9_pressure"]
+[ext_resource type="PackedScene" path="res://scenes/monster/da_zhi.tscn" id="10_da_zhi"]
+[ext_resource type="Script" path="res://scripts/dungeon/first_entry_manifest_trigger.gd" id="11_manifest_trigger"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud/pressure_hud.tscn" id="12_pressure_hud"]
+[ext_resource type="PackedScene" path="res://scenes/audio/heartbeat_player.tscn" id="13_heartbeat"]
 
 [node name="AbandonedSchool" type="Node2D"]
 
@@ -114,5 +119,24 @@ note_text = "保健室后门的锁遇到强光会卡死，等脚步声远离再�
 position = Vector2(-300, -155)
 interactable_id = &"hide_locker_a"
 spot_id = &"hide_locker_a"
+
+[node name="PressureLevel" type="Node" parent="."]
+script = ExtResource("9_pressure")
+
+[node name="Monsters" type="Node2D" parent="."]
+
+[node name="DaZhi" parent="Monsters" instance=ExtResource("10_da_zhi")]
+position = Vector2(-120, -72)
+
+[node name="FirstEntryManifestTrigger" type="Node2D" parent="."]
+script = ExtResource("11_manifest_trigger")
+target_path = NodePath("../Monsters/DaZhi")
+manifest_duration = 2.5
+
+[node name="PressureHud" parent="." instance=ExtResource("12_pressure_hud")]
+
+[node name="Audio" type="Node2D" parent="."]
+
+[node name="HeartbeatPlayer" parent="Audio" instance=ExtResource("13_heartbeat")]
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]

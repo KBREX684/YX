@@ -32,6 +32,7 @@ signal origin_progress_changed(origin_id: String, progress: Vector3)
 signal origin_stage_locked(origin_id: String, route: StringName)
 
 # --- 感知与压力 --------------------------------------------------------------
+signal pressure_changed(level: float)                         ## 0.0 ~ 1.0
 signal heartbeat_intensity_changed(intensity: float)        ## 0.0 ~ 1.0
 signal sanity_changed(value: float)
 

@@ -75,8 +75,14 @@ func apply_rule_context(_rule_id: String, context: Dictionary) -> void:
 func manifest(duration: float = 2.5) -> void:
 	_is_manifested = true
 	_sync_visual()
+	EventBus.monster_manifested.emit(entity_id, duration)
+	EventBus.pressure_changed.emit(maxf(_pressure_for_phase(), 0.65))
 	if duration > 0.0 and is_inside_tree():
 		get_tree().create_timer(duration).timeout.connect(clear_manifestation, CONNECT_ONE_SHOT)
+
+
+func show_apparition(duration: float = 2.5) -> void:
+	manifest(duration)
 
 
 func clear_manifestation() -> void:
@@ -95,6 +101,7 @@ func _set_phase(next_phase: StringName) -> void:
 	if _state_machine.has_method("dispatch"):
 		_state_machine.call("dispatch", _phase)
 	EventBus.monster_phase_changed.emit(entity_id, _phase)
+	EventBus.pressure_changed.emit(_pressure_for_phase())
 
 
 func _speed_for_phase() -> float:
@@ -105,6 +112,18 @@ func _speed_for_phase() -> float:
 			return search_speed
 		PHASE_PROBING:
 			return probe_speed
+		_:
+			return 0.0
+
+
+func _pressure_for_phase() -> float:
+	match _phase:
+		PHASE_DISPOSAL, PHASE_HUNT:
+			return 1.0
+		PHASE_SEARCH:
+			return 0.7
+		PHASE_PROBING:
+			return 0.35
 		_:
 			return 0.0
 

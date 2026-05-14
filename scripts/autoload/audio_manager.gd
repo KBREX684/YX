@@ -11,7 +11,7 @@ const BUS_MUSIC := "Music"
 const BUS_SFX := "SFX"
 const BUS_HEARTBEAT := "Heartbeat"
 const BUS_FLASHLIGHT := "Flashlight"
-const BUS_AMBIENT := "Ambient"
+const BUS_AMBIENT := "Ambience"
 
 
 func _ready() -> void:
