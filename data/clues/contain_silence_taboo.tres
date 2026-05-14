@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ClueResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/systems/resources/clue_resource.gd" id="1_clue"]
+
+[resource]
+script = ExtResource("1_clue")
+clue_id = "clue_silence_taboo"
+route = "contain"
+clue_kind = "sound"
+linked_rule_ids = PackedStringArray("rule_da_zhi_corridor_run", "rule_da_zhi_containment_roster_step")
+dialogic_timeline_id = &"dlg_clue_silence_taboo"
+dialogic_timeline_path = "res://dialogic/timelines/clue_silence_taboo.dtl"
+archive_summary = "contain: 仪式开始后不能奔跑或喊名字，任何主动噪声都会让大只重新进入搜索。"
+risk_band = "high"
+placeholder_asset_note = "占位美术: 录音带/静音警告牌，后续替换为声音线索物 PNG。"

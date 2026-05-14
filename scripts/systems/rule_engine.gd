@@ -137,6 +137,7 @@ func _emit_effect_outputs(effect: Dictionary) -> void:
 	var clue_id := String(effect.get("clue_id", effect.get("unlock_clue_id", "")))
 	if clue_id != "":
 		clue_unlocked.emit(clue_id)
+		EventBus.clue_unlocked.emit(clue_id)
 
 
 func _collection_has(collection: Variant, value: Variant) -> bool:

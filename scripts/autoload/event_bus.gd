@@ -24,6 +24,7 @@ signal monster_manifested(monster_id: String, duration: float)
 
 # --- 线索与解谜 --------------------------------------------------------------
 signal clue_collected(clue_id: String)
+signal clue_unlocked(clue_id: String)
 signal clue_decoded(clue_id: String, kind: StringName)      ## escape/kill/contain
 
 # --- 结算与养成 --------------------------------------------------------------

@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://yx_abandoned_school"]
+[gd_scene load_steps=16 format=3 uid="uid://yx_abandoned_school"]
 
 [ext_resource type="PackedScene" path="res://scenes/dungeon/rooms/classroom_a.tscn" id="1_classroom"]
 [ext_resource type="PackedScene" path="res://scenes/dungeon/rooms/storage_a.tscn" id="2_storage"]
@@ -13,8 +13,13 @@
 [ext_resource type="Script" path="res://scripts/dungeon/first_entry_manifest_trigger.gd" id="11_manifest_trigger"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud/pressure_hud.tscn" id="12_pressure_hud"]
 [ext_resource type="PackedScene" path="res://scenes/audio/heartbeat_player.tscn" id="13_heartbeat"]
+[ext_resource type="PackedScene" path="res://scenes/objects/clue_note.tscn" id="14_clue_note"]
+[ext_resource type="Script" path="res://scripts/systems/clue_book.gd" id="15_clue_book"]
 
 [node name="AbandonedSchool" type="Node2D"]
+
+[node name="ClueBook" type="Node" parent="."]
+script = ExtResource("15_clue_book")
 
 [node name="Sections" type="Node2D" parent="."]
 
@@ -119,6 +124,83 @@ note_text = "保健室后门的锁遇到强光会卡死，等脚步声远离再�
 position = Vector2(-300, -155)
 interactable_id = &"hide_locker_a"
 spot_id = &"hide_locker_a"
+
+[node name="ClueEscapeExitLock" parent="Interactables" instance=ExtResource("14_clue_note")]
+position = Vector2(360, 48)
+interactable_id = &"clue_escape_exit_lock"
+clue_id = &"clue_escape_exit_lock"
+dialogic_timeline_id = &"dlg_clue_escape_exit_lock"
+dialogic_timeline_path = "res://dialogic/timelines/clue_escape_exit_lock.dtl"
+
+[node name="ClueEscapePowerRoomTag" parent="Interactables" instance=ExtResource("14_clue_note")]
+position = Vector2(-20, 112)
+interactable_id = &"clue_escape_power_room_tag"
+clue_id = &"clue_escape_power_room_tag"
+dialogic_timeline_id = &"dlg_clue_escape_power_room_tag"
+dialogic_timeline_path = "res://dialogic/timelines/clue_escape_power_room_tag.dtl"
+
+[node name="ClueEscapeRouteMap" parent="Interactables" instance=ExtResource("14_clue_note")]
+position = Vector2(-390, -42)
+interactable_id = &"clue_escape_route_map"
+clue_id = &"clue_escape_route_map"
+dialogic_timeline_id = &"dlg_clue_escape_route_map"
+dialogic_timeline_path = "res://dialogic/timelines/clue_escape_route_map.dtl"
+
+[node name="ClueCorridorEcho" parent="Interactables" instance=ExtResource("14_clue_note")]
+position = Vector2(-120, -44)
+interactable_id = &"clue_corridor_echo"
+clue_id = &"clue_corridor_echo"
+dialogic_timeline_id = &"dlg_clue_corridor_echo"
+dialogic_timeline_path = "res://dialogic/timelines/clue_corridor_echo.dtl"
+
+[node name="ClueBroadcastDependency" parent="Interactables" instance=ExtResource("14_clue_note")]
+position = Vector2(324, -118)
+interactable_id = &"clue_broadcast_dependency"
+clue_id = &"clue_broadcast_dependency"
+dialogic_timeline_id = &"dlg_clue_broadcast_dependency"
+dialogic_timeline_path = "res://dialogic/timelines/clue_broadcast_dependency.dtl"
+
+[node name="ClueBroadcastPowerCut" parent="Interactables" instance=ExtResource("14_clue_note")]
+position = Vector2(256, -118)
+interactable_id = &"clue_broadcast_power_cut"
+clue_id = &"clue_broadcast_power_cut"
+dialogic_timeline_id = &"dlg_clue_broadcast_power_cut"
+dialogic_timeline_path = "res://dialogic/timelines/clue_broadcast_power_cut.dtl"
+
+[node name="ClueFullRoster" parent="Interactables" instance=ExtResource("14_clue_note")]
+position = Vector2(135, -130)
+interactable_id = &"clue_full_roster"
+clue_id = &"clue_full_roster"
+dialogic_timeline_id = &"dlg_clue_full_roster"
+dialogic_timeline_path = "res://dialogic/timelines/clue_full_roster.dtl"
+
+[node name="ClueMissingName" parent="Interactables" instance=ExtResource("14_clue_note")]
+position = Vector2(-262, -230)
+interactable_id = &"clue_missing_name"
+clue_id = &"clue_missing_name"
+dialogic_timeline_id = &"dlg_clue_missing_name"
+dialogic_timeline_path = "res://dialogic/timelines/clue_missing_name.dtl"
+
+[node name="ClueRitualCordLeft" parent="Interactables" instance=ExtResource("14_clue_note")]
+position = Vector2(104, -190)
+interactable_id = &"clue_ritual_cord_left"
+clue_id = &"clue_ritual_cord_left"
+dialogic_timeline_id = &"dlg_clue_ritual_cord_left"
+dialogic_timeline_path = "res://dialogic/timelines/clue_ritual_cord_left.dtl"
+
+[node name="ClueRitualCordRight" parent="Interactables" instance=ExtResource("14_clue_note")]
+position = Vector2(218, -190)
+interactable_id = &"clue_ritual_cord_right"
+clue_id = &"clue_ritual_cord_right"
+dialogic_timeline_id = &"dlg_clue_ritual_cord_right"
+dialogic_timeline_path = "res://dialogic/timelines/clue_ritual_cord_right.dtl"
+
+[node name="ClueSilenceTaboo" parent="Interactables" instance=ExtResource("14_clue_note")]
+position = Vector2(160, -248)
+interactable_id = &"clue_silence_taboo"
+clue_id = &"clue_silence_taboo"
+dialogic_timeline_id = &"dlg_clue_silence_taboo"
+dialogic_timeline_path = "res://dialogic/timelines/clue_silence_taboo.dtl"
 
 [node name="PressureLevel" type="Node" parent="."]
 script = ExtResource("9_pressure")

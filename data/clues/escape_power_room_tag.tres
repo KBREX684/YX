@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ClueResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/systems/resources/clue_resource.gd" id="1_clue"]
+
+[resource]
+script = ExtResource("1_clue")
+clue_id = "clue_escape_power_room_tag"
+route = "escape"
+clue_kind = "item"
+linked_rule_ids = PackedStringArray("rule_da_zhi_flashlight_stare_manifestation")
+dialogic_timeline_id = &"dlg_clue_escape_power_room_tag"
+dialogic_timeline_path = "res://dialogic/timelines/clue_escape_power_room_tag.dtl"
+archive_summary = "escape: 配电室钥匙牌标着旧广播线路，提示出口电磁锁与广播电源共线。"
+risk_band = "low"
+placeholder_asset_note = "占位美术: 生锈钥匙牌和断裂挂绳，后续替换为小物件分层 PNG。"

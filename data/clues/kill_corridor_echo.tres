@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ClueResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/systems/resources/clue_resource.gd" id="1_clue"]
+
+[resource]
+script = ExtResource("1_clue")
+clue_id = "clue_corridor_echo"
+route = "kill"
+clue_kind = "behavior"
+linked_rule_ids = PackedStringArray("rule_da_zhi_corridor_run", "clue_da_zhi_corridor_echo")
+dialogic_timeline_id = &"dlg_clue_corridor_echo"
+dialogic_timeline_path = "res://dialogic/timelines/clue_corridor_echo.dtl"
+archive_summary = "kill: 走廊奔跑后会出现第二组脚步回声，说明大只会按奔跑噪声进入搜索。"
+is_behavior_verification = true
+verifies_rule_id = "rule_da_zhi_corridor_run"
+risk_band = "medium"
+placeholder_asset_note = "占位美术: 走廊地面回声标记/脚印涂层，后续替换为环境痕迹 PNG。"

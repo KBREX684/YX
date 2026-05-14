@@ -31,6 +31,13 @@ const REQUIRED := {
 		"id": "non_empty_string",
 		"stack_max": "positive_int",
 	},
+	"ClueResource": {
+		"clue_id": "non_empty_string",
+		"route": "non_empty_string",
+		"clue_kind": "non_empty_string",
+		"dialogic_timeline_path": "non_empty_string",
+		"archive_summary": "non_empty_string",
+	},
 }
 
 

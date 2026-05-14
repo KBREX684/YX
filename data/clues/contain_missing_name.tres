@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ClueResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/systems/resources/clue_resource.gd" id="1_clue"]
+
+[resource]
+script = ExtResource("1_clue")
+clue_id = "clue_missing_name"
+route = "contain"
+clue_kind = "environment"
+linked_rule_ids = PackedStringArray("rule_da_zhi_containment_roster_step")
+dialogic_timeline_id = &"dlg_clue_missing_name"
+dialogic_timeline_path = "res://dialogic/timelines/clue_missing_name.dtl"
+archive_summary = "contain: 黑板座次表少了一个名字，说明收容第一步不是念名字，而是先补齐名单。"
+risk_band = "high"
+placeholder_asset_note = "占位美术: 黑板座次表缺名区域，后续替换为教室墙面分层 PNG。"

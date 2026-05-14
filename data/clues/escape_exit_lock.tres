@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ClueResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/systems/resources/clue_resource.gd" id="1_clue"]
+
+[resource]
+script = ExtResource("1_clue")
+clue_id = "clue_escape_exit_lock"
+route = "escape"
+clue_kind = "text"
+linked_rule_ids = PackedStringArray("rule_da_zhi_corridor_run")
+dialogic_timeline_id = &"dlg_clue_escape_exit_lock"
+dialogic_timeline_path = "res://dialogic/timelines/clue_escape_exit_lock.dtl"
+archive_summary = "escape: 后门锁会在走廊安静下来后松动，逃离路线要求玩家停止奔跑并等待脚步声远离。"
+risk_band = "low"
+placeholder_asset_note = "占位美术: 保健室后门旁的泛黄维修单，后续替换为分层纸张 PNG。"

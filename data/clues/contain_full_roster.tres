@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ClueResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/systems/resources/clue_resource.gd" id="1_clue"]
+
+[resource]
+script = ExtResource("1_clue")
+clue_id = "clue_full_roster"
+route = "contain"
+clue_kind = "text"
+linked_rule_ids = PackedStringArray("rule_da_zhi_containment_roster_step", "clue_da_zhi_full_roster", "rule_da_zhi_roster_reaction_verification")
+dialogic_timeline_id = &"dlg_clue_full_roster"
+dialogic_timeline_path = "res://dialogic/timelines/clue_full_roster.dtl"
+archive_summary = "contain: 完整名单必须被摊开放在仪式房门口，大只看到缺失补全的名单会停步。"
+is_behavior_verification = true
+verifies_rule_id = "rule_da_zhi_roster_reaction_verification"
+risk_band = "high"
+placeholder_asset_note = "占位美术: 完整学生名单档案页，后续替换为可读档案 PNG。"

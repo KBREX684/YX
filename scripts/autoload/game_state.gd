@@ -18,6 +18,32 @@ var carried_origin_id: String = ""
 ## 全局污染度（详见 docs/modules/10-base-management-research.md）。
 var contamination: float = 0.0
 
+var known_clue_ids: PackedStringArray = PackedStringArray()
+
+
+func record_clue(clue_id: String) -> bool:
+	var normalized := clue_id.strip_edges()
+	if normalized == "":
+		return false
+	if known_clue_ids.has(normalized):
+		return false
+	known_clue_ids.append(normalized)
+	return true
+
+
+func knows_clue(clue_id: String) -> bool:
+	return known_clue_ids.has(clue_id.strip_edges())
+
+
+func clear_known_clues() -> void:
+	known_clue_ids.clear()
+
+
+func set_known_clues(clue_ids: PackedStringArray) -> void:
+	known_clue_ids.clear()
+	for clue_id in clue_ids:
+		record_clue(clue_id)
+
 
 func _ready() -> void:
 	pass

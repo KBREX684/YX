@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="RuleResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/systems/resources/rule_resource.gd" id="1_rule"]
+
+[resource]
+script = ExtResource("1_rule")
+id = "rule_da_zhi_roster_reaction_verification"
+trigger_conditions = [{
+"type": "context_equals",
+"key": "clue_id",
+"value": "clue_full_roster"
+}, {
+"type": "context_equals",
+"key": "verification_action",
+"value": "display_roster"
+}]
+effect = {
+"type": "clue_verification",
+"target_id": "da_zhi",
+"clue_id": "clue_full_roster",
+"route": "contain",
+"verified_label": "完整名单摊开时，大只会停在门框外。"
+}
+clue_unlock_id = "clue_full_roster"
+learnable_hint = "完整名单不是背景文档。它会让大只短暂停步，证明收容第一步必须先补全名单。"

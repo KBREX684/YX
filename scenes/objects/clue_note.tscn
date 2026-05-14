@@ -1,0 +1,33 @@
+[gd_scene load_steps=3 format=3 uid="uid://yx_obj_clue_note"]
+
+[ext_resource type="Script" path="res://scripts/objects/clue_note.gd" id="1_clue_note"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_clue_note"]
+size = Vector2(44, 34)
+
+[node name="ClueNote" type="Area2D"]
+collision_layer = 4
+collision_mask = 2
+script = ExtResource("1_clue_note")
+interactable_id = &"clue_note_stub"
+prompt_text = "阅读线索"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_clue_note")
+
+[node name="Paper" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-18, -12, 16, -15, 19, 12, -16, 15)
+color = Color(0.79, 0.74, 0.58, 1)
+
+[node name="RedThreadMark" type="Polygon2D" parent="."]
+position = Vector2(1, 1)
+polygon = PackedVector2Array(-10, -2, 10, -2, 10, 2, -10, 2)
+color = Color(0.42, 0.08, 0.08, 1)
+
+[node name="PlaceholderAssetLabel" type="Label" parent="."]
+offset_left = -118.0
+offset_top = 24.0
+offset_right = 118.0
+offset_bottom = 62.0
+text = "占位: Dialogic线索物/纸条/电台/档案"
+horizontal_alignment = 1
