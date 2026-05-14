@@ -17,6 +17,8 @@ build/
 
 # 系统与编辑器缓存
 .tmp
+*.TMP
+~*
 .DS_Store
 Thumbs.db
 *.swp

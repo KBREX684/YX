@@ -12,10 +12,10 @@ class_name MonsterProfile
 @export var name: String = ""
 
 ## 该怪物绑定的所有规则 ID 列表（指向 RuleResource.id）。
-@export var rule_ids: Array[String] = []
+@export var rule_ids: PackedStringArray = []
 
 ## 弱点规则 ID。玩家学习并满足此规则即可触发击杀路径。
 @export var weakness_rule_id: String = ""
 
 ## 收容仪式规则 ID 序列（顺序敏感，错序触发"错误收容"）。
-@export var containment_rule_ids: Array[String] = []
+@export var containment_rule_ids: PackedStringArray = []

@@ -1,10 +1,8 @@
-@tool
-extends EditorScript
+extends SceneTree
 ## validate_schemas.gd —— 数据契约校验器（TASK-P0-6）
 ##
 ## 用途：遍历 res://data/**/*.tres，逐字段检查必填字段非空，输出报告。
 ## 调用方式：
-##   - 编辑器：File ➜ Run Script，选中本文件后点击运行。
 ##   - 命令行：godot --headless --path . --script res://tools/validate_schemas.gd
 ##
 ## 退出码（命令行模式）：0=全部通过，1=存在错误。
@@ -36,10 +34,10 @@ const REQUIRED := {
 }
 
 
-func _run() -> void:
+func _init() -> void:
 	var report := validate_all()
 	_print_report(report)
-	# 由调用方决定是否 quit；EditorScript._run() 不应主动退出编辑器。
+	quit(1 if not report["errors"].is_empty() else 0)
 
 
 ## 遍历数据目录，返回 {checked: int, errors: Array[String], passed: Array[String]}。
@@ -100,7 +98,7 @@ func _validate_resource(res: Resource, rules: Dictionary) -> Array[String]:
 	var errors: Array[String] = []
 	for field in rules.keys():
 		var rule: String = rules[field]
-		if not (field in res):
+		if not _has_property(res, field):
 			errors.append("缺少字段: %s" % field)
 			continue
 		var value: Variant = res.get(field)
@@ -108,6 +106,13 @@ func _validate_resource(res: Resource, rules: Dictionary) -> Array[String]:
 		if err != "":
 			errors.append("字段 %s %s" % [field, err])
 	return errors
+
+
+func _has_property(res: Resource, field: String) -> bool:
+	for property in res.get_property_list():
+		if property.get("name", "") == field:
+			return true
+	return false
 
 
 func _check(value: Variant, rule: String) -> String:

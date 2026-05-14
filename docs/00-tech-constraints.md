@@ -1,7 +1,7 @@
 # 技术选型与底基约束 Tech Constraints
 
-版本：v1.0.0
-关联总设定版本：v0.6.1
+版本：v1.3.0
+关联总设定版本：v0.8.1
 创建日期：2026-05-14
 最后更新：2026-05-14
 
@@ -10,6 +10,7 @@
 本文档是 YX 项目的**技术最高规约**，与 `docs/00-design-pillars.md` 并列，分别从设计与工程两侧约束所有模块实现。
 
 - 设计层：所有玩法决策须通过 [Design Pillars](00-design-pillars.md) 裁决。
+- 视觉层：所有美术、动画和外包资产须通过 [Art Direction](00-art-direction.md) 裁决。
 - 工程层：所有技术决策须通过本文档裁决。
 
 适用范围：第一阶段原型（垂直切片，详见 [docs/00-vertical-slice.md](00-vertical-slice.md)）。第二阶段开始前需复盘并按需升版本。
@@ -33,10 +34,10 @@
 
 | 项目 | 选型 | 备注 |
 |---|---|---|
-| 游戏引擎 | **Godot 4.x（最新稳定版，LTS 优先）** | 用户偏好；开源；2.5D/2D 支持优秀；GDScript 适合低代码 |
+| 游戏引擎 | **Godot 4.6.2 stable** | winget 安装版本；开源；2.5D/2D 支持优秀；GDScript 适合低代码 |
 | 渲染后端 | **Forward+（桌面端）** | 支持现代光照与雾效，营造恐怖氛围 |
 | 主脚本语言 | **GDScript** | 一人开发首选，Codex 生成质量足够；强类型语法（`var x: int`）必写 |
-| 辅助语言 | 不引入 C#/C++/Rust GDExtension（除非性能瓶颈被实测验证） | 降低工具链复杂度 |
+| 辅助语言 | 不自写 C#/C++/Rust 业务代码；第三方插件自带 GDExtension 必须通过插件采纳门槛 | 降低工具链复杂度，同时允许 LimboAI 这类已核查插件 |
 | 目标平台（第一阶段） | **Windows 64-bit 桌面，单机离线** | 不做 Web / Mobile / 主机；不做联机 |
 | 最低硬件目标 | 1080p / 60fps / GTX 1060 等级 | 2.5D 项目应轻松达成 |
 
@@ -74,10 +75,12 @@
    - `AudioManager`（音频）
    - `Config`（运行时配置读取）
    - 其余一律走信号或资源传参。
+   - Dialogic 2 已安装到 `/addons/`，但 P0 默认不启用其 editor plugin；该插件启用时会自动注册 Dialogic 运行时 Autoload。后续剧情/线索任务若必须启用，需在对应 TASK 中更新本节白名单并重新验证空项目无红字。
+   - GoPeak MCP runtime addon 已安装但默认不启用；启用会引入运行态桥接能力，必须作为开发工具单独记录，禁止成为正式游戏运行依赖。
 2. **通信方式**：模块间通信 **统一使用 Godot 信号（signal）+ EventBus**，禁止跨模块直接调用其他节点的方法。
-3. **怪物 AI**：使用 Godot 内置 `AnimationTree` / 自定义 **状态机插件（如 `godot-state-charts` 或 `LimboAI` Behavior Tree）** 实现，禁止在单文件里写超过 3 层的 if/else 行为逻辑。
+3. **怪物 AI**：第一阶段使用 **LimboAI v1.7.0** 实现 Behavior Tree + 状态机工作流；必要时可配合 Godot 内置 `AnimationTree` 做动画状态。禁止在单文件里写超过 3 层的 if/else 行为逻辑。
 4. **怪物异常规则**：每条规则一个 `RuleResource (.tres)`，包含触发条件、效果、可学习线索字段。规则由 `RuleEngine` 统一评估，**不**写死在怪物脚本里。
-5. **地图**：第一阶段为手工关卡，使用 `TileMap`（2D 网格）+ 2.5D 视差/Sprite 层。导航使用 Godot `NavigationRegion2D`。
+5. **地图**：第一阶段为手工关卡，使用场景嵌套 + `Node2D` / `Sprite2D` / `Parallax2D` / `CollisionShape2D` / `NavigationRegion2D` 组织 2.5D Live 场景。`TileMap` 仅允许作为灰盒/blockout 或碰撞参考，不作为最终画面瓦片方案。
 6. **存档**：使用 Godot `ResourceSaver` 保存自定义 Resource，或 JSON。**禁止**使用 Pickle/二进制不可读格式（一人调试需要可读性）。
 
 ---
@@ -86,28 +89,32 @@
 
 | 用途 | 工具 | 理由 |
 |---|---|---|
-| 对话/剧情 | **Dialogic 2**（Godot 插件） | 节点式编辑器，零脚本可做线索/笔记/对话 |
-| 行为树 / 状态机 | **LimboAI** 或 **Godot State Charts** | 可视化怪物 AI 编辑 |
-| 关卡 | Godot 内建 TileMap + 场景嵌套 | 无需额外编辑器 |
+| 对话/剧情 | **Dialogic 2**（Godot 插件） | 节点式编辑器，零脚本可做线索/笔记/对话；P0 仅安装入库，默认不启用，剧情任务按需接入 |
+| 行为树 / 状态机 | **LimboAI v1.7.0** | Q-16 已定案；Behavior Tree + 状态机融合，可视化怪物 AI 编辑 |
+| 关卡 | Godot 场景嵌套 + Node2D / Parallax2D / Sprite2D / Collision / Navigation | 适配 2.5D Live 厚涂场景；`TileMap` 仅作灰盒辅助 |
+| 美术源文件 | Krita / Clip Studio Paint / Photoshop；默认免费底基推荐 Krita | 工具只负责分层绘制；正式运行资源以 PNG / `.tscn` / `.tres` 为准 |
+| 2.5D Live 动画 | Godot `AnimationPlayer` + `Skeleton2D` / `Bone2D` / `Polygon2D` + `Sprite2D` / Shader | 第一阶段全部动画必须能在 Godot 编辑器内预览和维护 |
 | 视觉脚本 | **不使用 VisualScript**（Godot 4 已移除），改用 **资源驱动+短 GDScript** | 兼顾低代码与可维护 |
 | 调试 | Godot 内建 Debugger + `print_rich` | 不引入额外工具 |
 | 数据表编辑 | `.tres` 用 Godot Inspector；大批量表用 CSV，运行时导入 | Codex 生成 CSV/JSON 比生成代码更稳 |
 | AI 协作 | **Codex / Copilot**，要求生成代码遵守本文规约 | 与现有 Codex 工作流匹配 |
+| Godot MCP 协作 | **GoPeak v2.3.7**（开发工具） | 仅用于 Codex 编辑/运行/检查 Godot 项目；默认启用 editor bridge，不启用 runtime addon |
 
-**插件采纳门槛**：必须 MIT/MPL/Apache 类宽松许可，GitHub star ≥ 500，最近 6 个月有更新；不满足任一项则不引入。
+**插件采纳门槛**：正式游戏功能插件必须 MIT/MPL/Apache 类宽松许可，GitHub star ≥ 500，最近 6 个月有更新；不满足任一项则不引入。开发期 MCP / 编辑器桥接工具可作为例外引入，但必须标注为 dev-only，记录在 `docs/plugin-vetting.md`，并保证不成为正式游戏运行依赖。
 
 ---
 
 ## 六、美术与音频技术约束
 
-1. **风格**：2.5D 像素或低多边形手绘，固定镜头（已在概念文档确认）。原则上美术风格服务"看不清"的恐怖叙事，**不追求高保真**。
+1. **风格**：2.5D Live 表现 + 厚涂精美二次元风格，固定镜头（已在概念文档 v0.8.1 与 [`00-art-direction.md`](00-art-direction.md) v1.0.0 确认）。美术风格服务"看不清但能感到危险"的恐怖叙事，强调体积、光影、材质、角色魅力和异常变形；不使用像素风或低多边形手绘作为主风格。
 2. **分辨率基准**：1080p 内部渲染，UI 9-slice，禁止使用未压缩 4K 贴图。
-3. **像素美术**：基础瓦片 32×32 或 64×64（**择一全局统一**，二选一在垂直切片前定稿，详见 Q-13）。
-4. **音频**：
+3. **2.5D Live 资产**：角色 / 拟人原形 / 怪物现形使用高分辨率分层透明图，优先以 `Sprite2D`、`AnimationPlayer`、`Skeleton2D` / `Bone2D` / `Polygon2D`、网格变形和 Shader 做呼吸、凝视、衣摆、阴影和异常扰动等细微动态。场景按前景 / 中景 / 背景 / 遮挡层 / 光影层拆分，使用 `Parallax2D` 和固定镜头构建纵深。禁止把 32×32 / 64×64 像素瓦片作为全局资产基准。
+4. **外部动画运行时边界**：第一阶段不以 Live2D Cubism 或 Spine 作为底基。Live2D 官方 SDK 平台不直接包含 Godot，Godot 接入通常依赖非官方扩展或原生适配；Spine 虽有官方 Godot runtime，但会引入额外授权与导入流程。两者仅可在第二阶段后按插件采纳门槛重新评估。
+5. **音频**：
    - 格式：BGM 用 `.ogg`，音效用 `.wav`。
    - **3D 空间化音频强制启用**（`AudioStreamPlayer2D` + Attenuation），因为"听声辨怪"是核心机制。
    - 心跳、手电闪烁、环境异响使用 **AudioBus** 分组，便于动态混音。
-5. **素材来源**：第一阶段允许使用 CC0 / 已购素材包占位（itch.io、Kenney、Freesound）；自有美术在垂直切片验收后再投入。
+6. **素材来源**：第一阶段允许使用 CC0 / 已购素材包 / 灰盒块面占位（itch.io、Kenney、Freesound 等），但最终美术目标必须回到 2.5D Live + 厚涂精美二次元风格；自有美术在垂直切片核心循环验收后再集中投入。
 
 ---
 
@@ -157,7 +164,7 @@
 5. ❌ 自研编辑器或自研 ECS 框架
 6. ❌ 引入 Unity/Unreal/Cocos 任何资源/工作流
 7. ❌ 使用 AI 实时生成游戏内文本/图像（异常规则必须人工可控）
-8. ❌ 任何未在本文 §五 列表中的第三方插件，未经评审不得加入
+8. ❌ 任何未在本文 §五 列表中的第三方插件，未经评审不得加入；dev-only 工具必须单独标注，不得伪装为正式玩法依赖
 
 ---
 
@@ -185,20 +192,57 @@
 
 ---
 
-## 十三、待用户决策的开放项
+## 十三、已定案技术开放项
 
-下列条目已同步至 [docs/00-open-questions.md](00-open-questions.md)（Q-13 ~ Q-18），定案后回填本节并升版本：
+下列条目已同步至 [docs/00-open-questions.md](00-open-questions.md)（Q-13 ~ Q-20），当前均已定案：
 
-1. 像素分辨率：32×32 还是 64×64 全局统一？（Q-13）
-2. 美术风格：像素 vs 低多边形手绘，二选一？（Q-14）
-3. 是否允许使用 **C#** 替代 GDScript（若用户对 GDScript 不熟悉，可改 C#，但需重评工具链）？（Q-15）
-4. 行为树插件选用 **LimboAI** 还是 **Godot State Charts**？建议 LimboAI（更专为 Godot 4 设计，编辑器更成熟）。（Q-16）
-5. 第一阶段是否引入 Steam SDK（成就/云存档）？建议**否**，留到正式上架前。（Q-17）
-6. 本地化：第一阶段是否仅中文？还是中英双语？（Q-18）
+1. 已定案：2.5D Live 分层资产规格，不使用 32×32 / 64×64 像素瓦片路线。（Q-13）
+2. 已定案：厚涂精美二次元风格，不使用像素风或低多边形手绘作为主风格。（Q-14）
+3. 已定案：第一阶段固定使用 **GDScript**，不引入 C#。（Q-15）
+4. 已定案：行为树 / 状态机插件选用 **LimboAI v1.7.0**。（Q-16）
+5. 已定案：第一阶段不引入 Steam SDK（成就 / 云存档 / 排行榜等均不做）。（Q-17）
+6. 已定案：第一阶段仅中文，目标语言 `zh_CN`。（Q-18）
+7. 已定案：美术源文件采用 Krita / Clip Studio Paint / Photoshop 均可，默认免费底基推荐 Krita；正式运行资源以分层 PNG / `.tscn` / `.tres` 为准。（Q-19）
+8. 已定案：第一阶段 2.5D Live 动画采用 Godot 原生管线，不使用 Live2D Cubism 或 Spine 作为底基。（Q-20）
 
 ---
 
 ## 版本记录
+
+### v1.3.0 - 2026-05-14
+
+- 同步 `game-concept.md` v0.8.1 与 `00-art-direction.md` v1.0.0。
+- 将美术源文件、2.5D Live 动画与外部动画运行时边界写入低代码工具链和美术技术约束。
+- 明确第一阶段使用 Godot 原生 2D Live 管线；Live2D Cubism 与 Spine 不作为第一阶段底基，仅第二阶段后评估。
+- 同步 `00-open-questions.md` v1.5.0：新增 Q-19 美术制作底基、Q-20 2.5D Live 动画技术路线。
+
+### v1.2.3 - 2026-05-14
+
+- 同步 `game-concept.md` v0.8.0 与 `00-open-questions.md` v1.4.0：当前无用户待确认阻塞项。
+- §十三标题改为“已定案技术开放项”，避免与已关闭的叙事/内容问题口径冲突。
+
+### v1.2.2 - 2026-05-14
+
+- 增补 GoPeak v2.3.7 为 dev-only Godot MCP 协作工具：默认启用 editor bridge，不启用 runtime addon。
+- 调整插件采纳门槛表述：正式游戏功能插件继续执行 stars ≥ 500 等门槛；开发期 MCP / 编辑器桥接工具允许例外，但必须记录且不得成为正式运行依赖。
+
+### v1.2.1 - 2026-05-14
+
+- P0 命令行复核后补充 Dialogic 运行时边界：插件已安装入库，但默认不启用 editor plugin，避免自动注册 Dialogic Autoload 影响启动验收。
+- Autoload 白名单维持 5 项；若后续剧情任务确需 Dialogic Runtime，必须在对应任务中书面更新白名单并重新验证。
+
+### v1.2.0 - 2026-05-14
+
+- 同步 `00-open-questions.md` v1.3.0：Q-15 ~ Q-18 全部定案。
+- 怪物 AI 工具链固定为 LimboAI v1.7.0；主脚本语言固定为 GDScript。
+- 明确第一阶段不接入 Steam SDK，仅支持中文本地化。
+- 固定本机引擎版本为 Godot 4.6.2 stable，并澄清第三方 GDExtension 插件与"不自写第二语言"的边界。
+
+### v1.1.0 - 2026-05-14
+
+- 同步 `game-concept.md` v0.7.0：美术方向定案为 2.5D Live + 厚涂精美二次元风格。
+- 地图与关卡技术约束从最终 `TileMap` 瓦片路线调整为场景嵌套 + 分层 Sprite / Parallax / Collision / Navigation；`TileMap` 仅保留为灰盒辅助。
+- Q-13 / Q-14 从待决项改为已定案项，Q-15 ~ Q-18 继续保留为待用户决策。
 
 ### v1.0.0 - 2026-05-14
 

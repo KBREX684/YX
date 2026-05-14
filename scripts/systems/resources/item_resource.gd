@@ -24,4 +24,4 @@ enum Category {
 @export var rarity: int = 0
 
 ## 可生成的区域 ID 列表（指向关卡子区域；空数组表示全图可生成）。
-@export var spawn_zone_ids: Array[String] = []
+@export var spawn_zone_ids: PackedStringArray = []

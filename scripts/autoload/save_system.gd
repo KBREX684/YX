@@ -10,7 +10,7 @@ const DEFAULT_SLOT := "slot_0"
 
 
 func _ready() -> void:
-	push_warning("SaveSystem: skeleton only, behaviour not implemented (TASK-P0-3).")
+	pass
 
 
 ## 保存当前游戏状态到指定存档槽。

@@ -15,7 +15,7 @@ const BUS_AMBIENT := "Ambient"
 
 
 func _ready() -> void:
-	push_warning("AudioManager: skeleton only, behaviour not implemented (TASK-P0-3).")
+	pass
 
 
 ## 播放 BGM。stream 为 AudioStream 资源；fade_in 单位秒。

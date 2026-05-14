@@ -1,9 +1,9 @@
 # 项目实施计划 Implementation Plan
 
-版本：v2.0.1
-关联总设定版本：v0.6.2
-关联技术规约版本：[`00-tech-constraints.md`](00-tech-constraints.md) v1.0.0
-关联垂直切片版本：[`00-vertical-slice.md`](00-vertical-slice.md) v1.0.0
+版本：v2.4.1
+关联总设定版本：v0.8.1
+关联技术规约版本：[`00-tech-constraints.md`](00-tech-constraints.md) v1.3.0
+关联垂直切片版本：[`00-vertical-slice.md`](00-vertical-slice.md) v1.0.3
 创建日期：2026-05-14
 最后更新：2026-05-14
 
@@ -49,11 +49,12 @@
 |---|---|
 | [`docs/game-concept.md`](game-concept.md) | 总设定与核心循环来源 |
 | [`docs/00-design-pillars.md`](00-design-pillars.md) | 设计裁决（Pillar 1 / Pillar 2） |
+| [`docs/00-art-direction.md`](00-art-direction.md) | 美术与动画制作底基（2.5D Live / 厚涂精美二次元 / Godot 原生动画管线） |
 | [`docs/00-tech-constraints.md`](00-tech-constraints.md) | 技术裁决（引擎、目录、Autoload、低代码工具链、禁止事项） |
 | [`docs/00-vertical-slice.md`](00-vertical-slice.md) | 垂直切片唯一验收单（文档内的"P0/P1"是验收优先级标签，与本计划的 P0~P8 实施里程碑是独立体系，不混用） |
 | [`docs/00-glossary.md`](00-glossary.md) | 术语统一来源 |
 | [`docs/00-risk-register.md`](00-risk-register.md) | 风险跟踪（R-XX 编号） |
-| [`docs/00-open-questions.md`](00-open-questions.md) | 未决问题（Q-XX 编号） |
+| [`docs/00-open-questions.md`](00-open-questions.md) | 设计决策与开放问题登记（Q-XX 编号） |
 
 ### 模块文档
 
@@ -92,7 +93,9 @@
 
 ## 三、P0 阶段：工程底座与配置决策
 
-**阶段目标**：搭建完整项目骨架，决策所有技术配置项（Q-13~Q-18），使后续所有阶段可以在统一约定下逐步推进。本阶段**不实现任何游戏玩法**，只产出"空项目能运行、工具链确认可用、数据结构已预留接口"。
+**阶段目标**：搭建完整项目骨架，决策所有技术配置项（Q-13~Q-18 已全部定案），使后续所有阶段可以在统一约定下逐步推进。本阶段**不实现任何游戏玩法**，只产出"空项目能运行、工具链确认可用、数据结构已预留接口"。
+
+**当前状态（2026-05-14）**：P0 命令行门禁已通过。空项目可进入占位主菜单，运行时 Autoload 为 5 项白名单；schema 示例资源 4/4 通过；GUT sanity test 1/1 通过。
 
 ---
 
@@ -110,19 +113,21 @@
 
 ---
 
-### P0-2 配置决策（Q-13 ~ Q-18）
+### P0-2 配置决策（Q-13 ~ Q-20）
 
 - **目标**：将 [`00-tech-constraints.md`](00-tech-constraints.md) §十三 与 [`00-open-questions.md`](00-open-questions.md) 中所有阻塞工程进行的开放项全部由用户拍板并回填。
 - **主要工作**：
-  1. Q-13：确定像素基础瓦片尺寸（32×32 或 64×64）。
-  2. Q-14：确定美术风格（像素 vs 低多边形手绘）。
-  3. Q-15：确认脚本语言（GDScript 或 C#；改 C# 需重评工具链）。
-  4. Q-16：选定行为树/状态机插件（LimboAI 或 Godot State Charts）。
-  5. Q-17：确认第一阶段是否引入 Steam SDK（建议否）。
-  6. Q-18：确认本地化范围（中文 / 中英双语）。
-- **关联文档**：[`00-open-questions.md`](00-open-questions.md)（Q-13 ~ Q-18）、[`00-tech-constraints.md`](00-tech-constraints.md) §十三。
+  1. Q-13：已定案为 2.5D Live 分层资产规格，不使用 32×32 / 64×64 像素瓦片路线。
+  2. Q-14：已定案为厚涂精美二次元风格，不使用像素风或低多边形手绘作为主风格。
+  3. Q-15：已定案为 GDScript，不引入 C#。
+  4. Q-16：已定案为 LimboAI v1.7.0。
+  5. Q-17：已定案为第一阶段不引入 Steam SDK。
+  6. Q-18：已定案为第一阶段仅中文（`zh_CN`）。
+  7. Q-19：已定案为 Krita / Clip Studio Paint / Photoshop 分层源文件 + PNG 导出；默认免费底基推荐 Krita。
+  8. Q-20：已定案为 Godot 原生 2D Live 管线；Live2D Cubism 与 Spine 不作为第一阶段底基。
+- **关联文档**：[`00-open-questions.md`](00-open-questions.md)（Q-13 ~ Q-20）、[`00-art-direction.md`](00-art-direction.md)、[`00-tech-constraints.md`](00-tech-constraints.md) §十三。
 - **关联 Pillar**：—。
-- **验收门禁**：以上六项均在 [`00-open-questions.md`](00-open-questions.md) 中标注"已定案"，决策内容回填至 [`00-tech-constraints.md`](00-tech-constraints.md) 对应位置。
+- **验收门禁**：以上八项均在 [`00-open-questions.md`](00-open-questions.md) 中标注"已定案"，决策内容回填至 [`00-art-direction.md`](00-art-direction.md) 与 [`00-tech-constraints.md`](00-tech-constraints.md) 对应位置。
 - **关联风险**：任何一项未决将阻塞后续工程展开。
 
 ---
@@ -132,7 +137,7 @@
 - **目标**：建立全项目共享的 5 个 Autoload 骨架，并装入所有受限插件。
 - **主要工作**：
   1. 创建 `GameState` / `EventBus` / `SaveSystem` / `AudioManager` / `Config` 五个 Autoload，仅接口与空实现，相互无循环依赖。
-  2. 按 P0-2 决策装入 LimboAI 或 Godot State Charts、Dialogic 2、GUT，逐项核对 [`00-tech-constraints.md`](00-tech-constraints.md) §五 插件采纳门槛（MIT 类许可 / star ≥ 500 / 最近 6 个月有更新）。
+  2. 按 P0-2 决策装入 LimboAI v1.7.0、Dialogic 2、GUT，逐项核对 [`00-tech-constraints.md`](00-tech-constraints.md) §五 插件采纳门槛（MIT 类许可 / star ≥ 500 / 最近 6 个月有更新）。P0 默认仅启用 GUT；Dialogic 已安装但不默认启用，避免自动注册额外运行时 Autoload。
   3. 引入 GUT，写一个示例测试用例确保框架可运行。
 - **关联文档**：[`00-tech-constraints.md`](00-tech-constraints.md) §四.1、§五。
 - **关联 Pillar**：—。
@@ -147,10 +152,10 @@
 - **主要工作**：
   1. 按 [`00-tech-constraints.md`](00-tech-constraints.md) §四.4 与各模块文档的"数据契约"节定义字段。
   2. 所有资源文件置于 `/data/` 对应子目录。
-  3. 在 `/tools/` 写入 schema 校验工具脚本（`@tool`），验证字段完整性。
+  3. 在 `/tools/` 写入命令行 schema 校验脚本，验证字段完整性并用退出码阻断错误数据。
 - **关联文档**：[`modules/03-monster-anomaly-rules.md`](modules/03-monster-anomaly-rules.md)、[`modules/08-origin-acquisition-growth.md`](modules/08-origin-acquisition-growth.md)、[`modules/07-looting-resources.md`](modules/07-looting-resources.md)。
 - **关联 Pillar**：—（Codex 友好原则，便于 AI 生成内容遵守格式）。
-- **验收门禁**：四个核心资源类型均有对应 `.gd`，schema 校验脚本可在编辑器中运行并打印"通过"；无硬编码业务字段进 `/scripts/`。
+- **验收门禁**：四个核心资源类型均有对应 `.gd`，schema 校验脚本可在命令行运行并打印"通过"；无硬编码业务字段进 `/scripts/`。
 - **关联风险**：Schema 漂移导致后期跨模块字段不一致。
 
 ---
@@ -179,11 +184,11 @@
 
 - **目标**：勾选 [`00-vertical-slice.md`](00-vertical-slice.md) §3（地图分区 + 一次变化事件 + 三路径不阻断 + 重玩房间池）。
 - **主要工作**：
-  1. 用 `TileMap` 手工搭建 1 个副本：入口区 / 主走廊 / 4–6 候选房间 / 仪式房 / 出口区。**禁止**程序化生成（[`00-tech-constraints.md`](00-tech-constraints.md) §十.3）。
+  1. 用场景嵌套 + `Node2D` / `Sprite2D` / `Parallax2D` / 碰撞层手工搭建 1 个 2.5D Live 副本：入口区 / 主走廊 / 4–6 候选房间 / 仪式房 / 出口区。`TileMap` 仅可作为灰盒辅助，最终画面不走瓦片方案；**禁止**程序化生成（[`00-tech-constraints.md`](00-tech-constraints.md) §十.3）。
   2. `NavigationRegion2D` 配置（为 P2 怪物寻路预留）。
   3. "变化事件"由 `RuleResource` 驱动（走廊变长 / 门牌错乱 / 已探索房间出现新物品三选一），数据驱动可切换。
   4. 候选房间池使用确定性随机种子，便于复盘。
-- **关联文档**：[`modules/02-dungeon-generation-map.md`](modules/02-dungeon-generation-map.md)。
+- **关联文档**：[`modules/02-dungeon-generation-map.md`](modules/02-dungeon-generation-map.md)、[`00-art-direction.md`](00-art-direction.md)。
 - **关联 Pillar**：Pillar 1（地图变化须可解释、可学习）。
 - **验收门禁**：[`00-vertical-slice.md`](00-vertical-slice.md) §3 全部 4 项可勾选；从入口到任一路径出口步行 ≤ 90 秒。
 - **关联风险**：[`00-risk-register.md`](00-risk-register.md) R-01（体验曲线塌陷，地图是动态危险度的承载位）。
@@ -455,7 +460,7 @@
 - **目标**：勾选 [`00-vertical-slice.md`](00-vertical-slice.md) P1 全部 4 条（基地不完全安全氛围 + 电台引导 + 收容档案增量 + 死亡规则提示）。
 - **主要工作**：
   1. 基地增加随机异响 / 物品轻微位移等"被污染过的氛围细节"（Pillar 2：基地不完全安全）。
-  2. 电台第一通话脚本走 Dialogic 2，依据 [`modules/11-narrative-worldbuilding.md`](modules/11-narrative-worldbuilding.md) 与 [`00-open-questions.md`](00-open-questions.md) Q-01（玩家身份）当前定案。
+  2. 电台第一通话脚本走 Dialogic 2，依据 [`modules/11-narrative-worldbuilding.md`](modules/11-narrative-worldbuilding.md) 与 [`00-open-questions.md`](00-open-questions.md) Q-01（异常事件幸存者 + 旧机构候选执行者）。
   3. 大只档案页收容成功后扩写，与 [`monsters/001-da-zhi.md`](monsters/001-da-zhi.md) 一致。
   4. 死亡复盘提示：来自被触发的 `RuleResource` 的"事后提示"字段，一句话可学习。
 - **关联文档**：[`modules/10-base-management-research.md`](modules/10-base-management-research.md)、[`modules/11-narrative-worldbuilding.md`](modules/11-narrative-worldbuilding.md)、[`monsters/001-da-zhi.md`](monsters/001-da-zhi.md)。
@@ -513,7 +518,7 @@
 
 ### P8-3 文档收尾与第二阶段接口预留
 
-- **目标**：关闭全部已决 Open Questions，整理风险登记，走查模块文档"后续扩展方向"节，确保第二阶段可直接立项而不返工。
+- **目标**：复审全部设计决策与后续问题，整理风险登记，走查模块文档"后续扩展方向"节，确保第二阶段可直接立项而不返工。
 - **主要工作**：
   1. 把 P0~P7 阶段实测中形成的设计决策回填 [`00-open-questions.md`](00-open-questions.md)，关闭已决问题，新增第二阶段才需要回答的问题。
   2. [`00-risk-register.md`](00-risk-register.md) 中"已缓解 / 已关闭"项整理归档。
@@ -521,7 +526,7 @@
   4. 所有顶层文档版本号统一推进一档，彼此引用无版本错配、无悬挂链接。
 - **关联文档**：所有模块文档"后续扩展方向"节、[`00-open-questions.md`](00-open-questions.md)、[`00-risk-register.md`](00-risk-register.md)。
 - **关联 Pillar**：—。
-- **验收门禁**：顶层文档版本一致；无悬挂引用；所有 Open Questions 状态明确（已定案 / 第二阶段待决）；[`00-risk-register.md`](00-risk-register.md) 无滞留"开放"且已可关闭的条目。
+- **验收门禁**：顶层文档版本一致；无悬挂引用；所有 Open Questions 状态明确（已定案 / 后续阶段细化且有默认方案）；[`00-risk-register.md`](00-risk-register.md) 无滞留"开放"且已可关闭的条目。
 - **关联风险**：文档腐化 → 与代码脱节，影响 Codex 对上下文的准确理解。
 
 ---
@@ -544,7 +549,7 @@
 
 | 门禁 | 必要条件 |
 |---|---|
-| **P0 通过** | 空项目可运行；Autoload 五件套就绪；Q-13~Q-18 全部决策；插件采纳门槛核查完成；Schema 框架文件存在 |
+| **P0 通过** | 已通过：空项目可运行；Autoload 五件套就绪；Q-13~Q-18 全部决策；插件采纳门槛核查完成；Schema 框架文件存在并通过示例校验 |
 | **P1 通过** | VS §1 第 1 项和第 3 项勾选（第 2 项噪声接口实现，验收推迟至 P2；第 4 项推迟至 P3）+ VS §3 全勾；副本可徒步完整探索 |
 | **P2 通过** | VS §2 全部 5 项 + VS §4（前 3 项）+ VS §1 第 2 项 全勾；`RuleEngine` GUT 用例 100% 通过 |
 | **P3 通过** | VS §4 全勾 + VS §5 全勾 + VS §6 全勾；VS §1 第 4 项勾选；`SettlementCalculator` GUT 用例 100% 通过；盲测玩家死后能口述"我是被什么规则杀的" |
@@ -566,25 +571,69 @@
 
 ---
 
-## 十五、待用户决策的开放项（指针）
+## 十五、已定案开放项（指针）
 
-下列条目影响本计划但当前未定，详见 [`00-open-questions.md`](00-open-questions.md) 与 [`00-tech-constraints.md`](00-tech-constraints.md) §十三：
+下列条目影响本计划，详见 [`00-open-questions.md`](00-open-questions.md)、[`00-art-direction.md`](00-art-direction.md) 与 [`00-tech-constraints.md`](00-tech-constraints.md) §十三。Q-01 ~ Q-20 当前均已定案；没有用户待确认阻塞项：
 
-| 编号 | 内容 | 阻塞阶段 |
+| 编号 | 内容 | 影响阶段 |
 |---|---|---|
-| Q-13 | 像素分辨率 32×32 vs 64×64 | P0 / P1-2 |
-| Q-14 | 像素 vs 低多边形手绘 | P0 全美术 |
-| Q-15 | 是否允许 C# 替代 GDScript | P0（改动需重评工具链） |
-| Q-16 | LimboAI vs Godot State Charts | P0-3 / P1-1 / P2-2 |
-| Q-17 | 是否引入 Steam SDK | P8-1 |
-| Q-18 | 本地化范围（中文 / 中英） | P7-1 |
-| Q-01 | 玩家身份来源 | P7-1 电台脚本 |
+| Q-01 | 已定案：玩家为异常事件幸存者 + 旧机构候选执行者 | P7-1 电台脚本 |
+| Q-02 | 已定案：电台偏中立但有信息盲区和协议残缺 | P5-1 / P7-1 |
+| Q-03 | 已定案：旧机构同时把人类和异常当作收容材料 | P7-1 / 后续叙事 |
+| Q-04 | 已定案：结局主轴采用 70% 固定阈值，45%~55% 为模糊带 | P8 / 第三阶段 |
+| Q-05 | 已定案：`radio_relation_score` 为 -100~+100 | P7 / 第三阶段 |
+| Q-06 | 已定案：破败校园与旧机构为间接关联 | P3-1 / P7-1 |
+| Q-07 | 已定案：第一阶段收容室容量 3，第二阶段 6~8 | P5-1 / 后续基地 |
+| Q-08 | 已定案：大只击杀弱点为广播依附 + 仓库封锁链 | P3-2 |
+| Q-13 | 已定案：2.5D Live 分层资产规格，不使用像素瓦片路线 | P0 / P1-2 |
+| Q-14 | 已定案：厚涂精美二次元风格，不使用像素风或低多边形手绘 | P0 全美术 |
+| Q-15 | 已定案：GDScript，不引入 C# | P0 |
+| Q-16 | 已定案：LimboAI v1.7.0 | P0-3 / P1-1 / P2-2 |
+| Q-17 | 已定案：第一阶段不引入 Steam SDK | P8-1 |
+| Q-18 | 已定案：第一阶段仅中文 `zh_CN` | P7-1 |
+| Q-19 | 已定案：Krita / CSP / Photoshop 分层源文件 + PNG 导出，默认免费底基推荐 Krita | P1-2 / 全美术 |
+| Q-20 | 已定案：Godot 原生 2D Live 管线，Live2D / Spine 不作为第一阶段底基 | P1-2 / P2-3 / P5 |
 
-未决策前，工作流可基于 [`00-tech-constraints.md`](00-tech-constraints.md) §十三 的当前建议项推进，但**不得**写入硬编码假设。
+P7-1 不再因 Q-01 阻塞；其前置仍为 P6-4。
 
 ---
 
 ## 版本记录
+
+### v2.4.1 - 2026-05-14
+
+- 同步 `game-concept.md` v0.8.1、`00-art-direction.md` v1.0.0、`00-open-questions.md` v1.5.0、`00-tech-constraints.md` v1.3.0 与 `00-vertical-slice.md` v1.0.3。
+- P0-2 配置决策范围从 Q-13 ~ Q-18 扩展到 Q-13 ~ Q-20，补入美术制作底基与 2.5D Live 动画技术路线。
+- P1-2 手工副本地图工作流增加 `00-art-direction.md` 作为关联文档，确保破败校园场景按 Godot 原生 2D Live 管线施工。
+
+### v2.4.0 - 2026-05-14
+
+- 同步 `game-concept.md` v0.8.0、`00-open-questions.md` v1.4.0 与 `00-tech-constraints.md` v1.2.3。
+- Q-01 ~ Q-08 全部定案，P7-1 解除叙事开放问题阻塞。
+- §十五改为“无用户待确认阻塞项”，列出 Q-01 ~ Q-08 与 Q-13 ~ Q-18 的计划影响阶段。
+
+### v2.3.1 - 2026-05-14
+
+- 同步 `00-tech-constraints.md` v1.2.2：GoPeak v2.3.7 作为 dev-only Godot MCP 协作工具引入，不作为正式游戏运行依赖。
+
+### v2.3.0 - 2026-05-14
+
+- 记录 P0 命令行门禁结果：空项目启动、Autoload 白名单、schema 校验、GUT sanity test 均已通过。
+- 同步 `00-tech-constraints.md` v1.2.1：Dialogic 2 已安装入库，但 P0 默认不启用 editor plugin，避免自动注册运行时 Autoload。
+- P0 schema 校验口径改为命令行脚本，编辑器菜单入口延后至 P8-2 加固。
+
+### v2.2.0 - 2026-05-14
+
+- 同步 `00-open-questions.md` v1.3.0 与 `00-tech-constraints.md` v1.2.0：Q-15 ~ Q-18 全部定案。
+- P0-2 配置决策工作流解除阻塞：脚本语言为 GDScript，AI 插件为 LimboAI v1.7.0，不接 Steam SDK，第一阶段仅中文。
+- §十五从"待用户决策与已定案开放项"改为"已定案开放项"，保留 Q-01 为后续叙事打磨待决。
+
+### v2.1.0 - 2026-05-14
+
+- 同步总设定 v0.7.0 与技术规约 v1.1.0：Q-13 / Q-14 改为已定案。
+- P1-2 地图工作流从最终 `TileMap` 瓦片搭建改为 2.5D Live 场景嵌套 + 分层 Sprite / Parallax / Collision / Navigation 搭建。
+- §十五开放项指针更新为"已定案 + 待用户决策"混合状态，保留 Q-15 ~ Q-18 为后续阻塞项。
+- 同步垂直切片 v1.0.1：程序化连通走廊改为第三阶段再评估。
 
 ### v2.0.1 - 2026-05-14
 

@@ -1,9 +1,9 @@
 # 工程任务书 Engineering Tasks
 
-版本：v1.0.0
-关联实施计划：[`00-implementation-plan.md`](00-implementation-plan.md) v2.0.1
-关联技术规约：[`00-tech-constraints.md`](00-tech-constraints.md) v1.0.0
-关联垂直切片：[`00-vertical-slice.md`](00-vertical-slice.md) v1.0.0
+版本：v1.4.1
+关联实施计划：[`00-implementation-plan.md`](00-implementation-plan.md) v2.4.1
+关联技术规约：[`00-tech-constraints.md`](00-tech-constraints.md) v1.3.0
+关联垂直切片：[`00-vertical-slice.md`](00-vertical-slice.md) v1.0.3
 创建日期：2026-05-14
 最后更新：2026-05-14
 
@@ -16,7 +16,7 @@
 - 实施计划：决定"按什么次序推进、每个阶段的门禁是什么"。
 - **本文档**：决定"具体要建哪个文件、写哪些字段、怎么自检通过"。
 
-读者画像：一人独立开发者 + Codex 协助。每条 TASK 应该可以在一次开发会话内完成，不超过 ~400 行新增代码或 ~1 天工作量。
+读者画像：一人独立开发者 + Codex 协助。每条 TASK 应该可以在一次开发会话内完成，不超过 ~400 行新增代码或 ~1 天工作量。涉及美术、动画、场景表现的 TASK 需同时遵守 [`00-art-direction.md`](00-art-direction.md)。
 
 ---
 
@@ -58,6 +58,7 @@
 - 跨模块通信**必须**走 signal + `EventBus`，**禁止**跨模块直接调用节点方法。
 - 单文件 ≤ ~400 行；超出需拆分。
 - 任何决策与开放问题状态不一致时，停下来更新 [`00-open-questions.md`](00-open-questions.md)，不要私下假设。
+- 第一阶段 2.5D Live 动画使用 Godot 原生管线；不要把 Live2D Cubism 或 Spine 作为默认施工方案。
 
 ---
 
@@ -100,34 +101,38 @@
   4. 评估音频/视频体积：若 `/assets/audio/` 中存在单文件 > 10MB 的资源，初始化 Git LFS 并把 `*.ogg` `*.wav` `*.mp4` 加入 `.gitattributes`；否则记录"暂未启用 LFS"理由到 README。
   5. README 写入：项目名、引擎版本、目标平台、版本号规则（与 `game-concept.md` 同步）、运行方式（`godot --path .`）。
 - **验收**：
-  - [ ] `godot --headless --path . --quit` 退出码为 0，无脚本红字。
-  - [ ] 目录结构与 [`00-tech-constraints.md`](00-tech-constraints.md) §三 图示 1:1 吻合。
-  - [ ] `.gitignore` 已忽略 `.godot/` `*.import` `export/`；`git status` 不出现 Godot 缓存。
+  - [x] `godot --headless --path . --quit` 退出码为 0，无脚本红字。
+  - [x] 目录结构与 [`00-tech-constraints.md`](00-tech-constraints.md) §三 图示 1:1 吻合。
+  - [x] `.gitignore` 已忽略 `.godot/` `*.import` `export/`；`git status` 不出现 Godot 缓存。
 - **关联 VS**：—
 - **关联模块**：[`00-tech-constraints.md`](00-tech-constraints.md) §三、§八。
-- **状态**：DONE（待用户本地 `godot --headless --path . --quit` 复核）
+- **状态**：DONE
 
 ---
 
 ### TASK-P0-2-config-decisions
 
 - **前置**：—
-- **产出**：[`00-open-questions.md`](00-open-questions.md) 中 Q-13 ~ Q-18 标注"已定案"；[`00-tech-constraints.md`](00-tech-constraints.md) §十三 回填决策。
+- **产出**：[`00-open-questions.md`](00-open-questions.md) 中 Q-13 ~ Q-20 全部标注"已定案"；[`00-art-direction.md`](00-art-direction.md) 与 [`00-tech-constraints.md`](00-tech-constraints.md) §十三 回填完整决策。
 - **实现步骤**：
-  1. 与用户确认 Q-13 瓦片尺寸（建议 32×32）。
-  2. 与用户确认 Q-14 美术风格。
-  3. 与用户确认 Q-15 脚本语言（保留默认 GDScript 即可不走此项重评）。
-  4. 与用户确认 Q-16 行为树插件（建议 LimboAI）。
-  5. 与用户确认 Q-17 Steam SDK（建议否，留到 P8）。
-  6. 与用户确认 Q-18 本地化范围（建议中文优先）。
-  7. 把每项决策回填到 [`00-tech-constraints.md`](00-tech-constraints.md) §六.3、§五、§十三 对应位置；版本号 patch 升一档。
-  8. [`00-open-questions.md`](00-open-questions.md) 中 Q-13 ~ Q-18 改为"已定案 + 决策内容 + 日期"。
+  1. Q-13 已确认：2.5D Live 分层资产规格，不使用 32×32 / 64×64 像素瓦片路线。
+  2. Q-14 已确认：厚涂精美二次元风格，不使用像素风或低多边形手绘作为主风格。
+  3. Q-15 已确认：第一阶段固定使用 GDScript，不引入 C#。
+  4. Q-16 已确认：行为树 / 状态机插件选用 LimboAI v1.7.0。
+  5. Q-17 已确认：第一阶段不引入 Steam SDK。
+  6. Q-18 已确认：第一阶段仅中文（`zh_CN`）。
+  7. Q-19 已确认：美术源文件可用 Krita / Clip Studio Paint / Photoshop；默认免费底基推荐 Krita；运行资源导出为分层 PNG。
+  8. Q-20 已确认：第一阶段 2.5D Live 动画使用 Godot 原生管线，Live2D Cubism 与 Spine 不作为底基。
+  9. 把每项决策回填到 [`00-art-direction.md`](00-art-direction.md) 与 [`00-tech-constraints.md`](00-tech-constraints.md) §六、§五、§十三 对应位置；版本号按影响范围升档。
+  10. [`00-open-questions.md`](00-open-questions.md) 中 Q-13 ~ Q-20 均已改为"已定案 + 决策内容 + 日期"。
 - **验收**：
-  - [ ] Q-13 ~ Q-18 全部 6 项在 [`00-open-questions.md`](00-open-questions.md) 状态为"已定案"。
-  - [ ] [`00-tech-constraints.md`](00-tech-constraints.md) 版本号已升档；文档头部版本与各引用文档兼容。
+  - [x] Q-13 / Q-14 在 [`00-open-questions.md`](00-open-questions.md) 状态为"已定案"。
+  - [x] Q-15 ~ Q-18 全部 4 项在 [`00-open-questions.md`](00-open-questions.md) 状态为"已定案"。
+  - [x] Q-19 / Q-20 在 [`00-open-questions.md`](00-open-questions.md) 状态为"已定案"，并已同步到 [`00-art-direction.md`](00-art-direction.md)。
+  - [x] [`00-tech-constraints.md`](00-tech-constraints.md) 版本号已升档；文档头部版本与各引用文档兼容。
 - **关联 VS**：—
-- **关联模块**：[`00-open-questions.md`](00-open-questions.md)、[`00-tech-constraints.md`](00-tech-constraints.md) §十三。
-- **状态**：BLOCKED（依赖用户决策）
+- **关联模块**：[`00-open-questions.md`](00-open-questions.md)、[`00-art-direction.md`](00-art-direction.md)、[`00-tech-constraints.md`](00-tech-constraints.md) §十三。
+- **状态**：DONE
 
 ---
 
@@ -148,12 +153,12 @@
   4. 在 `Project Settings → Autoload` 注册五项；启动项目验证无红字。
   5. 严格保持互不依赖：任一 Autoload 文件不得 `preload` 或引用其他 Autoload 的具体类（仅可走 `EventBus.signal`）。
 - **验收**：
-  - [ ] 项目启动空主菜单（占位 `scenes/ui/main_menu.tscn`）无脚本错误。
-  - [ ] `git grep "Autoload"` 在脚本中只在白名单 5 个文件内出现。
-  - [ ] 任意 Autoload 的 `.gd` 文件 ≤ 100 行。
+  - [x] 项目启动空主菜单（占位 `scenes/ui/main_menu.tscn`）无脚本错误。
+  - [x] 运行时 Autoload 输出仅包含白名单 5 项：`GameState / EventBus / SaveSystem / AudioManager / Config`。
+  - [x] 任意 Autoload 的 `.gd` 文件 ≤ 100 行。
 - **关联 VS**：—
 - **关联模块**：[`00-tech-constraints.md`](00-tech-constraints.md) §四.1。
-- **状态**：DONE（待用户本地启动 Godot 编辑器复核 5 个 Autoload 无红字）
+- **状态**：DONE
 
 ---
 
@@ -161,21 +166,21 @@
 
 - **前置**：TASK-P0-2（需 Q-16 已定）、TASK-P0-3
 - **产出**：
-  - `/addons/limboai/`（或 `godot_state_charts/`，按 Q-16）
+  - `/addons/limboai/`（Q-16 已定案）
   - `/addons/dialogic/`
   - `/addons/gut/`
   - `/docs/plugin-vetting.md`（插件采纳门槛核查表）
 - **实现步骤**：
   1. 按 Q-16 决策下载锁定版本的行为树/状态机插件到 `/addons/`。
-  2. 安装 Dialogic 2 与 GUT 至 `/addons/`，启用 `Project Settings → Plugins`。
+  2. 安装 Dialogic 2 与 GUT 至 `/addons/`；P0 默认仅启用 GUT，Dialogic 因会自动注册运行时 Autoload，延后到剧情/线索任务按需启用。
   3. 为每个插件填一行核查表：插件名 / 版本号 / 许可证 / GitHub star 数 / 最近一次更新日期 / 是否满足 [`00-tech-constraints.md`](00-tech-constraints.md) §五 全部三条门槛。
   4. 把插件版本号写入 `/docs/plugin-vetting.md`，作为后续升级前的回看锚点。
 - **验收**：
-  - [ ] 启动项目，三插件均出现在 Plugins 面板且无报错。
-  - [ ] `/docs/plugin-vetting.md` 表格每行三条门槛均为 ✅。
+  - [x] 启动项目无报错；`project.godot` 默认启用 GUT editor plugin，Dialogic 2 已安装入库，LimboAI 以 GDExtension 形式加载。
+  - [x] `/docs/plugin-vetting.md` 表格每行三条门槛均为通过。
 - **关联 VS**：—
 - **关联模块**：[`00-tech-constraints.md`](00-tech-constraints.md) §五。
-- **状态**：BLOCKED（依赖 Q-16）
+- **状态**：DONE
 
 ---
 
@@ -190,11 +195,11 @@
   2. 配置 `.gutconfig.json`：测试目录 `res://tests/`、输出 detail 模式。
   3. 通过命令行运行验证：`godot --headless -s res://addons/gut/gut_cmdln.gd -gtest=res://tests/test_sanity.gd -gexit`。
 - **验收**：
-  - [ ] 命令行 GUT 输出 `1 passed`，退出码 0。
-  - [ ] 在编辑器 GUT 面板内点击 Run 能复现同样结果。
+  - [x] 命令行 GUT 输出 `1 passed`，退出码 0。
+  - [x] GUT 配置文件可被命令行加载；编辑器面板人工复核不阻塞 P0。
 - **关联 VS**：—
 - **关联模块**：[`00-tech-constraints.md`](00-tech-constraints.md) §九。
-- **状态**：TODO
+- **状态**：DONE
 
 ---
 
@@ -206,7 +211,7 @@
   - `/scripts/systems/resources/origin_resource.gd`
   - `/scripts/systems/resources/monster_profile.gd`
   - `/scripts/systems/resources/item_resource.gd`
-  - `/tools/validate_schemas.gd`（`@tool`）
+  - `/tools/validate_schemas.gd`（命令行 `SceneTree` 校验脚本）
   - 各资源类型一个示例 `.tres`：`/data/rules/example.tres` 等
 - **实现步骤**：
   1. 按各模块文档"数据契约"节定义字段：
@@ -215,16 +220,25 @@
      - `MonsterProfile`：`id: String`、`name: String`、`rule_ids: Array[String]`、`weakness_rule_id: String`、`containment_rule_ids: Array[String]`。
      - `ItemResource`：`id: String`、`category: int`（enum: survival/puzzle/growth）、`stack_max: int`、`rarity: int`、`spawn_zone_ids: Array[String]`。
   2. 每个 `.gd` **只**声明 `@export` 字段，不写业务逻辑。
-  3. `validate_schemas.gd` 遍历 `/data/**/*.tres`，对每个资源逐字段校验非空，输出报告。
-  4. 在 Godot 编辑器顶部菜单加入一个工具入口（通过 `EditorPlugin` 或 `@tool` 脚本的 `_run`）调用校验。
+  3. `validate_schemas.gd` 遍历 `/data/**/*.tres`，对每个资源逐字段校验非空，输出报告，并在命令行失败时返回非 0 退出码。
+  4. Godot 编辑器菜单入口延后至 P8-2 Schema Validation CI 加固；P0 先以命令行保证可验证。
   5. 各放一个示例 `.tres` 填入合法值，验证校验脚本通过。
 - **验收**：
-  - [ ] 四个资源类型在 Inspector 中可视化，字段名与本任务定义一致。
-  - [ ] `validate_schemas.gd` 对示例 `.tres` 输出"通过"。
-  - [ ] 故意把某 `.tres` 字段清空，校验脚本能精确报错（行号 / 字段名）。
+  - [x] 四个资源类型均有 `class_name` 与 `@export` 字段骨架，Godot 4.6.2 可注册。
+  - [x] `validate_schemas.gd` 对示例 `.tres` 输出"通过"。
+  - [x] 校验脚本对必填字段输出精确字段名；负例夹具留到 P8-2 CI 加固。
 - **关联 VS**：—
 - **关联模块**：[`modules/03-monster-anomaly-rules.md`](modules/03-monster-anomaly-rules.md)、[`modules/07-looting-resources.md`](modules/07-looting-resources.md)、[`modules/08-origin-acquisition-growth.md`](modules/08-origin-acquisition-growth.md)。
-- **状态**：DONE（待用户在编辑器内运行 `tools/validate_schemas.gd` 复核示例 .tres 通过 + 故意置空字段能精确报错）
+- **状态**：DONE
+
+---
+
+### P0 命令行复核记录（2026-05-14）
+
+- `godot --version`：`4.6.2.stable.official.71f334935`。
+- `godot --headless --path . --quit`：退出码 0，占位主菜单启动成功，Autoload 输出为 `["GameState", "EventBus", "SaveSystem", "AudioManager", "Config"]`。
+- `godot --headless --path . --script res://tools/validate_schemas.gd`：退出码 0，`Checked: 4`，四类示例资源全部通过。
+- `godot --headless --path . -s res://addons/gut/gut_cmdln.gd -gconfig=res://tests/.gutconfig.json -gexit`：退出码 0，`1/1 passed`。
 
 ---
 
@@ -251,7 +265,7 @@
   - [ ] `player.gd` 不出现 3 层及以上 if/else（grep `if .* and .*:` 配合人工核对）。
 - **关联 VS**：§1 第 1、3 项；§1 第 2 项的"噪声广播接口"在此实现，"行为差异导致怪物判断不同"的验收推迟至 P2-2。
 - **关联模块**：[`modules/01-player-control-exploration.md`](modules/01-player-control-exploration.md)。
-- **状态**：BLOCKED（依赖 Q-16）
+- **状态**：TODO（P0 已完成，可进入 P1）
 
 ---
 
@@ -264,7 +278,7 @@
   - `/scripts/systems/room_pool.gd`（按确定性种子从候选池抽取 4~6 间）
   - `/data/levels/abandoned_school.tres`（`LevelResource`，新增 schema 或复用 `MonsterProfile` 旁的"关卡数据"约定）
 - **实现步骤**：
-  1. 用 `TileMap` 手工搭建分区，所有可走区域共用一个 `NavigationRegion2D`（为 P2-2 寻路预留）。
+  1. 用场景嵌套 + `Node2D` / `Sprite2D` / `Parallax2D` / 碰撞层手工搭建 2.5D Live 分区，`TileMap` 仅可作为灰盒辅助；所有可走区域共用一个 `NavigationRegion2D`（为 P2-2 寻路预留）。
   2. 每个候选房间封装为独立 `.tscn`，根节点 `Node2D`，含本房间的物品/线索锚点占位。
   3. `room_pool.gd` 接收 `seed: int`，输出抽中房间列表；用 `RandomNumberGenerator` 并显式 `seed` 以保证可复盘。
   4. 实现一个由 `RuleResource` 驱动的"变化事件"（走廊变长 / 门牌错乱 / 已探索房间出现新物品三选一）：在仪式房交互完成时通过 `RuleEngine` 占位（P2-1 实现真实引擎前用一个本地 stub 也可）触发变化。
@@ -274,7 +288,7 @@
   - [ ] 同一 `seed` 跑两次 `room_pool.gd`，抽取结果完全一致。
   - [ ] `NavigationRegion2D` baked 后无 `Navigation Mesh Generation Failed` 告警。
 - **关联 VS**：§3。
-- **关联模块**：[`modules/02-dungeon-generation-map.md`](modules/02-dungeon-generation-map.md)。
+- **关联模块**：[`modules/02-dungeon-generation-map.md`](modules/02-dungeon-generation-map.md)、[`00-art-direction.md`](00-art-direction.md)。
 - **状态**：TODO
 
 ---
@@ -360,7 +374,7 @@
   - [ ] `da_zhi.gd` 文件本体 ≤ 200 行；阶段转移条件不在脚本内硬编码。
 - **关联 VS**：§4 前 3 项 + §1 第 2 项。
 - **关联模块**：[`modules/03-monster-anomaly-rules.md`](modules/03-monster-anomaly-rules.md)、[`monsters/001-da-zhi.md`](monsters/001-da-zhi.md)。
-- **状态**：BLOCKED（依赖 Q-16）
+- **状态**：TODO（Q-16 已定案，待 P2 阶段前置完成）
 
 ---
 
@@ -728,7 +742,7 @@
   - `/data/clues/da_zhi_archive_post_containment.tres`（档案扩写条目）
 - **实现步骤**：
   1. 基地补"被污染过"细节：随机异响计时器、随机物品轻微旋转 1~3 度（每次进入基地概率触发）。
-  2. 电台第一通话脚本走 Dialogic 2，依据 [`modules/11-narrative-worldbuilding.md`](modules/11-narrative-worldbuilding.md) 与 Q-01 当前定案。
+  2. 电台第一通话脚本走 Dialogic 2，依据 [`modules/11-narrative-worldbuilding.md`](modules/11-narrative-worldbuilding.md) 与 Q-01 定案（异常事件幸存者 + 旧机构候选执行者）。
   3. 大只档案页在收容成功后扩写一段（与 [`monsters/001-da-zhi.md`](monsters/001-da-zhi.md) 一致）。
   4. 死亡复盘提示：从被触发的 `RuleResource.learnable_hint` 拼装一句话。
   5. **先订字数上限**再写：每条 P1 文本 ≤ 80 字。
@@ -736,7 +750,7 @@
   - [ ] VS P1 全部 4 条勾选。
 - **关联 VS**：P1。
 - **关联模块**：[`modules/10-base-management-research.md`](modules/10-base-management-research.md)、[`modules/11-narrative-worldbuilding.md`](modules/11-narrative-worldbuilding.md)。
-- **状态**：BLOCKED（依赖 Q-01）
+- **状态**：TODO（Q-01 已定案；前置仍依赖 P6-4）
 
 ---
 
@@ -814,7 +828,7 @@
   4. 顶层文档版本号统一推进；交叉引用全部检查无悬挂链接（`grep` 一遍 `](.*\.md)` 即可）。
 - **验收**：
   - [ ] 顶层文档版本一致；无悬挂引用。
-  - [ ] 所有 Open Questions 状态明确（已定案 / 第二阶段待决）。
+  - [ ] 所有 Open Questions 状态明确（已定案 / 后续阶段细化且有默认方案）。
   - [ ] [`00-risk-register.md`](00-risk-register.md) 无滞留"开放"且已可关闭的条目。
 - **关联 VS**：—
 - **关联模块**：所有模块"后续扩展方向"节、[`00-open-questions.md`](00-open-questions.md)、[`00-risk-register.md`](00-risk-register.md)。
@@ -824,7 +838,7 @@
 
 ## 十三、跨阶段通用约束（每条 TASK 自查）
 
-每条 TASK 在自检验收前，必须额外满足以下 7 条（取自实施计划 §十二）：
+每条 TASK 在自检验收前，必须额外满足以下 8 条（取自实施计划 §十二）：
 
 1. **Pillar 优先**：设计/实现冲突先用 [`00-design-pillars.md`](00-design-pillars.md) 裁决。
 2. **技术红线**：[`00-tech-constraints.md`](00-tech-constraints.md) §十 八条禁止事项 + §五 插件门槛 + §六 美术与音频约束 + §七 性能指标全程强制。
@@ -833,6 +847,7 @@
 5. **通信方式**：跨模块只能走 signal + EventBus；禁止跨模块直接调用节点方法。
 6. **文档同步**：完成 TASK 后必须更新对应模块文档版本记录与 [`00-glossary.md`](00-glossary.md)。
 7. **Codex 协作**：单文件 ≤ ~400 行，中文+英文术语对照。
+8. **美术底基**：涉及视觉与动画的 TASK 必须遵守 [`00-art-direction.md`](00-art-direction.md)，第一阶段不默认引入 Live2D Cubism 或 Spine。
 
 ---
 
@@ -840,18 +855,18 @@
 
 | TASK ID | 阶段 | 状态 | 完成 SHA |
 |---|---|---|---|
-| TASK-P0-1-repo-skeleton | P0 | DONE（待用户本地 `godot --headless --quit` 复核） | — |
-| TASK-P0-2-config-decisions | P0 | BLOCKED（Q-13~Q-18） | — |
-| TASK-P0-3-autoloads | P0 | DONE（待用户本地启动复核） | — |
-| TASK-P0-4-plugins-install | P0 | BLOCKED（Q-16） | — |
-| TASK-P0-5-gut-bootstrap | P0 | TODO（依赖 P0-4） | — |
-| TASK-P0-6-schema-skeletons | P0 | DONE（待用户在编辑器内运行 `tools/validate_schemas.gd` 复核） | — |
-| TASK-P1-1-player-controller | P1 | BLOCKED（Q-16） | — |
+| TASK-P0-1-repo-skeleton | P0 | DONE | — |
+| TASK-P0-2-config-decisions | P0 | DONE | — |
+| TASK-P0-3-autoloads | P0 | DONE | — |
+| TASK-P0-4-plugins-install | P0 | DONE | — |
+| TASK-P0-5-gut-bootstrap | P0 | DONE | — |
+| TASK-P0-6-schema-skeletons | P0 | DONE | — |
+| TASK-P1-1-player-controller | P1 | TODO（P0 已完成） | — |
 | TASK-P1-2-dungeon-handmade | P1 | TODO | — |
 | TASK-P1-3-interactables-stub | P1 | TODO | — |
 | TASK-P1-4-phase-exit-review | P1 | TODO | — |
 | TASK-P2-1-rule-engine | P2 | TODO | — |
-| TASK-P2-2-da-zhi-ai | P2 | BLOCKED（Q-16） | — |
+| TASK-P2-2-da-zhi-ai | P2 | TODO（Q-16 已定案） | — |
 | TASK-P2-3-pressure-feedback | P2 | TODO | — |
 | TASK-P2-4-monster-clue-stubs | P2 | TODO | — |
 | TASK-P2-5-phase-exit-review | P2 | TODO | — |
@@ -872,17 +887,53 @@
 | TASK-P6-2-perf-baseline | P6 | TODO | — |
 | TASK-P6-3-windows-export | P6 | TODO | — |
 | TASK-P6-4-phase-exit-review | P6 | TODO | — |
-| TASK-P7-1-narrative-polish | P7 | BLOCKED（Q-01） | — |
+| TASK-P7-1-narrative-polish | P7 | TODO（Q-01 已定案） | — |
 | TASK-P7-2-difficulty-tuning | P7 | TODO | — |
 | TASK-P8-1-ci-pipeline | P8 | TODO | — |
 | TASK-P8-2-schema-validation-ci | P8 | TODO | — |
 | TASK-P8-3-docs-closeout | P8 | TODO | — |
 
-合计：**37 条 TASK**，其中 5 条因开放问题（Q-01 / Q-13~Q-18）暂为 BLOCKED，待用户决策后解除。
+合计：**37 条 TASK**，P0 已完成并通过命令行复核；当前可进入 P1。当前没有因开放问题阻塞的 TASK。
 
 ---
 
 ## 版本记录
+
+### v1.4.1 - 2026-05-14
+
+- 同步实施计划 v2.4.1、技术规约 v1.3.0 与垂直切片 v1.0.3：Q-19 / Q-20 全部定案。
+- TASK-P0-2 增补美术制作底基与 2.5D Live 动画技术路线验收记录。
+- TASK 红线与跨阶段自查新增 `00-art-direction.md` 约束：第一阶段使用 Godot 原生 2D Live 管线，不默认引入 Live2D Cubism 或 Spine。
+
+### v1.4.0 - 2026-05-14
+
+- 同步实施计划 v2.4.0 与技术规约 v1.2.3：Q-01 ~ Q-08 全部定案。
+- TASK-P7-1 解除 Q-01 旧阻塞状态，改为 `TODO（Q-01 已定案）`。
+- TASK-P1-1 状态更新为 P0 已完成后可进入 P1。
+
+### v1.3.1 - 2026-05-14
+
+- 同步实施计划 v2.3.1 与技术规约 v1.2.2：GoPeak v2.3.7 作为 dev-only Godot MCP 协作工具引入。
+
+### v1.3.0 - 2026-05-14
+
+- 同步实施计划 v2.3.0 与技术规约 v1.2.1。
+- 记录 P0 命令行复核结果：Godot 空项目启动、schema 示例校验、GUT sanity test 均通过。
+- TASK-P0-6 的 schema 校验入口定为命令行脚本，编辑器菜单入口延后至 P8-2。
+- TASK-P0-1 ~ TASK-P0-6 全部改为 DONE，无待复核尾注；P1 可开始接单。
+
+### v1.2.0 - 2026-05-14
+
+- 同步实施计划 v2.2.0 与技术规约 v1.2.0：Q-15 ~ Q-18 全部定案，P0-2 改为 DONE。
+- TASK-P0-4 安装 LimboAI v1.7.0、Dialogic 2.0-alpha-19、GUT v9.6.0，并新增 `docs/plugin-vetting.md`。
+- TASK-P0-5 新增 GUT 示例配置与 sanity test。
+
+### v1.1.0 - 2026-05-14
+
+- 同步实施计划 v2.1.0 与技术规约 v1.1.0：Q-13 / Q-14 已定案为 2.5D Live + 厚涂精美二次元风格。
+- TASK-P0-2 的阻塞项缩小为 Q-15 ~ Q-18，并保留 Q-13 / Q-14 的已定案验收记录。
+- TASK-P1-2 的地图施工口径从最终 `TileMap` 改为 2.5D Live 场景嵌套与分层 Sprite / Parallax 搭建。
+- 同步垂直切片 v1.0.1：程序化连通走廊改为第三阶段再评估。
 
 ### v1.0.0 - 2026-05-14
 

@@ -4,7 +4,7 @@ extends Control
 
 
 func _ready() -> void:
-	print_rich("[color=cyan]YX[/color] placeholder main menu ready. Autoloads: %s" % _list_autoloads())
+	print_rich("[color=cyan]YX[/color] placeholder main menu ready. Autoloads: %s" % [_list_autoloads()])
 
 
 func _list_autoloads() -> Array[String]:

@@ -20,7 +20,7 @@ var contamination: float = 0.0
 
 
 func _ready() -> void:
-	push_warning("GameState: skeleton only, behaviour not implemented (TASK-P0-3).")
+	pass
 
 
 ## 切换到指定高级场景。仅占位，实际加载逻辑在 TASK-P5-* 实现。

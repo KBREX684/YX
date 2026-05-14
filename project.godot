@@ -1,5 +1,10 @@
-; Godot 4.x 项目配置
-; 仅在引擎中编辑应当通过 Project Settings；本文件由 TASK-P0-1/P0-3 初始化。
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
 
 config_version=5
 
@@ -8,12 +13,11 @@ config_version=5
 config/name="YX"
 config/description="2.5D 恐怖躲藏探索 + 无限流异常副本 + 怪物原形养成"
 run/main_scene="res://scenes/ui/main_menu.tscn"
-config/features=PackedStringArray("4.2", "Forward Plus")
+config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
 
-; 五件 Autoload 白名单（详见 docs/00-tech-constraints.md §四.1）
 GameState="*res://scripts/autoload/game_state.gd"
 EventBus="*res://scripts/autoload/event_bus.gd"
 SaveSystem="*res://scripts/autoload/save_system.gd"
@@ -25,11 +29,13 @@ Config="*res://scripts/autoload/config.gd"
 window/size/viewport_width=1920
 window/size/viewport_height=1080
 window/stretch/mode="canvas_items"
-window/stretch/aspect="keep"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/gut/plugin.cfg", "res://addons/godot_mcp_editor/plugin.cfg")
 
 [input]
 
-; 占位输入映射，正式按键将在 TASK-P1-1 重新定义。
 ui_accept={
 "deadzone": 0.5,
 "events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":4194309,"physical_keycode":0,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
@@ -39,5 +45,4 @@ ui_accept={
 
 [rendering]
 
-renderer/rendering_method="forward_plus"
 environment/defaults/default_clear_color=Color(0.05, 0.05, 0.07, 1)
