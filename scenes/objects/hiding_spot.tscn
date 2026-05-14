@@ -1,0 +1,33 @@
+[gd_scene load_steps=3 format=3 uid="uid://yx_obj_hiding_spot_stub"]
+
+[ext_resource type="Script" path="res://scripts/objects/hiding_spot.gd" id="1_hiding"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hiding"]
+size = Vector2(58, 72)
+
+[node name="HidingSpot" type="Area2D"]
+collision_layer = 4
+collision_mask = 2
+script = ExtResource("1_hiding")
+interactable_id = &"hide_locker_stub"
+prompt_text = "躲藏"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_hiding")
+
+[node name="LockerBody" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-22, -36, 22, -36, 22, 36, -22, 36)
+color = Color(0.2, 0.28, 0.32, 1)
+
+[node name="LockerSlit" type="Polygon2D" parent="."]
+position = Vector2(0, -12)
+polygon = PackedVector2Array(-12, -3, 12, -3, 12, 3, -12, 3)
+color = Color(0.07, 0.1, 0.12, 1)
+
+[node name="PlaceholderAssetLabel" type="Label" parent="."]
+offset_left = -96.0
+offset_top = 42.0
+offset_right = 96.0
+offset_bottom = 78.0
+text = "占位: 躲藏柜/阴影区"
+horizontal_alignment = 1

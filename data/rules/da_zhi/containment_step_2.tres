@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="RuleResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/systems/resources/rule_resource.gd" id="1_rule"]
+
+[resource]
+script = ExtResource("1_rule")
+id = "rule_da_zhi_containment_step_2"
+trigger_conditions = [{
+"type": "zone",
+"zone_id": "broadcast_room"
+}, {
+"type": "player_action",
+"action": "play_tape"
+}, {
+"type": "light_state",
+"is_on": false
+}, {
+"type": "has_item",
+"item_id": "item_ritual_tape"
+}, {
+"type": "collection_has",
+"key": "completed_steps",
+"value": "roster_confirmation"
+}]
+effect = {
+"type": "containment_step",
+"target_id": "da_zhi",
+"monster_id": "da_zhi",
+"step_id": "sound_seal",
+"sequence_index": 2
+}
+clue_unlock_id = "clue_ritual_cord_left"
+learnable_hint = "名单确认后，在熄灯的广播室播放旧磁带，把脚步声压回广播线。"

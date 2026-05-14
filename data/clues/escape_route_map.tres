@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ClueResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/systems/resources/clue_resource.gd" id="1_clue"]
+
+[resource]
+script = ExtResource("1_clue")
+clue_id = "clue_escape_route_map"
+route = "escape"
+clue_kind = "environment"
+linked_rule_ids = PackedStringArray("rule_da_zhi_first_manifestation")
+dialogic_timeline_id = &"dlg_clue_escape_route_map"
+dialogic_timeline_path = "res://dialogic/timelines/clue_escape_route_map.dtl"
+archive_summary = "escape: 半张疏散图把主走廊标成两段，玩家可以沿值班室一侧绕回出口区。"
+risk_band = "low"
+placeholder_asset_note = "占位美术: 墙面半张疏散图，后续替换为可读地图贴图。"

@@ -1,7 +1,7 @@
 # 术语表 Glossary
 
-版本：v1.4.0
-关联总设定版本：v0.8.2
+版本：v1.5.3
+关联总设定版本：v0.8.6
 创建日期：2026-05-14
 最后更新：2026-05-14
 
@@ -79,6 +79,54 @@
 
 ---
 
+### 噪声事件（Noise Event）
+
+**定义：** 玩家行动、物体交互或异常变化产生的可被怪物规则订阅的声音信号。
+
+**补充说明：** 第一阶段接口为 `EventBus.noise_emitted(level, position, source_action_id)`，`level` 使用 0–3 表示无声、低噪、普通噪声和高噪，`source_action_id` 必须是稳定 Input Map action 或后续资源 ID。怪物不直接读取玩家节点，而是通过该事件理解玩家行为。
+
+---
+
+### 手电资源（Flashlight Resource）
+
+**定义：** 用 `.tres` 数据资源描述手电电量、消耗与低电量视觉反馈的配置对象。
+
+**补充说明：** P1-1 默认资源为 `data/items/flashlight.tres`，字段包含电量上限、每秒消耗、低电量阈值、正常光强、低电量光强和关闭光强。玩家控制器只读取资源字段，后续可在 Inspector 中调参而不改脚本。
+
+---
+
+### 关卡资源（Level Resource）
+
+**定义：** 用 `.tres` 数据资源描述一个副本关卡的稳定 ID、场景 ID、候选房间和地图事件列表。
+
+**补充说明：** P1-2 默认资源为 `data/levels/abandoned_school.tres`。玩法系统应优先传递 `level_abandoned_school`、房间 ID 和事件 ID，场景路径只作为 manifest 内部加载细节，避免裸路径成为跨系统公共契约。
+
+---
+
+### 地图变化事件（Map Change Event）
+
+**定义：** 副本空间在规则触发后发生的可观察变化，例如走廊变长、门牌错乱或已探索房间出现新物品。
+
+**补充说明：** 地图变化必须制造不安但不能阻断逃离、击杀或收容路径。P1-2 最低版由 `MapChangeEvent.trigger()` 驱动灰盒走廊段位移，并通过 `EventBus.rule_triggered` 发出事件占位，P2 后由 RuleEngine 接管规则判定。
+
+---
+
+### 交互物（Interactable）
+
+**定义：** 副本内可被玩家执行开门、拾取、阅读、躲藏或启动等动作的对象。
+
+**补充说明：** P1-3 最低接口为 `interact(player) -> Dictionary`，交互物只返回 payload 或发出必要事件，玩家控制器消费 payload 更新临时状态。正式搜刮、线索和对话系统在 P3/P4 接管前，不把占位逻辑升级为长期公共契约。
+
+---
+
+### 临时背包（Temporary Inventory）
+
+**定义：** P1 微切片内用于验证拾取动词的短期玩家物品记录。
+
+**补充说明：** 当前只由玩家控制器记录 `item_id -> count`，用于证明拾取物能被交互并影响后续流程。P4 搜刮系统上线后，临时背包必须迁移到正式库存/存档结构，不作为跨阶段数据模型。
+
+---
+
 ### 收容（Containment）
 
 **定义：** 玩家通过完整规则链和仪式将副本内异常稳定封存的目标路径。
@@ -149,6 +197,150 @@
 
 ---
 
+### 规则引擎（RuleEngine）
+
+**定义：** 统一评估 `RuleResource` 触发条件，并向怪物 AI、线索系统和反馈系统广播规则结果的普通系统节点。
+
+**补充说明：** P2-1 版本不进入 Autoload，而是由场景或测试实例持有规则列表。它订阅 EventBus 输入，输出 `rule_triggered(rule_id, context)` 与 `clue_unlocked(clue_id)`，确保怪物规则数据驱动而不是写死在怪物脚本里。
+
+---
+
+### 目标解析器（ObjectiveResolver）
+
+**定义：** 副本场景内的普通系统节点，负责把 `RuleResource.effect` 中的目标完成效果转换为统一的 `EventBus.objective_completed(objective_type, payload)` 事件。
+
+**补充说明：** `ObjectiveResolver` 不进入 Autoload 白名单，不硬编码具体怪物规则 ID。P3-2 起它记录收容步骤完成状态，并把击杀、收容成功、错误收容交给 P3-3 结算系统订阅。
+
+---
+
+### 目标完成事件（Objective Completed Event）
+
+**定义：** `EventBus.objective_completed(objective_type, payload)`，表示副本目标路径已经产生可结算结果。
+
+**补充说明：** 当前 `objective_type` 约定为 `0=逃离`、`1=击杀`、`2=收容成功`、`3=错误收容`。事件只表达事实和规则 payload，不直接计算奖励、不显示结算 UI。
+
+---
+
+### 结算计算器（SettlementCalculator）
+
+**定义：** 副本场景内的普通系统节点，负责把目标完成事件、玩家剩余 HP、拾取列表和规则触发记录转换为结算 payload。
+
+**补充说明：** P3-3 起，`SettlementCalculator` 默认订阅 `EventBus.objective_completed(objective_type, payload)`，并输出 `EventBus.settlement_ready(payload)`。它不进入 Autoload 白名单，奖励曲线来自 `data/settlement_payoffs.tres`。
+
+---
+
+### 结算数值表（SettlementPayoffResource）
+
+**定义：** 用 `.tres` 保存四种结算路径奖励倍率、档案条目、原形质量和错误收容惩罚参数的数据资源。
+
+**补充说明：** P3-3 默认文件为 `data/settlement_payoffs.tres`。该表可在 Inspector 中调整，不需要修改 `SettlementCalculator` 脚本；schema 工具已注册 `SettlementPayoffResource` 的关键字段校验。
+
+---
+
+### 结算界面（SettlementScreen）
+
+**定义：** P3-3 的结算 UI 占位场景，用于显示完成方式、资源分类、原形质量、档案新增、基地占位扣减和污染变化。
+
+**补充说明：** 当前场景为 `scenes/ui/settlement_screen.tscn`，已挂接到 `abandoned_school.tscn`。后续正式美术替换时保留字段和节点契约，视觉改为 2.5D Live + 厚涂精美二次元结算演出。
+
+---
+
+### 收容步骤触发器（Ritual Step Trigger）
+
+**定义：** 放置在副本场景中的占位交互区域，用于承载收容步骤、触发 zone/action 上下文和后续正式美术资产说明。
+
+**补充说明：** P3-2 默认节点为 `RitualTriggers/RosterStep`、`SoundSealStep`、`AnchorStep` 与 `FailureStep`，均带 `placeholder_asset_note`，后续替换为厚涂分层 PNG 与 2.5D Live 轻动画时必须保留稳定 `step_id`。
+
+---
+
+### 可学习提示（Learnable Hint）
+
+**定义：** 玩家死亡、失败或错误收容后用于解释最低规则线索的一句话反馈。
+
+**补充说明：** 字段位于 `RuleResource.learnable_hint`。它应帮助玩家理解"我违反了哪类规则"，但不直接泄露完整弱点或收容答案；P3-4 负责显示，P7 只负责文案和演出打磨。
+
+---
+
+### 死亡反馈解析器（DeathFeedbackResolver）
+
+**定义：** 普通系统脚本，负责根据死亡 payload 中的 `rule_id` 查找对应 `RuleResource.learnable_hint`。
+
+**补充说明：** P3-4 起使用 `scripts/systems/death_feedback_resolver.gd`。它不进入 Autoload 白名单，找不到规则或提示为空时返回 fallback，并由 `GameState` 记录缺失 rule id。
+
+---
+
+### 基地复活占位场景（Base Placeholder）
+
+**定义：** P3-4 的基地占位场景，用于承接死亡复活后的最低可见反馈。
+
+**补充说明：** 当前路径为 `scenes/base/base_placeholder.tscn`，显示死亡学习提示和资源损失占位值。它带有 `placeholder_asset_note`，P5 会替换为正式基地场景和厚涂 2.5D Live 分层资产。
+
+---
+
+### 基地复活入口（Respawn At Base）
+
+**定义：** `GameState.respawn_at_base(payload, change_scene)`，负责死亡后清空副本态、计算占位损失、切回基地并发出场景变化事件。
+
+**补充说明：** 当前事件链为 `EventBus.player_died` → `GameState.respawn_at_base()` → `EventBus.scene_changed("dungeon", "base")`。P4 会接入正式拾取返还率，P5 会接入正式基地状态。
+
+---
+
+### 线索规则占位（Clue Rule Stub）
+
+**定义：** P2 阶段先行创建、供 P3 线索系统接管的 `RuleResource` 数据锚点。
+
+**补充说明：** 线索规则占位必须有稳定 `clue_unlock_id`，但不绑定 Dialogic timeline、笔记正文或正式场景物件。它用于提前冻结“哪条线索对应哪条怪物规则”，避免 P3 一次性新增线索时发生 schema 漂移。
+
+---
+
+### 线索资源（ClueResource）
+
+**定义：** 用 `.tres` 描述单条线索 ID、目标路径、线索类型、关联规则、Dialogic 时间线和占位资产说明的数据资源。
+
+**补充说明：** P3-1 默认目录为 `data/clues/`，已包含 3 条逃离、3 条击杀和 5 条收容线索。线索资源是信息层契约，正式美术和更长文本可以替换，但 `clue_id` 必须保持稳定。
+
+---
+
+### 线索本（ClueBook）
+
+**定义：** 副本内普通系统节点，负责自动整理已解锁线索并写入 `GameState.known_clue_ids`。
+
+**补充说明：** `ClueBook` 不进入 Autoload 白名单，而是由副本场景持有。它订阅 `EventBus.clue_unlocked(clue_id)` 和规则验证事件，提供路线完成度、低理智文本干扰和行为验证标签。
+
+---
+
+### 线索解锁事件（Clue Unlock Event）
+
+**定义：** `EventBus.clue_unlocked(clue_id)`，表示玩家已经获得一条可进入推理记录的线索。
+
+**补充说明：** 它区别于 P1 占位 `clue_collected`：`clue_unlocked` 是 P3 后续系统写入推理记录、结算档案和规则可见性的稳定事件。重复解锁由 `ClueBook` 去重。
+
+---
+
+### Dialogic 时间线（Dialogic Timeline）
+
+**定义：** Dialogic 2 使用的 `.dtl` 对话/文本时间线文件，用于承载线索阅读、对话和电台文本。
+
+**补充说明：** P3-1 先以短文本 `.dtl` 占位，不启用 Dialogic editor plugin，也不新增 Dialogic Autoload。后续在编辑器中精修时间线时，必须重新验证 Autoload 白名单和启动红字。
+
+---
+
+### 压力等级（Pressure Level）
+
+**定义：** 怪物接近、规则触发和异常压迫被归一化后的 0.0–1.0 反馈强度。
+
+**补充说明：** 第一阶段由 `EventBus.pressure_changed(level)` 输入，`PressureLevel` 输出心跳、手电闪烁、环境氛围混音、理智干扰和危险档位。压力等级不直接以 UI 数字显示，只通过表现层让玩家判断远/近和安全/危险。
+
+---
+
+### 压力反馈总线（Pressure Feedback Buses）
+
+**定义：** 用于把心跳、手电和环境氛围反馈分路混音的 Godot AudioBus 配置。
+
+**补充说明：** P2-3 最低版为 `data/audio/heartbeat_busses.tres`，包含 `Heartbeat`、`Flashlight`、`Ambience` 三路。`Ambience` 预置低理智低通滤波，后续正式音频资源必须接到对应总线，而不是混到默认 Master。
+
+---
+
 ### 路线偏向缓冲带（Route Inclination Buffer Zone）
 
 **定义：** 原形在成长进度 0%–60% 阶段，路线方向可以被逆向素材投喂或行为改变，60%–100% 路线不可逆。
@@ -214,6 +406,61 @@
 ---
 
 ## 版本记录
+
+### v1.5.3 - 2026-05-14
+
+- 新增 3 个 P3-4 工程术语：死亡反馈解析器、基地复活占位场景、基地复活入口。
+- 同步总设定 v0.8.6、玩家控制与探索模块 v0.3.6、实施计划 v2.6.3 与工程任务书 v1.6.3。
+
+### v1.5.2 - 2026-05-14
+
+- 新增 3 个 P3-3 工程术语：结算计算器、结算数值表、结算界面。
+- 同步总设定 v0.8.5、目标结算模块 v0.3.4、实施计划 v2.6.2 与工程任务书 v1.6.2。
+
+### v1.5.1 - 2026-05-14
+
+- 新增 3 个 P3-2 工程术语：目标解析器、目标完成事件、收容步骤触发器。
+- 同步总设定 v0.8.4、怪物规则模块 v0.3.6、线索模块 v0.3.6、目标结算模块 v0.3.3、Monster Bible v0.2.8 与工程任务书 v1.6.1。
+
+### v1.5.0 - 2026-05-14
+
+- 新增 4 个 P3-1 工程术语：线索资源、线索本、线索解锁事件、Dialogic 时间线。
+- 同步线索模块 v0.3.5、实施计划 v2.6.0 与总设定 v0.8.3。
+
+### v1.4.7 - 2026-05-14
+
+- P2 出口走查复核术语表，无新增术语。
+- 确认 P2 阶段仍沿用规则引擎、可学习提示、压力等级、压力反馈总线和线索规则占位五个工程术语。
+
+### v1.4.6 - 2026-05-14
+
+- 新增 1 个 P2-4 工程术语：线索规则占位。
+- 同步线索解谜模块 v0.3.4 中 `clue_*.tres`、`clue_unlock_id` 与 P3-1 接管边界。
+
+### v1.4.5 - 2026-05-14
+
+- 新增 2 个 P2-3 工程术语：压力等级、压力反馈总线。
+- 同步恐怖感知与压力模块 v0.3.3 中的 `PressureLevel`、三路 AudioBus 与低理智低通口径。
+
+### v1.4.4 - 2026-05-14
+
+- 新增 2 个 P2-1 工程术语：规则引擎、可学习提示。
+- 同步怪物规则模块 v0.3.4 中的 RuleEngine 与 `RuleResource.learnable_hint` 口径。
+
+### v1.4.3 - 2026-05-14
+
+- 新增 2 个 P1-3 工程术语：交互物、临时背包。
+- 同步玩家控制模块 v0.3.5 中的 `Interactable` payload、P1 临时拾取与后续 P3/P4 接管口径。
+
+### v1.4.2 - 2026-05-14
+
+- 新增 2 个 P1-2 工程术语：关卡资源、地图变化事件。
+- 同步地图模块 v0.3.5 中的稳定关卡 ID、manifest 与地图变化事件最低版口径。
+
+### v1.4.1 - 2026-05-14
+
+- 新增 2 个 P1-1 工程术语：噪声事件、手电资源。
+- 同步玩家控制模块 v0.3.4 中的 `source_action_id` 与手电资源数据驱动口径。
 
 ### v1.4.0 - 2026-05-14
 

@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ClueResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/systems/resources/clue_resource.gd" id="1_clue"]
+
+[resource]
+script = ExtResource("1_clue")
+clue_id = "clue_broadcast_dependency"
+route = "kill"
+clue_kind = "audio_text"
+linked_rule_ids = PackedStringArray("rule_da_zhi_broadcast_power_off_weakness", "clue_da_zhi_broadcast_dependency")
+dialogic_timeline_id = &"dlg_clue_broadcast_dependency"
+dialogic_timeline_path = "res://dialogic/timelines/clue_broadcast_dependency.dtl"
+archive_summary = "kill: broadcast 依附记录显示大只会顺着校内广播定位，断开广播总线能制造短暂弱点窗口。"
+risk_band = "medium"
+placeholder_asset_note = "占位美术: 旧广播稿和磁带标签，后续替换为电台/纸张组合 PNG。"

@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://yx_room_restroom_a"]
+
+[node name="RoomRestroomA" type="Node2D"]
+
+[node name="BlockoutFloor" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-90, -55, 90, -55, 90, 55, -90, 55)
+color = Color(0.2, 0.26, 0.28, 1)
+
+[node name="PlaceholderAssetLabel" type="Label" parent="."]
+offset_left = -110.0
+offset_top = -20.0
+offset_right = 110.0
+offset_bottom = 22.0
+text = "占位: 卫生间分层背景/潮湿灯光"
+horizontal_alignment = 1

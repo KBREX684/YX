@@ -1,0 +1,318 @@
+[gd_scene load_steps=21 format=3 uid="uid://yx_abandoned_school"]
+
+[ext_resource type="PackedScene" path="res://scenes/dungeon/rooms/classroom_a.tscn" id="1_classroom"]
+[ext_resource type="PackedScene" path="res://scenes/dungeon/rooms/storage_a.tscn" id="2_storage"]
+[ext_resource type="PackedScene" path="res://scenes/dungeon/rooms/restroom_a.tscn" id="3_restroom"]
+[ext_resource type="PackedScene" path="res://scenes/dungeon/rooms/office_a.tscn" id="4_office"]
+[ext_resource type="PackedScene" path="res://scenes/objects/door.tscn" id="5_door"]
+[ext_resource type="PackedScene" path="res://scenes/objects/pickup.tscn" id="6_pickup"]
+[ext_resource type="PackedScene" path="res://scenes/objects/note.tscn" id="7_note"]
+[ext_resource type="PackedScene" path="res://scenes/objects/hiding_spot.tscn" id="8_hiding"]
+[ext_resource type="Script" path="res://scripts/systems/pressure_level.gd" id="9_pressure"]
+[ext_resource type="PackedScene" path="res://scenes/monster/da_zhi.tscn" id="10_da_zhi"]
+[ext_resource type="Script" path="res://scripts/dungeon/first_entry_manifest_trigger.gd" id="11_manifest_trigger"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud/pressure_hud.tscn" id="12_pressure_hud"]
+[ext_resource type="PackedScene" path="res://scenes/audio/heartbeat_player.tscn" id="13_heartbeat"]
+[ext_resource type="PackedScene" path="res://scenes/objects/clue_note.tscn" id="14_clue_note"]
+[ext_resource type="Script" path="res://scripts/systems/clue_book.gd" id="15_clue_book"]
+[ext_resource type="Script" path="res://scripts/systems/objective_resolver.gd" id="16_objective_resolver"]
+[ext_resource type="Script" path="res://scripts/dungeon/ritual_step_trigger.gd" id="17_ritual_trigger"]
+[ext_resource type="Script" path="res://scripts/systems/settlement_calculator.gd" id="18_settlement_calculator"]
+[ext_resource type="PackedScene" path="res://scenes/ui/settlement_screen.tscn" id="19_settlement_screen"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ritual_trigger"]
+size = Vector2(54, 54)
+
+[node name="AbandonedSchool" type="Node2D"]
+y_sort_enabled = true
+
+[node name="ClueBook" type="Node" parent="."]
+script = ExtResource("15_clue_book")
+
+[node name="ObjectiveResolver" type="Node" parent="."]
+script = ExtResource("16_objective_resolver")
+
+[node name="SettlementCalculator" type="Node" parent="."]
+script = ExtResource("18_settlement_calculator")
+
+[node name="SettlementScreen" parent="." instance=ExtResource("19_settlement_screen")]
+
+[node name="RitualTriggers" type="Node2D" parent="."]
+
+[node name="RosterStep" type="Area2D" parent="RitualTriggers"]
+position = Vector2(130, -152)
+script = ExtResource("17_ritual_trigger")
+step_id = &"roster_confirmation"
+zone_id = &"records_room"
+action_id = &"read_roster"
+placeholder_asset_note = "占位: 收容步骤1，档案室完整名单确认点；后续替换为厚涂档案页、学生名册与纸张翻动轻动画。"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RitualTriggers/RosterStep"]
+shape = SubResource("RectangleShape2D_ritual_trigger")
+
+[node name="PlaceholderAssetLabel" type="Label" parent="RitualTriggers/RosterStep"]
+offset_left = -128.0
+offset_top = -34.0
+offset_right = 128.0
+offset_bottom = 28.0
+text = "占位: 名单确认"
+horizontal_alignment = 1
+
+[node name="SoundSealStep" type="Area2D" parent="RitualTriggers"]
+position = Vector2(250, -152)
+script = ExtResource("17_ritual_trigger")
+step_id = &"sound_seal"
+zone_id = &"broadcast_room"
+action_id = &"play_tape"
+placeholder_asset_note = "占位: 收容步骤2，熄灯广播室磁带封声点；后续替换为旧磁带、广播旋钮与声波压暗动画。"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RitualTriggers/SoundSealStep"]
+shape = SubResource("RectangleShape2D_ritual_trigger")
+
+[node name="PlaceholderAssetLabel" type="Label" parent="RitualTriggers/SoundSealStep"]
+offset_left = -128.0
+offset_top = -34.0
+offset_right = 128.0
+offset_bottom = 28.0
+text = "占位: 封声磁带"
+horizontal_alignment = 1
+
+[node name="AnchorStep" type="Area2D" parent="RitualTriggers"]
+position = Vector2(160, -190)
+script = ExtResource("17_ritual_trigger")
+step_id = &"anchor_order"
+zone_id = &"ritual_room"
+action_id = &"place_anchors"
+placeholder_asset_note = "占位: 收容步骤3，仪式室四锚点摆放；后续替换为校牌、照片、值班表、末次广播稿的分层 PNG。"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RitualTriggers/AnchorStep"]
+shape = SubResource("RectangleShape2D_ritual_trigger")
+
+[node name="PlaceholderAssetLabel" type="Label" parent="RitualTriggers/AnchorStep"]
+offset_left = -128.0
+offset_top = -34.0
+offset_right = 128.0
+offset_bottom = 28.0
+text = "占位: 四锚点"
+horizontal_alignment = 1
+
+[node name="FailureStep" type="Area2D" parent="RitualTriggers"]
+position = Vector2(160, -122)
+script = ExtResource("17_ritual_trigger")
+step_id = &"wrong_anchor_order"
+zone_id = &"ritual_room"
+action_id = &"place_anchors"
+placeholder_asset_note = "占位: 错误收容反馈点；后续替换为红绳错位、黑板名册渗墨和污染扩散动画。"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RitualTriggers/FailureStep"]
+shape = SubResource("RectangleShape2D_ritual_trigger")
+
+[node name="PlaceholderAssetLabel" type="Label" parent="RitualTriggers/FailureStep"]
+offset_left = -128.0
+offset_top = -34.0
+offset_right = 128.0
+offset_bottom = 28.0
+text = "占位: 错误收容"
+horizontal_alignment = 1
+
+[node name="Sections" type="Node2D" parent="."]
+
+[node name="Entrance" type="Node2D" parent="Sections"]
+position = Vector2(-520, 0)
+
+[node name="Floor" type="Polygon2D" parent="Sections/Entrance"]
+polygon = PackedVector2Array(-90, -60, 90, -60, 90, 60, -90, 60)
+color = Color(0.13, 0.18, 0.2, 1)
+
+[node name="PlaceholderAssetLabel" type="Label" parent="Sections/Entrance"]
+offset_left = -100.0
+offset_top = -18.0
+offset_right = 100.0
+offset_bottom = 18.0
+text = "占位: 入口区校门/值班室"
+horizontal_alignment = 1
+
+[node name="MainCorridor" type="Node2D" parent="Sections"]
+
+[node name="Floor" type="Polygon2D" parent="Sections/MainCorridor"]
+polygon = PackedVector2Array(-420, -48, 420, -48, 420, 48, -420, 48)
+color = Color(0.12, 0.16, 0.18, 1)
+
+[node name="PlaceholderAssetLabel" type="Label" parent="Sections/MainCorridor"]
+offset_left = -160.0
+offset_top = -34.0
+offset_right = 160.0
+offset_bottom = 8.0
+text = "占位: 完整主走廊分层背景"
+horizontal_alignment = 1
+
+[node name="RitualRoom" type="Node2D" parent="Sections"]
+position = Vector2(160, -190)
+
+[node name="Floor" type="Polygon2D" parent="Sections/RitualRoom"]
+polygon = PackedVector2Array(-130, -70, 130, -70, 130, 70, -130, 70)
+color = Color(0.25, 0.18, 0.18, 1)
+
+[node name="PlaceholderAssetLabel" type="Label" parent="Sections/RitualRoom"]
+offset_left = -135.0
+offset_top = -20.0
+offset_right = 135.0
+offset_bottom = 20.0
+text = "占位: 仪式房/收容符号层"
+horizontal_alignment = 1
+
+[node name="ExitArea" type="Node2D" parent="Sections"]
+position = Vector2(520, 0)
+
+[node name="Floor" type="Polygon2D" parent="Sections/ExitArea"]
+polygon = PackedVector2Array(-90, -60, 90, -60, 90, 60, -90, 60)
+color = Color(0.14, 0.2, 0.18, 1)
+
+[node name="PlaceholderAssetLabel" type="Label" parent="Sections/ExitArea"]
+offset_left = -100.0
+offset_top = -18.0
+offset_right = 100.0
+offset_bottom = 18.0
+text = "占位: 出口区/逃离门"
+horizontal_alignment = 1
+
+[node name="CandidateRooms" type="Node2D" parent="."]
+
+[node name="ClassroomA" parent="CandidateRooms" instance=ExtResource("1_classroom")]
+position = Vector2(-260, -180)
+
+[node name="StorageA" parent="CandidateRooms" instance=ExtResource("2_storage")]
+position = Vector2(-80, 170)
+
+[node name="RestroomA" parent="CandidateRooms" instance=ExtResource("3_restroom")]
+position = Vector2(160, 170)
+
+[node name="OfficeA" parent="CandidateRooms" instance=ExtResource("4_office")]
+position = Vector2(340, -170)
+
+[node name="Interactables" type="Node2D" parent="."]
+
+[node name="EntranceDoor" parent="Interactables" instance=ExtResource("5_door")]
+position = Vector2(-430, 0)
+interactable_id = &"door_entrance_a"
+
+[node name="ExitDoor" parent="Interactables" instance=ExtResource("5_door")]
+position = Vector2(430, 0)
+interactable_id = &"door_exit_a"
+is_locked = true
+
+[node name="BatteryPickup" parent="Interactables" instance=ExtResource("6_pickup")]
+position = Vector2(-80, 105)
+interactable_id = &"pickup_battery_a"
+item_id = &"item_battery_aa"
+amount = 1
+
+[node name="RuleNote" parent="Interactables" instance=ExtResource("7_note")]
+position = Vector2(-260, -105)
+interactable_id = &"note_escape_notice_a"
+note_id = &"clue_escape_notice_a"
+dialogic_timeline_id = &"dlg_p1_note_escape_notice"
+note_text = "保健室后门的锁遇到强光会卡死，等脚步声远离再开。"
+
+[node name="LockerHidingSpot" parent="Interactables" instance=ExtResource("8_hiding")]
+position = Vector2(-300, -155)
+interactable_id = &"hide_locker_a"
+spot_id = &"hide_locker_a"
+
+[node name="ClueEscapeExitLock" parent="Interactables" instance=ExtResource("14_clue_note")]
+position = Vector2(360, 48)
+interactable_id = &"clue_escape_exit_lock"
+clue_id = &"clue_escape_exit_lock"
+dialogic_timeline_id = &"dlg_clue_escape_exit_lock"
+dialogic_timeline_path = "res://dialogic/timelines/clue_escape_exit_lock.dtl"
+
+[node name="ClueEscapePowerRoomTag" parent="Interactables" instance=ExtResource("14_clue_note")]
+position = Vector2(-20, 112)
+interactable_id = &"clue_escape_power_room_tag"
+clue_id = &"clue_escape_power_room_tag"
+dialogic_timeline_id = &"dlg_clue_escape_power_room_tag"
+dialogic_timeline_path = "res://dialogic/timelines/clue_escape_power_room_tag.dtl"
+
+[node name="ClueEscapeRouteMap" parent="Interactables" instance=ExtResource("14_clue_note")]
+position = Vector2(-390, -42)
+interactable_id = &"clue_escape_route_map"
+clue_id = &"clue_escape_route_map"
+dialogic_timeline_id = &"dlg_clue_escape_route_map"
+dialogic_timeline_path = "res://dialogic/timelines/clue_escape_route_map.dtl"
+
+[node name="ClueCorridorEcho" parent="Interactables" instance=ExtResource("14_clue_note")]
+position = Vector2(-120, -44)
+interactable_id = &"clue_corridor_echo"
+clue_id = &"clue_corridor_echo"
+dialogic_timeline_id = &"dlg_clue_corridor_echo"
+dialogic_timeline_path = "res://dialogic/timelines/clue_corridor_echo.dtl"
+
+[node name="ClueBroadcastDependency" parent="Interactables" instance=ExtResource("14_clue_note")]
+position = Vector2(324, -118)
+interactable_id = &"clue_broadcast_dependency"
+clue_id = &"clue_broadcast_dependency"
+dialogic_timeline_id = &"dlg_clue_broadcast_dependency"
+dialogic_timeline_path = "res://dialogic/timelines/clue_broadcast_dependency.dtl"
+
+[node name="ClueBroadcastPowerCut" parent="Interactables" instance=ExtResource("14_clue_note")]
+position = Vector2(256, -118)
+interactable_id = &"clue_broadcast_power_cut"
+clue_id = &"clue_broadcast_power_cut"
+dialogic_timeline_id = &"dlg_clue_broadcast_power_cut"
+dialogic_timeline_path = "res://dialogic/timelines/clue_broadcast_power_cut.dtl"
+
+[node name="ClueFullRoster" parent="Interactables" instance=ExtResource("14_clue_note")]
+position = Vector2(135, -130)
+interactable_id = &"clue_full_roster"
+clue_id = &"clue_full_roster"
+dialogic_timeline_id = &"dlg_clue_full_roster"
+dialogic_timeline_path = "res://dialogic/timelines/clue_full_roster.dtl"
+
+[node name="ClueMissingName" parent="Interactables" instance=ExtResource("14_clue_note")]
+position = Vector2(-262, -230)
+interactable_id = &"clue_missing_name"
+clue_id = &"clue_missing_name"
+dialogic_timeline_id = &"dlg_clue_missing_name"
+dialogic_timeline_path = "res://dialogic/timelines/clue_missing_name.dtl"
+
+[node name="ClueRitualCordLeft" parent="Interactables" instance=ExtResource("14_clue_note")]
+position = Vector2(104, -190)
+interactable_id = &"clue_ritual_cord_left"
+clue_id = &"clue_ritual_cord_left"
+dialogic_timeline_id = &"dlg_clue_ritual_cord_left"
+dialogic_timeline_path = "res://dialogic/timelines/clue_ritual_cord_left.dtl"
+
+[node name="ClueRitualCordRight" parent="Interactables" instance=ExtResource("14_clue_note")]
+position = Vector2(218, -190)
+interactable_id = &"clue_ritual_cord_right"
+clue_id = &"clue_ritual_cord_right"
+dialogic_timeline_id = &"dlg_clue_ritual_cord_right"
+dialogic_timeline_path = "res://dialogic/timelines/clue_ritual_cord_right.dtl"
+
+[node name="ClueSilenceTaboo" parent="Interactables" instance=ExtResource("14_clue_note")]
+position = Vector2(160, -248)
+interactable_id = &"clue_silence_taboo"
+clue_id = &"clue_silence_taboo"
+dialogic_timeline_id = &"dlg_clue_silence_taboo"
+dialogic_timeline_path = "res://dialogic/timelines/clue_silence_taboo.dtl"
+
+[node name="PressureLevel" type="Node" parent="."]
+script = ExtResource("9_pressure")
+
+[node name="Monsters" type="Node2D" parent="."]
+
+[node name="DaZhi" parent="Monsters" instance=ExtResource("10_da_zhi")]
+position = Vector2(-120, -72)
+
+[node name="FirstEntryManifestTrigger" type="Node2D" parent="."]
+script = ExtResource("11_manifest_trigger")
+target_path = NodePath("../Monsters/DaZhi")
+manifest_duration = 2.5
+
+[node name="PressureHud" parent="." instance=ExtResource("12_pressure_hud")]
+
+[node name="Audio" type="Node2D" parent="."]
+
+[node name="HeartbeatPlayer" parent="Audio" instance=ExtResource("13_heartbeat")]
+
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]

@@ -25,3 +25,31 @@ offset_bottom = 40.0
 text = "YX\n(P0 placeholder)"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="StartPlaytestButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -90.0
+offset_top = 56.0
+offset_right = 90.0
+offset_bottom = 96.0
+focus_mode = 2
+text = "开始试玩"
+
+[node name="PlaytestHint" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -220.0
+offset_top = 108.0
+offset_right = 220.0
+offset_bottom = 140.0
+text = "当前进入灰盒微切片：移动、手电、躲藏与基础探索"
+horizontal_alignment = 1

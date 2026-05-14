@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://yx_room_storage_a"]
+
+[node name="RoomStorageA" type="Node2D"]
+
+[node name="BlockoutFloor" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-100, -60, 100, -60, 100, 60, -100, 60)
+color = Color(0.18, 0.22, 0.2, 1)
+
+[node name="PlaceholderAssetLabel" type="Label" parent="."]
+offset_left = -110.0
+offset_top = -20.0
+offset_right = 110.0
+offset_bottom = 22.0
+text = "占位: 储藏室分层背景/资源点"
+horizontal_alignment = 1

@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ClueResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/systems/resources/clue_resource.gd" id="1_clue"]
+
+[resource]
+script = ExtResource("1_clue")
+clue_id = "clue_ritual_cord_right"
+route = "contain"
+clue_kind = "item"
+linked_rule_ids = PackedStringArray("rule_da_zhi_containment_roster_step")
+dialogic_timeline_id = &"dlg_clue_ritual_cord_right"
+dialogic_timeline_path = "res://dialogic/timelines/clue_ritual_cord_right.dtl"
+archive_summary = "contain: 右侧红绳要压住值班铃，提示第二步需要让铃声停止而不是持续播放。"
+risk_band = "high"
+placeholder_asset_note = "占位美术: 右侧红绳和值班铃，后续替换为仪式物 PNG。"

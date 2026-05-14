@@ -1,0 +1,35 @@
+[gd_scene load_steps=3 format=3 uid="uid://yx_obj_door_stub"]
+
+[ext_resource type="Script" path="res://scripts/objects/door.gd" id="1_door"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_door"]
+size = Vector2(48, 72)
+
+[node name="Door" type="Area2D"]
+collision_layer = 4
+collision_mask = 2
+script = ExtResource("1_door")
+interactable_id = &"door_school_stub"
+prompt_text = "开门"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_door")
+
+[node name="PlaceholderDoor" type="Node2D" parent="."]
+
+[node name="DoorPanel" type="Polygon2D" parent="PlaceholderDoor"]
+polygon = PackedVector2Array(-18, -36, 18, -36, 18, 36, -18, 36)
+color = Color(0.32, 0.24, 0.18, 1)
+
+[node name="DoorKnob" type="Polygon2D" parent="PlaceholderDoor"]
+position = Vector2(10, 0)
+polygon = PackedVector2Array(-3, -3, 3, -3, 3, 3, -3, 3)
+color = Color(0.82, 0.7, 0.42, 1)
+
+[node name="PlaceholderAssetLabel" type="Label" parent="."]
+offset_left = -96.0
+offset_top = 42.0
+offset_right = 96.0
+offset_bottom = 78.0
+text = "占位: 破败校园木门/门锁分层"
+horizontal_alignment = 1

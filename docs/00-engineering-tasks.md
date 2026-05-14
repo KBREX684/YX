@@ -1,9 +1,9 @@
 # 工程任务书 Engineering Tasks
 
-版本：v1.5.0
-关联实施计划：[`00-implementation-plan.md`](00-implementation-plan.md) v2.5.0
+版本：v1.6.4
+关联实施计划：[`00-implementation-plan.md`](00-implementation-plan.md) v2.6.4
 关联技术规约：[`00-tech-constraints.md`](00-tech-constraints.md) v1.3.1
-关联垂直切片：[`00-vertical-slice.md`](00-vertical-slice.md) v1.0.4
+关联垂直切片：[`00-vertical-slice.md`](00-vertical-slice.md) v1.0.5
 创建日期：2026-05-14
 最后更新：2026-05-14
 
@@ -271,7 +271,15 @@
   - [ ] `player.gd` 不出现 3 层及以上 if/else（grep `if .* and .*:` 配合人工核对）。
 - **关联 VS**：§1 第 1、3 项；§1 第 2 项的"噪声广播接口"在此实现，"行为差异导致怪物判断不同"的验收推迟至 P2-2。
 - **关联模块**：[`modules/01-player-control-exploration.md`](modules/01-player-control-exploration.md)。
-- **状态**：TODO（P0 已完成，可进入 P1）
+- **状态**：DONE（实现提交：`a28dbf7`）
+
+#### TASK-P1-1 完成记录（2026-05-14）
+
+- 实现提交：`a28dbf7 feat(TASK-P1-1): add player controller prototype`。
+- 设计：按 `docs/modules/01-player-control-exploration.md` v0.3.4 收束为 Input Map、玩家基础动词、手电资源和噪声事件接口，不扩展地图、怪物或结算。
+- 搭建：新增 `scenes/player/player.tscn`、`scripts/player/player.gd`、`scripts/player/states/player_limbo_state.gd`、`data/items/flashlight.tres` 与 `FlashlightResource`；玩家美术使用 `PlaceholderBody` + `PlaceholderAssetLabel` 标注“玩家 2.5D Live 分层立绘”占位。
+- 审计修复：`player.gd` 195 行；玩家脚本未出现物理按键硬编码；GoPeak `resource_dependencies` 检查玩家场景无循环依赖。
+- 验收：`test_player_controller.gd` 5/5 通过；全量 GUT 6/6 通过；schema 校验 5 个资源通过（`FlashlightResource` 当前按 P8 schema 加固前规则跳过强制校验）；项目与玩家场景均可 headless 启动。
 
 ---
 
@@ -301,7 +309,15 @@
   - [ ] `level_manifest.tres` 或等价 manifest 中存在关卡、房间、地图事件稳定 ID。
 - **关联 VS**：§3。
 - **关联模块**：[`modules/02-dungeon-generation-map.md`](modules/02-dungeon-generation-map.md)、[`00-art-direction.md`](00-art-direction.md)。
-- **状态**：TODO
+- **状态**：DONE（实现提交：`42f9796`）
+
+#### TASK-P1-2 完成记录（2026-05-14）
+
+- 实现提交：`42f9796 feat(TASK-P1-2): add dungeon blockout slice`。
+- 设计：按 `docs/modules/02-dungeon-generation-map.md` v0.3.5 收束为手工灰盒微切片 + 固定候选房间池；没有引入程序化大地图或最终 TileMap 方案。
+- 搭建：新增 `micro_school_blockout.tscn`、`abandoned_school.tscn`、4 个候选房间子场景、`RoomPool`、`MapChangeEvent`、`LevelResource` 和 `ManifestResource`；所有场景占位 Label 标注后续替换的破败校园分层美术内容。
+- 审计修复：`RoomPool`、`MapChangeEvent`、`LevelResource`、`ManifestResource` 均小于 40 行；GoPeak `resource_dependencies` 检查微切片与完整校园场景均无循环依赖；未检出 `TileMap` 或程序化大地图实现。
+- 验收：`test_dungeon_blockout.gd` 5/5 通过；全量 GUT 11/11 通过；schema 校验 7 个资源通过（P1 新增资源在 P8 schema 加固前跳过强制校验）；微切片与完整校园场景均可 headless 加载。
 
 ---
 
@@ -316,11 +332,20 @@
   2. `door` 支持开/关、可被规则锁定占位字段；`pickup` 写入临时 `inventory`（P4 接搜刮系统时替换）；`note` 弹出 Dialogic 2 的占位对话；`hiding_spot` 让 player 进入 `hide` 状态。
   3. 把至少 5 个实例摆进 `abandoned_school.tscn`，确保 VS §1 第 1 项"开门 / 拾取 / 阅读线索 / 进入躲藏点"四类操作都能在本副本内完成。
 - **验收**：
-  - [ ] VS §1 第 1 项的全部六个动作能在副本中实测完成。
-  - [ ] 任一交互物脚本 ≤ 80 行。
+  - [x] VS §1 第 1 项的全部六个动作能在副本中实测完成。
+  - [x] 任一交互物脚本 ≤ 80 行。
 - **关联 VS**：§1 第 1 项。
 - **关联模块**：[`modules/01-player-control-exploration.md`](modules/01-player-control-exploration.md)。
-- **状态**：TODO
+- **状态**：DONE
+
+#### TASK-P1-3 完成记录（2026-05-14）
+
+- 实现提交：`ca89401 feat(TASK-P1-3): add interactable object stubs`。
+- 设计：四类交互物统一为 `Area2D` 场景，脚本通过 `scripts/objects/interactable.gd` 提供 `interact(player)` 接口；交互物返回 payload，玩家控制器消费 payload，避免对象反向直接改写玩家状态。
+- 搭建：新增 `door / pickup / note / hiding_spot` 四个占位场景与根脚本；`abandoned_school.tscn` 放入 `EntranceDoor`、`ExitDoor`、`BatteryPickup`、`RuleNote`、`LockerHidingSpot` 共 5 个实例。
+- 占位资源：门、拾取电池、线索纸条和躲藏柜均在场景内用 `PlaceholderAssetLabel` 标注正式美术替换意图。
+- 审计修复：Dialogic 2 暂不启用运行时 Autoload，`note` 仅保留 `dialogic_timeline_id` 和 `note_text` 占位；派生交互脚本使用显式脚本路径继承，避免无编辑器导入缓存时 `class_name` 解析失败。
+- 验收：GUT `17/17` 通过；schema 校验通过（未注册 P1 资源保持 P8 schema hardening 前的 SKIP）；废弃学校与交互物场景 headless 加载通过；GoPeak `resource_dependencies` 检查无循环依赖，编辑器桥接仍因 `127.0.0.1:6506` 被占用不可连接。
 
 ---
 
@@ -333,11 +358,19 @@
   2. 记录已发现但延后处理的 issue 列表（指向后续 TASK）。
   3. 让 P2 入口前置任务 `block_until_p1_done` 解除。
 - **验收**：
-  - [ ] P1 全部门禁条件勾选 ✅。
-  - [ ] 出口走查记录已提交。
+  - [x] P1 全部门禁条件勾选 ✅。
+  - [x] 出口走查记录已提交。
 - **关联 VS**：§1 第 1、3 项 + §3。
 - **关联模块**：[`00-implementation-plan.md`](00-implementation-plan.md) §十三。
-- **状态**：TODO
+- **状态**：DONE
+
+#### TASK-P1-4 完成记录（2026-05-14）
+
+- 实现提交：`f81dbb9 docs(TASK-P1-4): add P1 exit review`。
+- 设计：P1 出口只判定无怪物阶段的基础探索动词与地图结构，不提前接入怪物、死亡复活、正式线索、正式搜刮或最终美术。
+- 搭建：新增 `docs/perf/p1-review.md`，逐项记录微切片门禁、VS §1 第 1/3 项、VS §3 和 P1 延后项。
+- 审计修复：记录 `player.gd` 行数收束、交互物脚本行数、GoPeak bridge 端口占用和资源依赖无循环结论。
+- 验收：P1 全部门禁已在走查表勾选；GUT `17/17`、schema 校验、headless 场景加载和 GoPeak `resource_dependencies` 均通过或有明确非阻塞说明。
 
 ---
 
@@ -358,13 +391,21 @@
   5. **禁止**在引擎中写任何怪物专属硬编码字段——所有判定都从 `RuleResource.trigger_conditions` 解析。
   6. GUT 用例覆盖：a) 单条规则触发；b) 多条规则同帧；c) 触发条件不满足时不发信号；d) 重复触发去重；e) 关键失败规则 `learnable_hint` 非空。
 - **验收**：
-  - [ ] `test_rule_engine.gd` 中至少 6 个用例 100% 通过。
-  - [ ] 在编辑器内替换 `RuleEngine` 加载的 `.tres` 列表，可观察到不同的 `rule_triggered` 信号序列。
-  - [ ] 会导致死亡、失败或错误收容的规则均有非空 `learnable_hint`。
-  - [ ] `rule_engine.gd` ≤ 300 行；无 `monster_*` 命名字段。
+  - [x] `test_rule_engine.gd` 中至少 6 个用例 100% 通过。
+  - [x] 在编辑器内替换 `RuleEngine` 加载的 `.tres` 列表，可观察到不同的 `rule_triggered` 信号序列。
+  - [x] 会导致死亡、失败或错误收容的规则均有非空 `learnable_hint`。
+  - [x] `rule_engine.gd` ≤ 300 行；无 `monster_*` 命名字段。
 - **关联 VS**：—（为 §4 §5 提供基础）
 - **关联模块**：[`modules/03-monster-anomaly-rules.md`](modules/03-monster-anomaly-rules.md)、[`monsters/001-da-zhi.md`](monsters/001-da-zhi.md)。
-- **状态**：TODO
+- **状态**：DONE
+
+#### TASK-P2-1 完成记录（2026-05-14）
+
+- 实现提交：`9acd9d8 feat(TASK-P2-1): add rule engine`。
+- 设计：`RuleEngine` 是普通 `Node`，不进入 Autoload；通过 Inspector 可替换 `Array[RuleResource]`，规则判断全部由 `trigger_conditions` 解析。
+- 搭建：新增 `scripts/systems/rule_engine.gd`、`tests/test_rule_engine.gd` 和 4 条大只 P2-1 最低规则资源：走廊奔跑、首次现形、广播断电弱点窗口、名单确认收容步骤。
+- 审计修复：GUT RED-GREEN 后清理了 5 个 orphan Node；`rule_engine.gd` 145 行，无 `monster_*` 命名字段；GoPeak `resource_dependencies` 检查 RuleEngine 与规则资源无循环依赖。
+- 验收：GUT `25/25` 通过；schema 校验 11 个资源通过；关键失败规则 `rule_da_zhi_corridor_run` 已填 `learnable_hint`。
 
 ---
 
@@ -383,12 +424,21 @@
   4. 现形效果：在 `rule_triggered("apparition_condition")` 时短暂提升 `Sprite2D` alpha 至 0.3 持续 2~3 秒。
   5. 严禁随机传送；如需"突然出现"必须经由规则触发。
 - **验收**：
-  - [ ] VS §4 前 3 项可勾选。
-  - [ ] VS §1 第 2 项可勾选：玩家以不同噪声等级行走，怪物有可观察的行为变化（如 `walk` 时不响应，`run` 时进入 `probe`）。
-  - [ ] `da_zhi.gd` 文件本体 ≤ 200 行；阶段转移条件不在脚本内硬编码。
+  - [x] VS §4 前 3 项可勾选。
+  - [x] VS §1 第 2 项可勾选：玩家以不同噪声等级行走，怪物有可观察的行为变化（如 `walk` 时不响应，`run` 时进入 `probe`）。
+  - [x] `da_zhi.gd` 文件本体 ≤ 200 行；阶段转移条件不在脚本内硬编码。
 - **关联 VS**：§4 前 3 项 + §1 第 2 项。
 - **关联模块**：[`modules/03-monster-anomaly-rules.md`](modules/03-monster-anomaly-rules.md)、[`monsters/001-da-zhi.md`](monsters/001-da-zhi.md)。
-- **状态**：TODO（Q-16 已定案，待 P2 阶段前置完成）
+- **状态**：DONE
+
+#### TASK-P2-2 完成记录（2026-05-14）
+
+- 实现提交：`ad22a25 feat(TASK-P2-2): add da zhi ai skeleton`。
+- 设计：大只 AI 骨架只消费 `RuleEngine` 注入的 `rule_effect`，不写具体规则 ID；阶段节点使用 LimboHSM，移动使用 `NavigationAgent2D`。
+- 搭建：新增 `scenes/monster/da_zhi.tscn`、`scripts/monster/da_zhi.gd`、`scripts/monster/states/da_zhi_limbo_state.gd`、`data/monsters/da_zhi.tres` 和 7 个 GUT 用例。
+- 占位资源：大只视觉为 `Polygon2D` 剪影 + `PlaceholderAssetLabel`“占位: 大只远处剪影/2.5D Live分层怪物立绘”。
+- 审计修复：`da_zhi.gd` 116 行，不包含 `rule_da_zhi_` 或随机/传送逻辑；GoPeak `resource_dependencies` 检查大只场景、脚本和 profile 无循环依赖。
+- 验收：GUT `32/32` 通过；schema 校验 12 个资源通过；大只场景 headless 加载通过；奔跑噪声可触发搜索阶段，行走不会触发。
 
 ---
 
@@ -408,12 +458,20 @@
   4. `sanity_distort.gdshader` 实现轻度文字抖动 + 音频低通滤波（理智低时启用），通过 `Config` 提供开关。
   5. 在 `abandoned_school.tscn` 的第一次进入触发器中**强制**调用一次 `da_zhi.show_apparition(2.5s)`。
 - **验收**：
-  - [ ] VS §2 全部 5 项可勾选。
-  - [ ] 三类反馈在"远 / 近"两档下能由玩家明显区分。
-  - [ ] 关闭 Shader 时游戏仍可玩（`Config.sanity_shader_enabled = false` 测试）。
+  - [x] VS §2 全部 5 项可勾选。
+  - [x] 三类反馈在"远 / 近"两档下能由玩家明显区分。
+  - [x] 关闭 Shader 时游戏仍可玩（`Config.sanity_shader_enabled = false` 测试）。
 - **关联 VS**：§2。
 - **关联模块**：[`modules/04-horror-perception-pressure.md`](modules/04-horror-perception-pressure.md)。
-- **状态**：TODO
+- **状态**：DONE
+
+**完成记录（2026-05-14）**
+
+- 设计：`PressureLevel` 保持普通场景节点，接收 `EventBus.pressure_changed(level)`；心跳、手电闪烁、环境氛围混音、理智干扰共用同一快照。
+- 搭建：新增 `pressure_level.gd`、`pressure_hud.tscn`、`heartbeat_player.tscn`、`heartbeat_busses.tres`、`sanity_distort.gdshader`、`first_entry_manifest_trigger.gd` 和 9 个 GUT 用例。
+- 占位资源：HUD 为全屏 `ColorRect` 叠层占位，心跳音源当前无正式 `AudioStream`；大只仍使用 `Polygon2D` 剪影 + `PlaceholderAssetLabel`，对应后续“远处高大人形剪影 / 2.5D Live 分层怪物立绘”。
+- 审计修复：`PressureLevel` 142 行、`DaZhiAI` 135 行，Autoload 白名单保持 5 项；GoPeak `resource_dependencies` 检查废弃学校、HUD、心跳和 AudioBus 无循环依赖，编辑器桥接仍因 `127.0.0.1:6506` 被占用不可连接。
+- 验收：GUT `41/41` 通过；schema 校验 13 个资源通过或按 P8 前 schema 口径 SKIP；废弃学校、压力 HUD、心跳播放器和大只场景 headless 加载通过；实现提交 `a5820a2`。
 
 ---
 
@@ -425,10 +483,18 @@
   1. 为后续 P3-1 提供"已存在的线索规则池"，避免 P3 阶段一次性新增过多 `.tres` 导致 schema 漂移。
   2. 每条线索规则仅填字段、不绑定具体笔记内容（笔记本体由 P3-1 Dialogic 提供）。
 - **验收**：
-  - [ ] `validate_schemas.gd` 对新加 `.tres` 全部通过。
+  - [x] `validate_schemas.gd` 对新加 `.tres` 全部通过。
 - **关联 VS**：—
 - **关联模块**：[`modules/05-clues-puzzles-rule-deduction.md`](modules/05-clues-puzzles-rule-deduction.md)。
-- **状态**：TODO
+- **状态**：DONE
+
+**完成记录（2026-05-14）**
+
+- 设计：新增 3 条线索规则占位，分别覆盖走廊回声行为观察、广播依赖击杀线索、完整名单收容线索；只登记稳定 `clue_unlock_id` 和规则元数据，不绑定 Dialogic timeline 或笔记正文。
+- 搭建：新增 `clue_da_zhi_corridor_echo.tres`、`clue_da_zhi_broadcast_dependency.tres`、`clue_da_zhi_full_roster.tres`，并把 3 条规则 ID 登记到 `data/monsters/da_zhi.tres`。
+- 占位资源：当前没有新增美术/文本资产；3 条 `.tres` 仅是 P3-1 线索对象和 Dialogic 笔记的稳定数据锚点。
+- 审计修复：新增 GUT 用例验证 clue stub 存在、`clue_unlock_id` 非空、effect 为 `clue_stub`、不含 `dialogic_timeline_id` / `note_text`；GoPeak `resource_dependencies` 检查 3 条线索规则和 profile 无循环依赖。
+- 验收：GUT `42/42` 通过；schema 校验 16 个资源通过或按 P8 前 schema 口径 SKIP；实现提交 `b52b51c`。
 
 ---
 
@@ -438,11 +504,18 @@
 - **产出**：`/docs/perf/p2-review.md`
 - **实现步骤**：按实施计划 §十三 P2 行逐项勾验；记录遗留 issue。
 - **验收**：
-  - [ ] VS §2 + §4 前 3 项 + §1 第 2 项 全勾。
-  - [ ] `RuleEngine` GUT 用例 100% 通过。
+  - [x] VS §2 + §4 前 3 项 + §1 第 2 项 全勾。
+  - [x] `RuleEngine` GUT 用例 100% 通过。
 - **关联 VS**：见上。
 - **关联模块**：[`00-implementation-plan.md`](00-implementation-plan.md) §十三。
-- **状态**：TODO
+- **状态**：DONE
+
+**完成记录（2026-05-14）**
+
+- 设计：P2 出口只验收怪物可观察、压力反馈与规则可学习前置，不提前实现 P3 线索正文、击杀/收容执行和死亡复活。
+- 搭建：新增 `docs/perf/p2-review.md`，逐项记录 VS §2、§4 前 3 项、§1 第 2 项和 RuleEngine GUT 结果。
+- 审计修复：走查发现“大只两种以上现形条件”不足，已补 `rule_da_zhi_flashlight_stare_manifestation.tres` 并纳入测试和 profile。
+- 验收：GUT `42/42` 通过；schema 校验 17 个资源通过或按 P8 前 schema 口径 SKIP；关键 P2 场景 headless 加载通过；审计修复提交 `5023655`。
 
 ---
 
@@ -459,13 +532,20 @@
   1. 每条线索由 Dialogic 2 timeline 编辑文本；脚本字段 `clue_id` 关联到 P2-4 已建的 `RuleResource.clue_unlock_id`。
   2. 玩家拾取后 `EventBus.clue_unlocked(clue_id)` → `clue_book.gd` 写入 `GameState.known_clue_ids`。
   3. 至少 1 条收容线索通过怪物行为反应间接验证：例如"对某物品有规避反应"→ 触发 `RuleEngine` 中的"验证规则"，更新 UI 标签。
-- **验收**：
-  - [ ] VS §5 全部 7 项可勾选。
-  - [ ] 盲测：1 名非开发玩家死亡后能口述"我是被什么规则杀的"（兑现 P2-3 延后的口述条件）。
-  - [ ] [`00-glossary.md`](00-glossary.md) 中所有线索术语已统一。
-- **关联 VS**：§5；兑现 P2 延后的盲测条件。
-- **关联模块**：[`modules/05-clues-puzzles-rule-deduction.md`](modules/05-clues-puzzles-rule-deduction.md)。
-- **状态**：TODO
+  - **验收**：
+    - [x] P3-1 信息层工程验收通过：11 条线索、Dialogic timeline、`ClueBook`、`GameState.known_clue_ids`、低理智干扰与 1 条收容行为验证规则均已覆盖。
+    - [ ] VS §5 完整玩家路径验证与非开发者口述盲测收束到 TASK-P3-5 出口门禁。
+    - [x] [`00-glossary.md`](00-glossary.md) 中 P3-1 线索术语已统一。
+  - **关联 VS**：§5；兑现 P2 延后的盲测条件。
+  - **关联模块**：[`modules/05-clues-puzzles-rule-deduction.md`](modules/05-clues-puzzles-rule-deduction.md)。
+  - **状态**：DONE
+
+**完成记录（2026-05-14）**
+
+- 设计：P3-1 只承接线索信息层，不提前实现击杀/收容执行、结算或死亡复活；VS §5 的完整路径验收保留到 P3-5。
+- 搭建：新增 `ClueResource`、`ClueBook`、`ClueNote`、11 条 `data/clues/*.tres`、11 条 Dialogic `.dtl` 时间线占位、`EventBus.clue_unlocked` 与 `GameState.known_clue_ids`。
+- 审计修复：GoPeak 发现 `@export_dir` 目录被误报为缺失资源依赖，已改为运行时拼接默认目录；未启用 Dialogic editor plugin，也未扩展 Autoload 白名单。
+- 验收：`test_clue_system.gd` 8/8 通过；全量 GUT `50/50` 通过；schema 校验 29 个资源通过或按既定 P8 口径 SKIP；关键场景 headless 加载与 GoPeak 依赖审计通过。
 
 ---
 
@@ -480,11 +560,18 @@
   2. 收容三步仪式：每步一个 `RuleResource`，前一步成功是后一步触发的前置条件之一。
   3. 击杀 / 收容成功时 `EventBus.objective_completed(type: int)`，供 P3-3 结算系统订阅。
 - **验收**：
-  - [ ] VS §4 后 3 项可勾选。
-  - [ ] 通过线索推理（不查文档）能在 ≤ 3 分钟内完成击杀；在 ≤ 全部 5 条收容线索集齐后能合理推出三步仪式。
+  - [x] 工程契约可勾选：弱点执行、三步收容顺序、错误收容与 `objective_completed` 事件均有 GUT 覆盖。
+  - [ ] VS §4 后 3 项的非开发者推理/实玩验收收束到 TASK-P3-5 阶段出口；P3-2 仅验证执行链可用。
 - **关联 VS**：§4 后 3 项。
 - **关联模块**：[`monsters/001-da-zhi.md`](monsters/001-da-zhi.md)。
-- **状态**：TODO
+- **状态**：DONE
+
+**完成记录（2026-05-14）**
+
+- 设计：`RuleEngine` 继续保持纯规则判定；新增普通场景节点 `ObjectiveResolver` 订阅 `EventBus.rule_triggered`，把规则效果转换为击杀、收容或错误收容目标完成事件。
+- 搭建：新增 `weakness.tres`、`containment_step_1.tres` ~ `containment_step_3.tres`、`containment_failure.tres`、`ObjectiveResolver`、`RitualStepTrigger` 与仪式触发占位节点；占位节点已标注后续厚涂分层 PNG / 2.5D Live 资产意图。
+- 审计修复：保留 P2 `rule_da_zhi_broadcast_power_off_weakness` 作为弱点窗口规则，新 P3-2 `rule_da_zhi_weakness_execute` 仅负责最终击杀完成；GoPeak 资源依赖审计无循环引用，编辑器桥接因 6506 端口占用未连接。
+- 验收：`test_objective_execution.gd` 8/8 通过；全量 GUT 58/58 通过；schema 校验 34 个资源通过或按既定 P8 口径 SKIP；`abandoned_school.tscn` 与关键对象场景 headless check-only 通过。
 
 ---
 
@@ -498,15 +585,21 @@
 - **实现步骤**：
   1. 输入：`path_flag`（逃离/击杀/收容/错误收容）、`hp_remaining`、`pickup_list`、`triggered_rules`。输出：四种结算之一 + 资源/原形/档案三项数值。
   2. 错误收容惩罚：扣减基地资源占位字段（P5 接入正式基地资源），并在结算页显示数值。
-  3. 三档奖励差："收容 > 击杀 > 逃离"在素材量 / 原形质量 / 叙事条目三维同时拉开（数值表 `/data/settlement_payoffs.tres`）。
+  3. 三维奖励差：素材量维度按"逃离 > 击杀 > 收容"拉开，原形质量与叙事条目维度按"收容 > 击杀 > 逃离"拉开；曲线来自数值表 `/data/settlement_payoffs.tres`。
   4. GUT 用例覆盖：四种路径各一例 + 错误收容扣减 + 边界（HP=0 / 拾取空）。
 - **验收**：
-  - [ ] `test_settlement_calculator.gd` 100% 通过（至少 6 用例）。
-  - [ ] VS §6 全部 5 项可勾选。
-  - [ ] 数值表在 Inspector 中可读可改，不需要改代码就能调奖励曲线。
+  - [x] `test_settlement_calculator.gd` 100% 通过（9 用例）。
+  - [ ] VS §6 全部 5 项正式验收收束到 TASK-P3-5 阶段出口。
+  - [x] 数值表在 Inspector 中可读可改，不需要改代码就能调奖励曲线。
 - **关联 VS**：§6。
 - **关联模块**：[`modules/06-objectives-settlement.md`](modules/06-objectives-settlement.md)。
-- **状态**：TODO
+- **状态**：DONE
+
+**完成记录（2026-05-14）**
+
+- 设计：`SettlementCalculator` 订阅 `EventBus.objective_completed(objective_type, payload)`，将 P3-2 目标完成事实转换为四类结算数据；奖励差异遵循模块 06 的三维分工，素材量与原形/叙事价值不互相塌缩。
+- 搭建：新增 `SettlementPayoffResource`、`data/settlement_payoffs.tres`、`SettlementCalculator`、`SettlementScreen` 与 `test_settlement_calculator.gd`；`abandoned_school.tscn` 已挂接结算器和结算屏，错误收容通过 `base_resource_delta.placeholder_materials` 输出 P5 前的基地资源占位扣减。
+- 快速自测：`test_settlement_calculator.gd` 9/9 通过；全量 GUT 67/67 通过；schema 校验 35 个资源通过或按既定 P8 口径 SKIP，其中 `settlement_payoffs.tres` 已注册为 `SettlementPayoffResource`；`abandoned_school.tscn` headless check-only 通过；GoPeak 资源依赖检查无循环引用，编辑器桥接仍因 6506 端口占用未连接。
 
 ---
 
@@ -523,12 +616,18 @@
   3. 复活时清空副本状态，重置 `RuleEngine` 内部计数器。
   4. 读取本次死亡关联 `RuleResource.learnable_hint` 并显示；无法定位规则时显示通用提示并把缺失 rule id 记入调试日志。
 - **验收**：
-  - [ ] VS §1 第 4 项可勾选。
-  - [ ] 死亡 → 复活 → 再次进入副本全流程无脚本红字。
-  - [ ] 死亡后至少出现一条可学习提示；提示来自 `learnable_hint` 或明确记录 fallback 原因。
+  - [ ] VS §1 第 4 项正式验收收束到 TASK-P3-5 阶段出口。
+  - [x] 死亡 → 基地占位复活工程链路无脚本红字，完整再次进入副本验收收束到 TASK-P3-5。
+  - [x] 死亡后至少出现一条可学习提示；提示来自 `learnable_hint` 或明确记录 fallback 原因。
 - **关联 VS**：§1 第 4 项。
 - **关联模块**：[`modules/01-player-control-exploration.md`](modules/01-player-control-exploration.md)。
-- **状态**：TODO
+- **状态**：DONE
+
+**完成记录（2026-05-14）**
+
+- 设计：`GameState` 订阅 `EventBus.player_died`，通过 `respawn_at_base()` 清空副本态并回到基地；`DeathFeedbackResolver` 负责从 `RuleResource.learnable_hint` 读取最低学习提示，避免把规则扫描逻辑塞进 Autoload。
+- 搭建：新增 `base_placeholder.tscn`、`base_placeholder.gd`、`death_feedback_resolver.gd` 与 `test_death_respawn.gd`；基地占位场景带 `placeholder_asset_note`，用于后续替换为 P5 厚涂 2.5D Live 基地分层资产。
+- 快速自测：`test_death_respawn.gd` 6/6 通过；全量 GUT 73/73 通过；schema 校验 35 个资源通过或按既定 P8 口径 SKIP；`base_placeholder.tscn` headless check-only 通过；`GameState.gd` 保持 100 行；GoPeak 资源依赖检查无循环引用，编辑器桥接仍因 6506 端口占用未连接。
 
 ---
 
@@ -537,7 +636,14 @@
 - **前置**：TASK-P3-1 ~ TASK-P3-4
 - **产出**：`/docs/perf/p3-review.md`
 - **验收**：VS §4 + §5 + §6 + §1 第 4 项全勾；`SettlementCalculator` GUT 全过；盲测口述规则成功。
-- **状态**：TODO
+- **状态**：BLOCKED（待非开发者盲测）
+
+**阶段出口记录（2026-05-14）**
+
+- 设计：P3 出口只判定"单次副本信息闭环"，不提前接入 P4 搜刮、P5 基地循环或 P7 文案演出；小阶段不再单独执行完整审计验收，正式审计与验收集中在本阶段出口。
+- 审计修复：新增 [`docs/perf/p3-review.md`](perf/p3-review.md)，并修正 [`00-vertical-slice.md`](00-vertical-slice.md) §6 奖励验收口径，保持"逃离偏素材、击杀偏中间策略、收容偏原形质量与叙事条目"。
+- 自动化验收：全量 GUT 73/73、schema 35 个资源检查、`abandoned_school.tscn` 与 `base_placeholder.tscn` headless check-only、GoPeak 关键依赖审计均通过。
+- 阻塞项：非开发者盲测尚未执行，暂不勾选 VS §4/§5 中的人工推理项，也不进入 TASK-P4-1。
 
 ---
 
@@ -883,20 +989,20 @@
 | TASK-P0-4-plugins-install | P0 | DONE | — |
 | TASK-P0-5-gut-bootstrap | P0 | DONE | — |
 | TASK-P0-6-schema-skeletons | P0 | DONE | — |
-| TASK-P1-1-player-controller | P1 | TODO（P0 已完成） | — |
-| TASK-P1-2-dungeon-handmade | P1 | TODO | — |
-| TASK-P1-3-interactables-stub | P1 | TODO | — |
-| TASK-P1-4-phase-exit-review | P1 | TODO | — |
-| TASK-P2-1-rule-engine | P2 | TODO | — |
-| TASK-P2-2-da-zhi-ai | P2 | TODO（Q-16 已定案） | — |
-| TASK-P2-3-pressure-feedback | P2 | TODO | — |
-| TASK-P2-4-monster-clue-stubs | P2 | TODO | — |
-| TASK-P2-5-phase-exit-review | P2 | TODO | — |
-| TASK-P3-1-clue-system | P3 | TODO | — |
-| TASK-P3-2-weakness-containment | P3 | TODO | — |
-| TASK-P3-3-settlement-calculator | P3 | TODO | — |
-| TASK-P3-4-death-respawn | P3 | TODO | — |
-| TASK-P3-5-phase-exit-review | P3 | TODO | — |
+| TASK-P1-1-player-controller | P1 | DONE | `a28dbf7` |
+| TASK-P1-2-dungeon-handmade | P1 | DONE | `42f9796` |
+| TASK-P1-3-interactables-stub | P1 | DONE | `ca89401` |
+| TASK-P1-4-phase-exit-review | P1 | DONE | `f81dbb9` |
+| TASK-P2-1-rule-engine | P2 | DONE | `9acd9d8` |
+| TASK-P2-2-da-zhi-ai | P2 | DONE | `ad22a25` |
+| TASK-P2-3-pressure-feedback | P2 | DONE | `a5820a2` |
+| TASK-P2-4-monster-clue-stubs | P2 | DONE | `b52b51c` |
+| TASK-P2-5-phase-exit-review | P2 | DONE | `5023655` / review doc |
+| TASK-P3-1-clue-system | P3 | DONE | `4840f2a` |
+| TASK-P3-2-weakness-containment | P3 | DONE | `95b3d9f` |
+| TASK-P3-3-settlement-calculator | P3 | DONE | `8029341` |
+| TASK-P3-4-death-respawn | P3 | DONE | `ac46b9c` |
+| TASK-P3-5-phase-exit-review | P3 | BLOCKED（待非开发者盲测） | `docs/perf/p3-review.md` |
 | TASK-P4-1-loot-system | P4 | TODO | — |
 | TASK-P4-2-origin-growth | P4 | TODO | — |
 | TASK-P4-3-save-system | P4 | TODO | — |
@@ -915,11 +1021,95 @@
 | TASK-P8-2-schema-validation-ci | P8 | TODO | — |
 | TASK-P8-3-docs-closeout | P8 | TODO | — |
 
-合计：**37 条 TASK**，P0 已完成并通过命令行复核；当前可进入 P1，且 P1 必须先过微切片门禁。当前没有因开放问题阻塞的 TASK。
+合计：**37 条 TASK**，P0、P1、P2 与 P3-1~P3-4 已完成并通过命令行复核；TASK-P3-5 自动化出口走查已完成，但因非开发者盲测未执行而阻塞，暂不可进入 TASK-P4-1。
 
 ---
 
 ## 版本记录
+
+### v1.6.4 - 2026-05-14
+
+- 新增 TASK-P3-5 阶段出口记录 [`docs/perf/p3-review.md`](perf/p3-review.md)，记录 P3 自动化验收、GoPeak 依赖审计和人工盲测阻塞项。
+- 将 TASK-P3-5 状态置为 `BLOCKED（待非开发者盲测）`，明确 P4-1 不在盲测完成前启动。
+- 同步实施计划 v2.6.4 与垂直切片 v1.0.5；保持小阶段只做快速自测，大阶段出口集中审计修复和验收。
+
+### v1.6.3 - 2026-05-14
+
+- 完成 TASK-P3-4：新增基地占位复活场景、死亡反馈解析器、`GameState.respawn_at_base()` 与死亡复活 GUT。
+- 记录 P3-4 设计与搭建结果；状态跟踪表写入实现提交 `ac46b9c`，当前入口推进至 TASK-P3-5 阶段出口走查。
+- 同步实施计划 v2.6.3、玩家控制与探索模块 v0.3.6、术语表 v1.5.3 与总设定 v0.8.6。
+
+### v1.6.2 - 2026-05-14
+
+- 完成 TASK-P3-3：新增 `SettlementCalculator`、`SettlementPayoffResource`、`data/settlement_payoffs.tres`、`SettlementScreen` 与结算系统 GUT。
+- 记录 P3-3 设计与搭建结果；状态跟踪表写入实现提交 `8029341`，当前入口推进至 TASK-P3-4。
+- 修正 P3-3 奖励表述：素材量维度为逃离最高，原形质量与叙事条目维度为收容最高，保持与目标结算模块 v0.3.4 一致。
+- 同步实施计划 v2.6.2、目标结算模块 v0.3.4、术语表 v1.5.2 与总设定 v0.8.5。
+
+### v1.6.1 - 2026-05-14
+
+- 完成 TASK-P3-2：新增大只弱点执行规则、三步收容规则、错误收容规则、`ObjectiveResolver` 与仪式触发占位节点。
+- 记录 P3-2 设计、搭建、审计修复与验收结果；状态跟踪表写入实现提交 `95b3d9f`，当前入口推进至 TASK-P3-3。
+- 同步实施计划 v2.6.1、怪物规则模块 v0.3.6、线索模块 v0.3.6、目标结算模块 v0.3.3、Monster Bible v0.2.8、术语表 v1.5.1 与总设定 v0.8.4。
+
+### v1.6.0 - 2026-05-14
+
+- 完成 TASK-P3-1：新增线索系统信息层、11 条线索资源、Dialogic 时间线占位、`ClueBook` 与收容行为验证规则。
+- 审计修复 P3-1 验收口径：完整玩家路径验证和非开发者口述盲测推至 TASK-P3-5 出口门禁。
+- 状态跟踪表写入实现提交 `4840f2a`；当前入口推进至 TASK-P3-2。
+- 同步实施计划 v2.6.0、线索模块 v0.3.5、Monster Bible v0.2.7、术语表 v1.5.0 与总设定 v0.8.3。
+
+### v1.5.9 - 2026-05-14
+
+- 完成 TASK-P2-5：新增 `docs/perf/p2-review.md`，记录 P2 阶段出口走查。
+- P2-5 审计修复新增 `rule_da_zhi_flashlight_stare_manifestation.tres`，使“大只至少两种特定条件现形”达标。
+- P2 阶段全部 TASK 标记为 DONE；当前实施入口推进至 TASK-P3-1。
+- 同步实施计划 v2.5.6、Monster Bible v0.2.6 与术语表 v1.4.7。
+
+### v1.5.8 - 2026-05-14
+
+- 完成 TASK-P2-4：新增 3 条大只线索规则占位 `.tres`，覆盖行为观察、击杀线索和收容线索。
+- 记录 P2-4 设计、搭建、占位边界、审计修复和验收结果；状态跟踪表写入实现提交 `b52b51c`。
+- 同步实施计划 v2.5.5、线索解谜模块 v0.3.4、Monster Bible v0.2.5 与术语表 v1.4.6。
+
+### v1.5.7 - 2026-05-14
+
+- 完成 TASK-P2-3：新增压力等级系统、HUD 叠层、心跳播放器、AudioBus layout、理智干扰 Shader 和首次入场现形触发器。
+- 记录 P2-3 设计、搭建、占位资源、审计修复和验收结果；状态跟踪表写入实现提交 `a5820a2`。
+- 同步实施计划 v2.5.4、恐怖感知与压力模块 v0.3.3、Monster Bible v0.2.4 与术语表 v1.4.5。
+
+### v1.5.6 - 2026-05-14
+
+- 完成 TASK-P2-2：新增大只 AI 骨架、LimboHSM 阶段节点、NavigationAgent2D、MonsterProfile 和 GUT 覆盖。
+- 记录 P2-2 设计、搭建、占位资源、审计修复和验收结果；状态跟踪表写入实现提交 `ad22a25`。
+- 同步实施计划 v2.5.3、怪物规则模块 v0.3.5 与 Monster Bible v0.2.3。
+
+### v1.5.5 - 2026-05-14
+
+- 完成 TASK-P2-1：新增 RuleEngine、8 个 GUT 用例和 4 条大只最低规则资源。
+- 记录 P2-1 设计、搭建、审计修复和验收结果；状态跟踪表写入实现提交 `9acd9d8`。
+- 同步实施计划 v2.5.2、怪物规则模块 v0.3.4、Monster Bible v0.2.2 与术语表 v1.4.4。
+
+### v1.5.4 - 2026-05-14
+
+- 完成 TASK-P1-4：新增 `docs/perf/p1-review.md`，记录 P1 阶段出口走查、验收命令、GoPeak 资源依赖审计和后续延后项。
+- P1 阶段全部 TASK 标记为 DONE，当前入口推进至 TASK-P2-1。
+- 同步实施计划 v2.5.1。
+
+### v1.5.3 - 2026-05-14
+
+- 完成 TASK-P1-3：新增四类交互物占位场景、统一交互接口、玩家临时交互 payload 消费和废弃学校 5 个交互实例。
+- 记录 P1-3 设计、搭建、审计修复和验收结果；状态跟踪表写入实现提交 `ca89401`。
+
+### v1.5.2 - 2026-05-14
+
+- 完成 TASK-P1-2：新增微切片灰盒场景、完整破败校园灰盒、4 个候选房间、确定性房间池、关卡资源与 level manifest。
+- 记录 P1-2 设计、搭建、审计修复和验收结果；状态跟踪表写入实现提交 `42f9796`。
+
+### v1.5.1 - 2026-05-14
+
+- 完成 TASK-P1-1：新增玩家控制器、Input Map、手电资源、LimboHSM 状态骨架、噪声事件 action id 与 GUT 覆盖。
+- 记录 P1-1 设计、搭建、审计修复和验收结果；状态跟踪表写入实现提交 `a28dbf7`。
 
 ### v1.5.0 - 2026-05-14
 

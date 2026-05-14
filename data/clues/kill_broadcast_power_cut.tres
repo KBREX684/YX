@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ClueResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/systems/resources/clue_resource.gd" id="1_clue"]
+
+[resource]
+script = ExtResource("1_clue")
+clue_id = "clue_broadcast_power_cut"
+route = "kill"
+clue_kind = "text"
+linked_rule_ids = PackedStringArray("rule_da_zhi_broadcast_power_off_weakness")
+dialogic_timeline_id = &"dlg_clue_broadcast_power_cut"
+dialogic_timeline_path = "res://dialogic/timelines/clue_broadcast_power_cut.dtl"
+archive_summary = "kill: 值班记录写着先拔广播保险再锁仓库门，提示击杀弱点需要断电和封锁连用。"
+risk_band = "medium"
+placeholder_asset_note = "占位美术: 配电箱旁值班记录，后续替换为墙贴/便签分层 PNG。"

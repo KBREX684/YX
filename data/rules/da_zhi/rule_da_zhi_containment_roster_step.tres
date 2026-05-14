@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="RuleResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/systems/resources/rule_resource.gd" id="1_rule"]
+
+[resource]
+script = ExtResource("1_rule")
+id = "rule_da_zhi_containment_roster_step"
+trigger_conditions = [{
+"type": "zone",
+"zone_id": "records_room"
+}, {
+"type": "player_action",
+"action": "read_roster"
+}, {
+"type": "flag",
+"key": "roster_complete",
+"value": true
+}]
+effect = {
+"type": "containment_step",
+"target_id": "da_zhi",
+"step_id": "roster_confirmation",
+"sequence_index": 1
+}
+clue_unlock_id = "clue_full_roster"
+learnable_hint = "名单必须完整读完。漏掉名字时，它会以为你也在篡改名单。"

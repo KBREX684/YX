@@ -1,0 +1,109 @@
+[gd_scene load_steps=8 format=3 uid="uid://yx_player_p1_placeholder"]
+
+[ext_resource type="Script" path="res://scripts/player/player.gd" id="1_player_script"]
+[ext_resource type="Resource" path="res://data/items/flashlight.tres" id="2_flashlight"]
+[ext_resource type="Script" path="res://scripts/player/states/player_limbo_state.gd" id="3_state_script"]
+[ext_resource type="Script" path="res://scripts/player/player_interaction_sensor.gd" id="4_interaction_sensor"]
+[ext_resource type="Script" path="res://scripts/player/player_feedback_view.gd" id="5_feedback_view"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_player"]
+size = Vector2(32, 56)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_interaction_sensor"]
+radius = 64.0
+
+[node name="Player" type="CharacterBody2D"]
+collision_layer = 2
+collision_mask = 1
+script = ExtResource("1_player_script")
+flashlight_data = ExtResource("2_flashlight")
+
+[node name="Visual" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -20)
+
+[node name="PlaceholderBody" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-14, -52, 14, -52, 18, -8, 10, 8, -10, 8, -18, -8)
+color = Color(0.23, 0.34, 0.55, 0.9)
+
+[node name="PlaceholderAssetLabel" type="Label" parent="."]
+offset_left = -96.0
+offset_top = 14.0
+offset_right = 96.0
+offset_bottom = 50.0
+text = "占位: 玩家2.5D Live分层立绘"
+horizontal_alignment = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -22)
+shape = SubResource("RectangleShape2D_player")
+
+[node name="StateMachine" type="Node" parent="."]
+
+[node name="Idle" type="Node" parent="StateMachine"]
+script = ExtResource("3_state_script")
+state_id = &"idle"
+noise_level = 0
+
+[node name="Walk" type="Node" parent="StateMachine"]
+script = ExtResource("3_state_script")
+state_id = &"walk"
+noise_level = 2
+
+[node name="Run" type="Node" parent="StateMachine"]
+script = ExtResource("3_state_script")
+state_id = &"run"
+noise_level = 3
+
+[node name="Crouch" type="Node" parent="StateMachine"]
+script = ExtResource("3_state_script")
+state_id = &"crouch"
+noise_level = 1
+
+[node name="Hide" type="Node" parent="StateMachine"]
+script = ExtResource("3_state_script")
+state_id = &"hide"
+noise_level = 0
+
+[node name="Flashlight" type="PointLight2D" parent="."]
+position = Vector2(28, -28)
+color = Color(1, 0.94, 0.76, 1)
+energy = 0.0
+texture_scale = 2.0
+
+[node name="FlashlightBeam" type="Polygon2D" parent="."]
+visible = false
+position = Vector2(18, -30)
+polygon = PackedVector2Array(0, -8, 178, -54, 178, 36)
+color = Color(1, 0.88, 0.48, 0.28)
+
+[node name="FollowCamera" type="Camera2D" parent="."]
+enabled = true
+position_smoothing_enabled = true
+position_smoothing_speed = 8.0
+drag_horizontal_enabled = true
+drag_vertical_enabled = true
+drag_left_margin = 0.15
+drag_right_margin = 0.15
+drag_top_margin = 0.15
+drag_bottom_margin = 0.15
+limit_smoothed = true
+process_callback = 1
+
+[node name="FeedbackLabel" type="Label" parent="."]
+offset_left = -150.0
+offset_top = -104.0
+offset_right = 150.0
+offset_bottom = -68.0
+text = "WASD移动  F手电  C蹲伏  E交互  H躲藏"
+horizontal_alignment = 1
+
+[node name="FeedbackView" type="Node" parent="."]
+script = ExtResource("5_feedback_view")
+
+[node name="InteractionSensor" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 1
+script = ExtResource("4_interaction_sensor")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InteractionSensor"]
+shape = SubResource("CircleShape2D_interaction_sensor")

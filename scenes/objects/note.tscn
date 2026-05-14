@@ -1,0 +1,33 @@
+[gd_scene load_steps=3 format=3 uid="uid://yx_obj_note_stub"]
+
+[ext_resource type="Script" path="res://scripts/objects/note.gd" id="1_note"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_note"]
+size = Vector2(40, 32)
+
+[node name="Note" type="Area2D"]
+collision_layer = 4
+collision_mask = 2
+script = ExtResource("1_note")
+interactable_id = &"note_escape_notice_stub"
+prompt_text = "阅读"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_note")
+
+[node name="Paper" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-16, -10, 14, -14, 17, 10, -14, 14)
+color = Color(0.83, 0.78, 0.64, 1)
+
+[node name="InkMark" type="Polygon2D" parent="."]
+position = Vector2(-2, 0)
+polygon = PackedVector2Array(-9, -2, 9, -2, 9, 2, -9, 2)
+color = Color(0.22, 0.17, 0.15, 1)
+
+[node name="PlaceholderAssetLabel" type="Label" parent="."]
+offset_left = -88.0
+offset_top = 24.0
+offset_right = 88.0
+offset_bottom = 60.0
+text = "占位: 纸条/线索文本"
+horizontal_alignment = 1

@@ -1,8 +1,8 @@
 # 线索、解谜与规则推理模块
 
-版本：v0.3.3
-关联总设定版本：v0.8.1
-状态：线索密度公式与层级结构确认
+版本：v0.3.6
+关联总设定版本：v0.8.4
+状态：P3-2 执行链映射同步
 创建日期：2026-05-14
 最后更新：2026-05-14
 
@@ -150,6 +150,36 @@
 - 1 个规则谜题（走廊奔跑触发感知）。
 - 1 个三步仪式谜题（大只收容仪式）。
 
+### P2-4 工程占位规则池
+
+P2-4 只建立线索规则数据锚点，不实现 Dialogic 笔记、不写正文、不放置正式线索物件：
+
+| 规则资源 | 稳定线索 ID | 目标层级 | 后续 P3-1 接管内容 |
+|---|---|---|---|
+| `clue_da_zhi_corridor_echo` | `clue_corridor_echo` | 行为观察 / 规则谜题 | 走廊奔跑后出现额外脚步声的可观察线索 |
+| `clue_da_zhi_broadcast_dependency` | `clue_broadcast_dependency` | 击杀线索 | 广播依赖与断电弱点的文本/音频线索 |
+| `clue_da_zhi_full_roster` | `clue_full_roster` | 收容线索 | 完整名单读取作为收容步骤的文本线索 |
+
+这些资源的 `effect.type` 固定为 `clue_stub`，用于防止 P3-1 新增线索时重新发明数据字段。
+
+### P3-1 工程落地线索表
+
+P3-1 已实现信息层，不提前实现目标执行与结算。线索交互统一使用 `ClueNote`，拾取后发出 `EventBus.clue_unlocked(clue_id)`，由 `ClueBook` 写入 `GameState.known_clue_ids`；Dialogic 2 先以 `.dtl` 文本时间线占位，后续可在编辑器中继续精修。
+
+| 线索资源 | 稳定线索 ID | 路径 | 类型 | 关联规则 / 验证 | 占位资产说明 |
+|---|---|---|---|---|---|
+| `escape_exit_lock.tres` | `clue_escape_exit_lock` | 逃离 | 文本 | `rule_da_zhi_corridor_run` | 后门维修单 |
+| `escape_power_room_tag.tres` | `clue_escape_power_room_tag` | 逃离 | 物品 | `rule_da_zhi_flashlight_stare_manifestation` | 配电室钥匙牌 |
+| `escape_route_map.tres` | `clue_escape_route_map` | 逃离 | 环境 | `rule_da_zhi_first_manifestation` | 半张疏散图 |
+| `kill_corridor_echo.tres` | `clue_corridor_echo` | 击杀 | 行为 | `rule_da_zhi_corridor_run` / `clue_da_zhi_corridor_echo` | 走廊脚印/回声标记 |
+| `kill_broadcast_dependency.tres` | `clue_broadcast_dependency` | 击杀 | 音频文本 | `rule_da_zhi_broadcast_power_off_weakness` / `rule_da_zhi_weakness_execute` | 旧广播稿和磁带标签 |
+| `kill_broadcast_power_cut.tres` | `clue_broadcast_power_cut` | 击杀 | 文本 | `rule_da_zhi_broadcast_power_off_weakness` | 配电箱值班记录 |
+| `contain_full_roster.tres` | `clue_full_roster` | 收容 | 文本 / 行为验证 | `rule_da_zhi_containment_step_1` / `rule_da_zhi_roster_reaction_verification` | 完整学生名单档案页 |
+| `contain_missing_name.tres` | `clue_missing_name` | 收容 | 环境 | `rule_da_zhi_containment_step_1` | 黑板座次表缺名区域 |
+| `contain_ritual_cord_left.tres` | `clue_ritual_cord_left` | 收容 | 物品 | `rule_da_zhi_containment_step_2` | 左侧红绳和喇叭残片 |
+| `contain_ritual_cord_right.tres` | `clue_ritual_cord_right` | 收容 | 物品 | `rule_da_zhi_containment_step_3` | 右侧红绳和值班铃 |
+| `contain_silence_taboo.tres` | `clue_silence_taboo` | 收容 | 声音 | `rule_da_zhi_containment_step_3` / `rule_da_zhi_containment_failure` | 录音带/静音警告牌 |
+
 ## 验收标准（Acceptance Criteria）
 
 - [ ] 玩家只看逃离线索也能通关，但没有原形和部分档案。
@@ -191,6 +221,24 @@
 - 每条收容关键规则需至少 2 种线索交叉验证。
 
 ## 版本记录
+
+### v0.3.6 - 2026-05-14
+
+- 同步 P3-2 执行链映射：击杀线索指向最终弱点执行规则，收容线索分别指向三步收容和错误收容规则。
+- 明确 P3-1 线索信息层不扩展文本量，P3-2 仅补规则关联，不新增正式美术资产。
+- 同步总设定 v0.8.4、Monster Bible v0.2.8 与工程任务书 v1.6.1。
+
+### v0.3.5 - 2026-05-14
+
+- P3-1 完成线索系统信息层：新增 11 条 `ClueResource`、11 条 Dialogic `.dtl` 时间线占位、`ClueBook` 和 `ClueNote`。
+- 记录 `EventBus.clue_unlocked(clue_id)` → `GameState.known_clue_ids` 的自动整理链路。
+- 新增收容行为验证规则 `rule_da_zhi_roster_reaction_verification`，用于证明 `clue_full_roster` 不是纯文本背景。
+- 审计修复：VS §5 的完整玩家路径验证与非开发者口述盲测收束到 P3-5 出口门禁。
+
+### v0.3.4 - 2026-05-14
+
+- 新增 P2-4 工程占位规则池，登记 3 条大只线索规则资源与稳定 `clue_unlock_id`。
+- 同步总设定版本至 v0.8.2。
 
 ### v0.3.3 - 2026-05-14
 

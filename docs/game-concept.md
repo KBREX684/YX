@@ -1,6 +1,6 @@
 # 无限流异常副本游戏设想
 
-版本：v0.8.2
+版本：v0.8.6
 状态：初期设想
 创建日期：2026-05-14
 最后更新：2026-05-14
@@ -26,7 +26,7 @@
 | 文档 | 内容 |
 |---|---|
 | [Design Pillars](00-design-pillars.md) | 2 条设计支柱，所有模块裁决依据 |
-| [术语表 Glossary](00-glossary.md) | 核心术语定义，24 个词条 |
+| [术语表 Glossary](00-glossary.md) | 核心术语定义与工程术语对照 |
 | [美术风格与制作底基 Art Direction](00-art-direction.md) | 视觉最高规约：2.5D Live、厚涂精美二次元、动画管线与外包验收 |
 | [风险登记 Risk Register](00-risk-register.md) | 15 条已识别设计与工程风险 |
 | [设计决策与开放问题 Open Questions](00-open-questions.md) | 集中管理已定案设计问题与后续阶段问题；当前无用户待确认阻塞项 |
@@ -85,15 +85,20 @@
 - 怪物可以跨房间追踪，但必须遵循固定行为逻辑。
 - 玩家被抓后触发恐怖动画，并在基地复活。
 - 死亡后损失资源，没有永久死亡。
+- P3-4 起，`GameState.respawn_at_base()` 处理死亡后回到基地占位场景、清空副本态和资源损失占位计算；`DeathFeedbackResolver` 从 `RuleResource.learnable_hint` 读取最低学习提示。
 - 结算结果收束为：收容成功、击杀、逃离、错误收容。
+- P3-2 起，击杀、收容成功和错误收容通过 `ObjectiveResolver` 转换为 `EventBus.objective_completed(objective_type, payload)`；P3-3 起，`SettlementCalculator` 订阅该事件并根据 `data/settlement_payoffs.tres` 输出资源、原形、档案、基地占位扣减与污染变化。
 - 逃离无法获得原形残片。
 - 击杀不会永久关闭剧情线。
 - 错误收容按错误类型分级惩罚仓库物资（轻度/中度/重度，使用比例+绝对值上限），并可能触发基地入侵（详见 docs/modules/06-objectives-settlement.md）。
 - 结算结果需要显示明确数值。
+- 结算数值曲线保持三维分工：逃离偏素材，击杀偏中间策略，收容偏高品质原形与叙事档案。
 
 ### 线索、资源与压力
 
 - 线索自动整理。
+- P3-1 起，线索信息层由 `ClueResource`、`ClueNote`、`ClueBook` 和 `EventBus.clue_unlocked(clue_id)` 组成；已知线索写入 `GameState.known_clue_ids`。
+- P3-2 起，大只弱点执行与三步收容链由 `RuleResource` 驱动；仪式触发占位节点带 `placeholder_asset_note`，用于后续替换厚涂分层 PNG 与 2.5D Live 轻动画。
 - 谜题采用现实逻辑与超自然规则混合。
 - 文本量保持克制。
 - 不使用 UI 明示压力或理智状态，完全依赖声音、心跳、画面、光源和环境表现。
@@ -513,6 +518,30 @@
 当前建议是：以恐怖求生和异常规则探索作为主体验，以原形养成作为长期奖励和策略扩展。养成系统不应完全安全化、萌化或数值化异常，否则会削弱恐怖基调。
 
 ## 版本记录
+
+### v0.8.6 - 2026-05-14
+
+- 同步 P3-4 死亡复活流程：`GameState.respawn_at_base()`、`DeathFeedbackResolver` 与 `base_placeholder.tscn` 已接入。
+- 明确死亡学习反馈来自 `RuleResource.learnable_hint`，无法定位规则时显示 fallback 并记录缺失 rule id。
+- 同步实施计划 v2.6.3、工程任务书 v1.6.3、玩家控制与探索模块 v0.3.6 与术语表 v1.5.3。
+
+### v0.8.5 - 2026-05-14
+
+- 同步 P3-3 结算系统：`SettlementCalculator`、`SettlementPayoffResource`、`data/settlement_payoffs.tres` 与 `SettlementScreen` 已接入废弃学校场景。
+- 明确结算三维奖励分工：逃离偏素材，击杀偏中间策略，收容偏高品质原形与叙事档案；错误收容输出 P5 前的基地资源占位扣减。
+- 同步实施计划 v2.6.2、工程任务书 v1.6.2、目标结算模块 v0.3.4 与术语表 v1.5.2。
+
+### v0.8.4 - 2026-05-14
+
+- 同步 P3-2 弱点与收容执行链：`ObjectiveResolver` 将规则效果转换为 `EventBus.objective_completed(objective_type, payload)`，供后续结算系统订阅。
+- 记录大只最终击杀、三步收容和错误收容均由 `RuleResource` 驱动；仪式触发节点使用占位资产并标注后续美术意图。
+- 同步术语表 v1.5.1、怪物规则模块 v0.3.6、线索模块 v0.3.6、目标结算模块 v0.3.3、Monster Bible v0.2.8 与工程任务书 v1.6.1。
+
+### v0.8.3 - 2026-05-14
+
+- 同步 P3-1 线索系统信息层：`ClueResource`、`ClueNote`、`ClueBook`、`EventBus.clue_unlocked(clue_id)` 与 `GameState.known_clue_ids`。
+- 明确 Dialogic `.dtl` 作为线索文本占位，不在 P3-1 启用 Dialogic editor plugin 或扩展 Autoload 白名单。
+- 同步术语表 v1.5.0 与线索模块 v0.3.5。
 
 ### v0.8.2 - 2026-05-14
 

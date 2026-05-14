@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ClueResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/systems/resources/clue_resource.gd" id="1_clue"]
+
+[resource]
+script = ExtResource("1_clue")
+clue_id = "clue_ritual_cord_left"
+route = "contain"
+clue_kind = "item"
+linked_rule_ids = PackedStringArray("rule_da_zhi_containment_roster_step")
+dialogic_timeline_id = &"dlg_clue_ritual_cord_left"
+dialogic_timeline_path = "res://dialogic/timelines/clue_ritual_cord_left.dtl"
+archive_summary = "contain: 左侧红绳必须绕过旧广播喇叭，表示收容仪式需要借用广播依附。"
+risk_band = "high"
+placeholder_asset_note = "占位美术: 左侧红绳和喇叭残片，后续替换为仪式物 PNG。"

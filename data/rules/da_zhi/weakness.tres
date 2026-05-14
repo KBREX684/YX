@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="RuleResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/systems/resources/rule_resource.gd" id="1_rule"]
+
+[resource]
+script = ExtResource("1_rule")
+id = "rule_da_zhi_weakness_execute"
+trigger_conditions = [{
+"type": "zone",
+"zone_id": "storage_entrance"
+}, {
+"type": "player_action",
+"action": "lock_warehouse_chain"
+}, {
+"type": "context_equals",
+"key": "monster_phase",
+"value": "search"
+}, {
+"type": "has_item",
+"item_id": "item_noise_bait"
+}, {
+"type": "flag",
+"key": "broadcast_silence_active",
+"value": true
+}, {
+"type": "flag",
+"key": "warehouse_chain_locked",
+"value": true
+}]
+effect = {
+"type": "objective_complete",
+"objective_type": 1,
+"outcome": "kill",
+"target_id": "da_zhi",
+"monster_id": "da_zhi",
+"origin_quality": "medium",
+"origin_stability": "low",
+"archive_unlock": "broadcast_dependency"
+}
+clue_unlock_id = "clue_broadcast_dependency"
+learnable_hint = "广播沉默窗口内，在库房入口用噪声诱饵引它撞向锁链。原形可带回，但稳定度偏低。"

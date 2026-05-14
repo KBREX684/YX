@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://yx_room_classroom_a"]
+
+[node name="RoomClassroomA" type="Node2D"]
+
+[node name="BlockoutFloor" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-120, -70, 120, -70, 120, 70, -120, 70)
+color = Color(0.24, 0.29, 0.31, 1)
+
+[node name="PlaceholderAssetLabel" type="Label" parent="."]
+offset_left = -110.0
+offset_top = -20.0
+offset_right = 110.0
+offset_bottom = 22.0
+text = "占位: 普通教室分层背景/课桌遮挡"
+horizontal_alignment = 1

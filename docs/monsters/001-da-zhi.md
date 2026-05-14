@@ -1,7 +1,7 @@
 # 大只 — Monster Bible
 
-版本：v0.2.1
-关联总设定版本：v0.8.1
+版本：v0.2.8
+关联总设定版本：v0.8.4
 关联副本主题：破败校园
 状态：Demo 规则口径确认
 创建日期：2026-05-14
@@ -95,7 +95,31 @@
   - 触发约 3 秒恐怖动画。
   - 玩家在基地复活。
   - 带入资源 100% 损失；副本内拾取资源约 60% 返还至基地仓库。
-  - 本次副本探索进度（已打开的门、已读线索）保留，但地图变化事件重置。
+- 本次副本探索进度（已打开的门、已读线索）保留，但地图变化事件重置。
+
+---
+
+### P2-2 工程阶段映射
+
+| 设计阶段 | 工程 phase_id | P2-2 表现 |
+|---|---|---|
+| 潜伏 | `dormant` | 默认阶段，剪影不可见，不移动 |
+| 试探 | `probing` | 弱点窗口或后续环境变化阶段占位，暂不主动追踪 |
+| 搜索 | `search` | 由规则效果 `phase = "search"` 触发，进入 NavigationAgent2D 目标点移动 |
+| 追猎 | `hunt` | 预留高速追踪阶段，P2-3 已接入最高压力反馈，P2-4 继续补线索反应 |
+| 处置 | `disposal` | 预留抓取/失败阶段，死亡复活由 P3-4 接入 |
+
+P2-2 不写具体规则 ID；大只只读取 `RuleEngine` 注入的 `rule_effect`。当前剪影占位对应后续正式“远处高大人形剪影 / 2.5D Live 分层怪物立绘”。
+
+### P2-3 压力反馈映射
+
+| 工程事件 | 当前输出 | 设计含义 |
+|---|---|---|
+| `search` 阶段 | `EventBus.pressure_changed(0.7)` | 玩家能感到大只正在接近，但仍有躲藏与绕行窗口 |
+| `hunt` / `disposal` 阶段 | `EventBus.pressure_changed(1.0)` | 近距离高压，心跳、手电和环境氛围达到最高档 |
+| `show_apparition(2.5)` | `monster_manifested` + 不低于 `0.65` 的压力 | 首次进入废弃学校时的弱光远处显形，提供基础外观信息 |
+
+`show_apparition(duration)` 是 `manifest(duration)` 的语义别名，供场景触发器调用；正式美术替换时仍对应“远处高大人形弱光轮廓”，不是近景完整立绘。
 
 ---
 
@@ -205,6 +229,25 @@
 | P4 | 禁止类 | 广播室开灯超过 5 秒，立即触发大只进入搜索 | 广播室门口警告纸条 |
 | P5 | 感知欺骗类 | 大只会制造"走廊末端有脚步声"的假声源，玩家奔跑去查看时正好触发 P1 | 行为观察（多次验证后可学习） |
 
+### P2-1 / P2-4 / P3-2 RuleResource 映射
+
+| 资源 ID | 对应设计 | 当前用途 |
+|---|---|---|
+| `rule_da_zhi_corridor_run` | P1：走廊内不可奔跑 | 关键失败 / 搜索阶段触发，占位 `learnable_hint` 已填 |
+| `rule_da_zhi_first_manifestation` | 首次进入主走廊强制现形 | 首次现形条件，占位时长 2.5 秒 |
+| `rule_da_zhi_flashlight_stare_manifestation` | 手电长时间照向空走廊后的侧影现形 | P2-5 审计修复，补足第二种特定现形条件 |
+| `rule_da_zhi_broadcast_power_off_weakness` | 广播断电后失向弱点窗口 | 击杀链弱点窗口，需 `clue_broadcast_dependency` 解锁 |
+| `rule_da_zhi_containment_roster_step` | 收容步骤 1：名单确认 | 收容链第 1 步，需 `clue_full_roster` 解锁 |
+| `rule_da_zhi_roster_reaction_verification` | 完整名单让大只停步 | P3-1 收容线索行为验证规则，验证 `clue_full_roster` |
+| `rule_da_zhi_weakness_execute` | 广播沉默窗口内的仓库封锁击杀 | P3-2 最终击杀完成规则，输出 `objective_type = 1` |
+| `rule_da_zhi_containment_step_1` | 收容步骤 1：名单确认 | P3-2 三步收容执行规则，写入 `roster_confirmation` |
+| `rule_da_zhi_containment_step_2` | 收容步骤 2：熄灯广播封声 | P3-2 三步收容执行规则，要求已完成名单确认 |
+| `rule_da_zhi_containment_step_3` | 收容步骤 3：四锚点实体锁定 | P3-2 收容成功规则，输出 `objective_type = 2` |
+| `rule_da_zhi_containment_failure` | 锚点顺序错误导致错误收容 | P3-2 错误收容规则，输出 `objective_type = 3` 与重度失败等级 |
+| `clue_da_zhi_corridor_echo` | 奔跑后额外脚步声行为观察 | P3-1 线索对象占位，稳定 ID 为 `clue_corridor_echo` |
+| `clue_da_zhi_broadcast_dependency` | 广播依赖弱点线索 | P3-1 击杀线索占位，稳定 ID 为 `clue_broadcast_dependency` |
+| `clue_da_zhi_full_roster` | 完整名单收容步骤线索 | P3-1 收容线索占位，稳定 ID 为 `clue_full_roster` |
+
 ---
 
 ## 9. 反学习机制与变体
@@ -230,6 +273,41 @@
 ---
 
 ## 版本记录
+
+### v0.2.8 - 2026-05-14
+
+- P3-2 新增大只最终击杀规则、三步收容执行规则与错误收容规则，并纳入 MonsterProfile `rule_ids` / `containment_rule_ids`。
+- 明确击杀完成输出 `objective_type = 1`、收容成功输出 `objective_type = 2`、错误收容输出 `objective_type = 3`，供 P3-3 结算系统订阅。
+- 同步总设定 v0.8.4、目标结算模块 v0.3.3 与工程任务书 v1.6.1。
+
+### v0.2.7 - 2026-05-14
+
+- P3-1 新增 `rule_da_zhi_roster_reaction_verification`，让完整名单线索具备怪物行为反应验证。
+- 同步 11 条线索资源与 `ClueBook` 信息层落地；大只 `MonsterProfile.rule_ids` 已纳入验证规则。
+
+### v0.2.6 - 2026-05-14
+
+- P2-5 审计修复新增 `rule_da_zhi_flashlight_stare_manifestation`，补足第二种特定现形条件。
+- 同步 P2 出口走查结果：大只通常不可见、间接反馈可判断、阶段流程无随机传送均已达标。
+
+### v0.2.5 - 2026-05-14
+
+- 将 P2-4 新增的 3 条 clue stub 规则纳入 RuleResource 映射表和 MonsterProfile `rule_ids`。
+- 记录线索占位资源与后续 P3-1 Dialogic 线索对象的对应关系。
+
+### v0.2.4 - 2026-05-14
+
+- 新增 P2-3 压力反馈映射，记录大只阶段与 `EventBus.pressure_changed` 的对应关系。
+- 记录 `show_apparition(2.5)` 首次入场触发语义与占位美术意图。
+
+### v0.2.3 - 2026-05-14
+
+- 新增 P2-2 工程阶段映射，记录大只 AI 骨架的 phase_id、RuleEngine effect 驱动方式和剪影占位资源意图。
+
+### v0.2.2 - 2026-05-14
+
+- 同步总设定版本至 v0.8.2。
+- 新增 P2-1 RuleResource 映射表，记录大只最低规则资源 ID 与设计对应关系。
 
 ### v0.2.1 - 2026-05-14
 

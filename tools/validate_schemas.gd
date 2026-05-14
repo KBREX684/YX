@@ -31,6 +31,24 @@ const REQUIRED := {
 		"id": "non_empty_string",
 		"stack_max": "positive_int",
 	},
+	"ClueResource": {
+		"clue_id": "non_empty_string",
+		"route": "non_empty_string",
+		"clue_kind": "non_empty_string",
+		"dialogic_timeline_path": "non_empty_string",
+		"archive_summary": "non_empty_string",
+	},
+	"SettlementPayoffResource": {
+		"escape_material_multiplier": "non_negative_number",
+		"kill_material_multiplier": "non_negative_number",
+		"contain_material_multiplier": "non_negative_number",
+		"miscontain_material_multiplier": "non_negative_number",
+		"escape_archive_entries": "non_negative_int",
+		"kill_archive_entries": "non_negative_int",
+		"contain_archive_entries": "non_negative_int",
+		"heavy_error_loss_pct": "non_negative_number",
+		"heavy_error_loss_cap": "positive_int",
+	},
 }
 
 
@@ -141,6 +159,11 @@ func _check(value: Variant, rule: String) -> String:
 		"non_negative_int":
 			if typeof(value) != TYPE_INT or (value as int) < 0:
 				return "必须是非负整数（当前=%s）" % str(value)
+		"non_negative_number":
+			if typeof(value) != TYPE_INT and typeof(value) != TYPE_FLOAT:
+				return "must be a non-negative number (current=%s)" % str(value)
+			if float(value) < 0.0:
+				return "must be a non-negative number (current=%s)" % str(value)
 		_:
 			return "未知校验规则 %s" % rule
 	return ""

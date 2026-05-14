@@ -1,0 +1,70 @@
+[gd_scene load_steps=2 format=3 uid="uid://yx_base_placeholder"]
+
+[ext_resource type="Script" path="res://scripts/base/base_placeholder.gd" id="1_base"]
+
+[node name="BasePlaceholder" type="Node2D"]
+script = ExtResource("1_base")
+
+[node name="Floor" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-260, -140, 260, -140, 260, 140, -260, 140)
+color = Color(0.1, 0.12, 0.13, 1)
+
+[node name="PlaceholderAssetLabel" type="Label" parent="."]
+offset_left = -210.0
+offset_top = -28.0
+offset_right = 210.0
+offset_bottom = 28.0
+text = "Placeholder: base recovery room / P5 painterly 2.5D Live layers"
+horizontal_alignment = 1
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = 4
+
+[node name="DeathFeedbackPanel" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Backdrop" type="ColorRect" parent="CanvasLayer/DeathFeedbackPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.02, 0.025, 0.03, 0.74)
+
+[node name="Margin" type="MarginContainer" parent="CanvasLayer/DeathFeedbackPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 32
+
+[node name="Content" type="VBoxContainer" parent="CanvasLayer/DeathFeedbackPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="TitleLabel" type="Label" parent="CanvasLayer/DeathFeedbackPanel/Margin/Content"]
+layout_mode = 2
+text = "Respawned At Base"
+horizontal_alignment = 1
+
+[node name="HintLabel" type="Label" parent="CanvasLayer/DeathFeedbackPanel/Margin/Content"]
+layout_mode = 2
+text = "Death feedback pending."
+autowrap_mode = 3
+
+[node name="LossLabel" type="Label" parent="CanvasLayer/DeathFeedbackPanel/Margin/Content"]
+layout_mode = 2
+text = "Carried lost 0 | Loot returned 0 | Loot lost 0"

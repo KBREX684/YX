@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="RuleResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/systems/resources/rule_resource.gd" id="1_rule"]
+
+[resource]
+script = ExtResource("1_rule")
+id = "clue_da_zhi_corridor_echo"
+trigger_conditions = [{
+"type": "context_equals",
+"key": "clue_id",
+"value": "clue_corridor_echo"
+}]
+effect = {
+"type": "clue_stub",
+"target_id": "da_zhi",
+"clue_id": "clue_corridor_echo",
+"route": "behavior",
+"clue_kind": "behavior_observation"
+}
+clue_unlock_id = "clue_corridor_echo"
+learnable_hint = ""

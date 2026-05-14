@@ -1,0 +1,33 @@
+[gd_scene load_steps=3 format=3 uid="uid://yx_obj_pickup_stub"]
+
+[ext_resource type="Script" path="res://scripts/objects/pickup.gd" id="1_pickup"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_pickup"]
+size = Vector2(34, 34)
+
+[node name="Pickup" type="Area2D"]
+collision_layer = 4
+collision_mask = 2
+script = ExtResource("1_pickup")
+interactable_id = &"pickup_battery_stub"
+prompt_text = "拾取"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_pickup")
+
+[node name="BatteryBody" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-12, -8, 12, -8, 12, 8, -12, 8)
+color = Color(0.78, 0.66, 0.28, 1)
+
+[node name="BatteryCap" type="Polygon2D" parent="."]
+position = Vector2(15, 0)
+polygon = PackedVector2Array(-3, -5, 3, -5, 3, 5, -3, 5)
+color = Color(0.88, 0.86, 0.72, 1)
+
+[node name="PlaceholderAssetLabel" type="Label" parent="."]
+offset_left = -76.0
+offset_top = 24.0
+offset_right = 76.0
+offset_bottom = 60.0
+text = "占位: 电池拾取物"
+horizontal_alignment = 1

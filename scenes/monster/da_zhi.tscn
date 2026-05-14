@@ -1,0 +1,72 @@
+[gd_scene load_steps=4 format=3 uid="uid://yx_monster_da_zhi_stub"]
+
+[ext_resource type="Script" path="res://scripts/monster/da_zhi.gd" id="1_da_zhi"]
+[ext_resource type="Script" path="res://scripts/monster/states/da_zhi_limbo_state.gd" id="2_state"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_da_zhi"]
+size = Vector2(42, 96)
+
+[node name="DaZhi" type="CharacterBody2D"]
+collision_layer = 8
+collision_mask = 1
+script = ExtResource("1_da_zhi")
+
+[node name="Visual" type="Node2D" parent="."]
+position = Vector2(0, -48)
+modulate = Color(1, 1, 1, 0)
+
+[node name="Silhouette" type="Polygon2D" parent="Visual"]
+polygon = PackedVector2Array(-16, -44, 16, -44, 22, 36, 8, 48, -8, 48, -22, 36)
+color = Color(0.04, 0.05, 0.06, 0.92)
+
+[node name="LongArmLeft" type="Polygon2D" parent="Visual"]
+polygon = PackedVector2Array(-14, -20, -34, 28, -28, 34, -8, -14)
+color = Color(0.035, 0.04, 0.05, 0.85)
+
+[node name="LongArmRight" type="Polygon2D" parent="Visual"]
+polygon = PackedVector2Array(14, -20, 34, 28, 28, 34, 8, -14)
+color = Color(0.035, 0.04, 0.05, 0.85)
+
+[node name="PlaceholderAssetLabel" type="Label" parent="."]
+offset_left = -132.0
+offset_top = 14.0
+offset_right = 132.0
+offset_bottom = 56.0
+text = "占位: 大只远处剪影/2.5D Live分层怪物立绘"
+horizontal_alignment = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -44)
+shape = SubResource("RectangleShape2D_da_zhi")
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+path_desired_distance = 8.0
+target_desired_distance = 12.0
+radius = 12.0
+
+[node name="StateMachine" type="Node" parent="."]
+
+[node name="Dormant" type="Node" parent="StateMachine"]
+script = ExtResource("2_state")
+phase_id = &"dormant"
+threat_level = 0
+
+[node name="Probing" type="Node" parent="StateMachine"]
+script = ExtResource("2_state")
+phase_id = &"probing"
+threat_level = 1
+
+[node name="Search" type="Node" parent="StateMachine"]
+script = ExtResource("2_state")
+phase_id = &"search"
+threat_level = 3
+
+[node name="Hunt" type="Node" parent="StateMachine"]
+script = ExtResource("2_state")
+phase_id = &"hunt"
+threat_level = 5
+
+[node name="Disposal" type="Node" parent="StateMachine"]
+script = ExtResource("2_state")
+phase_id = &"disposal"
+threat_level = 5

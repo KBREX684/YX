@@ -1,9 +1,9 @@
 # 项目实施计划 Implementation Plan
 
-版本：v2.5.0
-关联总设定版本：v0.8.2
+版本：v2.6.4
+关联总设定版本：v0.8.6
 关联技术规约版本：[`00-tech-constraints.md`](00-tech-constraints.md) v1.3.1
-关联垂直切片版本：[`00-vertical-slice.md`](00-vertical-slice.md) v1.0.4
+关联垂直切片版本：[`00-vertical-slice.md`](00-vertical-slice.md) v1.0.5
 创建日期：2026-05-14
 最后更新：2026-05-14
 
@@ -165,6 +165,8 @@
 
 **阶段目标**：在手工搭建的副本场景里，玩家能完整移动、探索、开门、拾取物品、阅读线索、使用手电。**本阶段没有怪物**，只验证"人在图中"基础可玩性与场景结构。
 
+**当前状态（2026-05-14）**：P1 出口走查已通过，记录见 [`docs/perf/p1-review.md`](perf/p1-review.md)；P2 已启动，当前入口见 P2 当前状态。
+
 **微切片门禁**：P1 不直接冲完整破败校园。先完成 [`00-vertical-slice.md`](00-vertical-slice.md) "微切片门禁"：Input Map + 玩家基础动词 + 走廊 + 2 个房间 + 1 个躲藏点 + 1 个交互占位物 + 1 次地图变化 + 1 条噪声事件。通过后再扩展到 4–6 房间版本和完整 P1 出口门禁。
 
 ---
@@ -203,6 +205,8 @@
 ## 五、P2 阶段：怪物系统与感知压力
 
 **阶段目标**：大只进入副本，玩家能被追杀，压力反馈系统正确驱动。本阶段不要求玩家能"赢"（线索/结算尚未完成），只要求怪物行为可观察、可推理、反馈可区分强弱。
+
+**当前状态（2026-05-14）**：P2 阶段出口走查已通过，记录见 [`docs/perf/p2-review.md`](perf/p2-review.md)；后续入口以 P3 当前状态为准。
 
 ---
 
@@ -254,18 +258,20 @@
 
 **阶段目标**：玩家能在副本中收集线索、推理出三条路径（逃离/击杀/收容），并触发对应结算屏幕。本阶段的"通关"还不依赖原形养成，只验证"单次副本的信息闭环"。
 
+**当前状态（2026-05-14）**：P3-1 线索信息层、P3-2 弱点/收容执行链、P3-3 结算计算器与 P3-4 死亡复活流程已完成：11 条 `ClueResource`、Dialogic `.dtl` 时间线占位、`ClueBook`、`ObjectiveResolver`、5 条大只执行规则、仪式占位触发节点、`SettlementCalculator`、`SettlementPayoffResource`、`SettlementScreen`、结算数值表、`DeathFeedbackResolver` 与基地占位复活场景已接入；P3-5 自动化出口走查记录见 [`docs/perf/p3-review.md`](perf/p3-review.md)，当前因非开发者盲测未执行而阻塞，暂不进入 P4。
+
 ---
 
 ### P3-1 线索系统与规则推理
 
 - **目标**：勾选 [`00-vertical-slice.md`](00-vertical-slice.md) §5 全部 7 项（3 逃离 + 3 击杀 + 5 收容线索 + 可推理 + 怪物反应验证）。
 - **主要工作**：
-  1. 使用 **Dialogic 2** 编辑可拾取线索（笔记、对话、电台），保持低代码（[`00-tech-constraints.md`](00-tech-constraints.md) §五）。
-  2. 每条线索关联到一条或多条 `RuleResource`，被拾取后写入 `GameState.knownClues`。
-  3. 至少一条收容线索通过怪物对特定物品/行为的反应间接验证（与 P2-1 `RuleEngine` 联动）。
+    1. 使用 **Dialogic 2** 编辑可拾取线索（笔记、对话、电台），保持低代码（[`00-tech-constraints.md`](00-tech-constraints.md) §五）。
+    2. 每条线索关联到一条或多条 `RuleResource`，被拾取后写入 `GameState.known_clue_ids`。
+    3. 至少一条收容线索通过怪物对特定物品/行为的反应间接验证（与 P2-1 `RuleEngine` 联动）。
 - **关联文档**：[`modules/05-clues-puzzles-rule-deduction.md`](modules/05-clues-puzzles-rule-deduction.md)。
 - **关联 Pillar**：Pillar 1。
-- **验收门禁**：[`00-vertical-slice.md`](00-vertical-slice.md) §5 全部 7 项可勾选；线索表已通过 [`00-glossary.md`](00-glossary.md) 术语校对；**盲测玩家在死亡后能口述"我是被什么规则杀的"**（此时线索系统已就绪，该条件从 P2-3 延续至此验收）。
+- **验收门禁**：P3-1 只验收信息层可用性：3 逃离 + 3 击杀 + 5 收容线索存在，`ClueBook` 写入 `GameState.known_clue_ids`，至少 1 条收容线索可被 `RuleEngine` 行为验证，低理智线索显示可干扰；[`00-vertical-slice.md`](00-vertical-slice.md) §5 的完整玩家路径验证与非开发者口述盲测收束到 P3-5 出口门禁。
 - **关联风险**：信息过载、线索冗余导致推理路径崩溃。
 
 ---
@@ -278,7 +284,7 @@
   2. 击杀和收容成功各有明确触发判定，产出不同品质原形（由 P4 接收）。
 - **关联文档**：[`modules/03-monster-anomaly-rules.md`](modules/03-monster-anomaly-rules.md)、[`monsters/001-da-zhi.md`](monsters/001-da-zhi.md)。
 - **关联 Pillar**：Pillar 1。
-- **验收门禁**：[`00-vertical-slice.md`](00-vertical-slice.md) §4 全部 6 项可勾选。
+- **验收门禁**：P3-2 工程门禁为弱点击杀、三步收容、错误收容和 `EventBus.objective_completed(objective_type, payload)` 可被自动化测试验证；[`00-vertical-slice.md`](00-vertical-slice.md) §4 的完整非开发者推理/实玩验收收束到 P3-5 阶段出口。
 - **关联风险**：收容仪式步骤过长或线索太隐晦 → 玩家只走逃离路线。
 
 ---
@@ -288,7 +294,7 @@
 - **目标**：勾选 [`00-vertical-slice.md`](00-vertical-slice.md) §6（四种结算 + 数值展示 + 错误收容惩罚）。
 - **主要工作**：
   1. `SettlementCalculator` 单独成系统，输入：路径标志、剩余 HP、拾取列表、规则触发记录；输出：四种结算之一与对应数值。
-  2. 三档奖励差："收容 > 击杀 > 逃离"在素材量 / 原形质量 / 叙事条目三维同时拉开。
+  2. 三维奖励差：素材量维度按"逃离 > 击杀 > 收容"拉开，原形质量与叙事条目维度按"收容 > 击杀 > 逃离"拉开。
   3. 错误收容惩罚扣减基地资源并在结算页显示（基地资源由 P5 接入，此阶段可用占位值验证）。
   4. 编写 GUT 用例覆盖 `SettlementCalculator`（[`00-tech-constraints.md`](00-tech-constraints.md) §九 强制项）。
 - **关联文档**：[`modules/06-objectives-settlement.md`](modules/06-objectives-settlement.md)。
@@ -609,6 +615,66 @@ P7-1 不再因 Q-01 阻塞；其前置仍为 P6-4。
 ---
 
 ## 版本记录
+
+### v2.6.4 - 2026-05-14
+
+- 新增 P3 阶段出口走查记录 [`docs/perf/p3-review.md`](perf/p3-review.md)：自动化工程验收通过，非开发者盲测未执行。
+- 将当前实施入口停在 P3-5 阶段出口门禁，明确盲测完成前不进入 P4。
+- 同步垂直切片 v1.0.5：修正 §6 结算奖励验收口径为三维分工。
+
+### v2.6.3 - 2026-05-14
+
+- 完成 P3-4 玩家死亡与复活流程：`GameState` 订阅 `EventBus.player_died`，通过 `respawn_at_base()` 回到 `base_placeholder.tscn` 并清理副本状态。
+- 新增 `DeathFeedbackResolver`，从 `RuleResource.learnable_hint` 输出最低学习提示；当前实施入口推进至 P3-5 阶段出口走查。
+- 保持小阶段只做快速自测，正式 P3 阶段审计修复与 VS 出口验收收束到 P3-5。
+
+### v2.6.2 - 2026-05-14
+
+- 完成 P3-3 副本目标结算系统：`SettlementCalculator` 订阅 `EventBus.objective_completed`，输出四种结算的资源、原形、档案、基地占位扣减与污染变化数据。
+- 新增 Inspector 可编辑数值表 `data/settlement_payoffs.tres` 与 `SettlementScreen`；当前实施入口推进至 P3-4 玩家死亡与复活流程。
+- 修正 P3-3 奖励描述，保持与模块 06 的三维奖励分工一致：逃离偏素材，击杀偏中间策略，收容偏原形质量与叙事档案。
+
+### v2.6.1 - 2026-05-14
+
+- 完成 P3-2 弱点与收容执行链：新增大只最终击杀规则、三步收容规则、错误收容规则、`ObjectiveResolver` 与仪式触发占位节点。
+- 明确 P3-2 验收边界：本阶段自动化验证执行链，VS §4 的完整非开发者推理/实玩验收收束到 P3-5。
+- 当前实施入口推进至 P3-3 副本目标结算系统施工。
+
+### v2.6.0 - 2026-05-14
+
+- 完成 P3-1 信息层：新增 `ClueResource`、`ClueBook`、`ClueNote`、11 条线索、Dialogic `.dtl` 时间线占位与收容行为验证规则。
+- 审计修复 P3-1 验收口径：P3-1 只验收线索系统信息层，VS §5 完整玩家路径验证与非开发者口述盲测收束到 P3-5 出口门禁。
+- 当前实施入口推进至 P3-2 弱点与收容执行链施工。
+
+### v2.5.6 - 2026-05-14
+
+- 记录 P2 阶段出口走查已通过，并指向 `docs/perf/p2-review.md`。
+- 当前实施入口推进至 P3-1 线索系统与规则推理施工。
+
+### v2.5.5 - 2026-05-14
+
+- 记录 P2-4 大只线索规则占位池已完成：3 条 `clue_*.tres` 已登记稳定 `clue_unlock_id`，供 P3-1 Dialogic 线索对象接管。
+- 当前实施入口推进至 P2-5 阶段出口走查。
+
+### v2.5.4 - 2026-05-14
+
+- 记录 P2-3 压力反馈系统已完成：`PressureLevel`、心跳、手电闪烁、环境氛围总线、理智干扰 Shader 与首次入场大只现形均已接入。
+- 当前实施入口推进至 P2-4 怪物线索占位规则池施工。
+
+### v2.5.3 - 2026-05-14
+
+- 记录 P2-2 大只 AI 骨架、MonsterProfile、LimboHSM 阶段节点与规则驱动阶段变化已完成。
+- 当前实施入口推进至 P2-3 恐怖感知与压力反馈施工。
+
+### v2.5.2 - 2026-05-14
+
+- 记录 P2-1 RuleEngine 与大只最低规则资源已完成。
+- 当前实施入口推进至 P2-2 大只 AI 四阶段行为施工。
+
+### v2.5.1 - 2026-05-14
+
+- 记录 P1 阶段出口走查已通过，并指向 `docs/perf/p1-review.md`。
+- 当前实施入口推进至 P2-1 RuleEngine 与怪物异常规则施工。
 
 ### v2.5.0 - 2026-05-14
 

@@ -1,0 +1,179 @@
+extends Node
+class_name RuleEngine
+
+signal rule_triggered(rule_id: String, context: Dictionary)
+signal clue_unlocked(clue_id: String)
+
+@export var rules: Array[RuleResource] = []
+@export var auto_subscribe_event_bus := true
+
+var _emitted_event_keys: Dictionary = {}
+
+
+func _ready() -> void:
+	if auto_subscribe_event_bus:
+		_subscribe_event_bus()
+
+
+func evaluate(context: Dictionary) -> Array[RuleResource]:
+	var triggered: Array[RuleResource] = []
+	var seen_rule_ids := {}
+	for rule in rules:
+		if rule == null or seen_rule_ids.has(rule.id):
+			continue
+		if _matches_rule(rule, context):
+			seen_rule_ids[rule.id] = true
+			triggered.append(rule)
+			_emit_rule(rule, context)
+	return triggered
+
+
+func clear_event_history() -> void:
+	_emitted_event_keys.clear()
+
+
+func _subscribe_event_bus() -> void:
+	if not EventBus.noise_emitted.is_connected(_on_noise_emitted):
+		EventBus.noise_emitted.connect(_on_noise_emitted)
+	if not EventBus.flashlight_toggled.is_connected(_on_flashlight_toggled):
+		EventBus.flashlight_toggled.connect(_on_flashlight_toggled)
+	if not EventBus.clue_collected.is_connected(_on_clue_collected):
+		EventBus.clue_collected.connect(_on_clue_collected)
+
+
+func _on_noise_emitted(level: int, position: Vector2, source_action_id: StringName) -> void:
+	evaluate({
+		"event_type": "noise",
+		"noise_level": level,
+		"position": position,
+		"source_action_id": source_action_id,
+	})
+
+
+func _on_flashlight_toggled(is_on: bool, battery: float) -> void:
+	evaluate({
+		"event_type": "flashlight",
+		"light_is_on": is_on,
+		"battery": battery,
+	})
+
+
+func _on_clue_collected(clue_id: String) -> void:
+	evaluate({
+		"event_type": "clue",
+		"clue_id": clue_id,
+	})
+
+
+func _matches_rule(rule: RuleResource, context: Dictionary) -> bool:
+	if not _rule_is_visible(rule, context):
+		return false
+	for condition in rule.trigger_conditions:
+		if typeof(condition) != TYPE_DICTIONARY:
+			return false
+		if not _condition_matches(condition, context):
+			return false
+	return true
+
+
+func _rule_is_visible(rule: RuleResource, context: Dictionary) -> bool:
+	if rule.clue_unlock_id.strip_edges() == "":
+		return true
+	return _collection_has(context.get("known_clues", []), rule.clue_unlock_id)
+
+
+func _condition_matches(condition: Dictionary, context: Dictionary) -> bool:
+	match String(condition.get("type", "")).strip_edges().to_lower():
+		"always":
+			return true
+		"player_action":
+			return _context_action(context) == String(condition.get("action", ""))
+		"zone":
+			return String(context.get("zone_id", "")) == String(condition.get("zone_id", ""))
+		"noise_level_min":
+			return int(context.get("noise_level", context.get("level", 0))) >= int(condition.get("min", 0))
+		"light_state":
+			return bool(context.get("light_is_on", false)) == bool(condition.get("is_on", true))
+		"has_item":
+			return _collection_has(context.get("items", context.get("player_carried_items", [])), condition.get("item_id", ""))
+		"collection_has":
+			var collection_key := String(condition.get("key", ""))
+			return collection_key != "" and _collection_has(context.get(collection_key, []), condition.get("value", ""))
+		"flag":
+			var key := String(condition.get("key", ""))
+			return key != "" and context.has(key) and context[key] == condition.get("value", true)
+		"context_equals":
+			var key := String(condition.get("key", ""))
+			return key != "" and context.has(key) and context[key] == condition.get("value")
+		"player_hidden":
+			return bool(context.get("player_is_hidden", context.get("is_hidden", false))) == bool(condition.get("value", true))
+		"distance_max":
+			# 玩家与目标坐标的最大距离上限。需要 context.position 与 condition.target。
+			var p: Variant = context.get("position", context.get("player_position"))
+			var target: Variant = condition.get("target", context.get("target_position"))
+			if typeof(p) != TYPE_VECTOR2 or typeof(target) != TYPE_VECTOR2:
+				return false
+			return (p as Vector2).distance_to(target as Vector2) <= float(condition.get("max", 0.0))
+		"time_since":
+			var key_name := String(condition.get("key", ""))
+			if key_name == "" or not context.has(key_name):
+				return false
+			var elapsed := float(Time.get_ticks_msec()) / 1000.0 - float(context[key_name])
+			return elapsed <= float(condition.get("max_seconds", 1e9))
+		"or":
+			var sub_conditions: Array = condition.get("conditions", [])
+			for sub in sub_conditions:
+				if typeof(sub) == TYPE_DICTIONARY and _condition_matches(sub, context):
+					return true
+			return false
+		"not":
+			var inner: Variant = condition.get("condition", null)
+			if typeof(inner) != TYPE_DICTIONARY:
+				return false
+			return not _condition_matches(inner, context)
+		_:
+			push_warning("RuleEngine: unknown condition type '%s'" % String(condition.get("type", "")))
+			return false
+
+
+func _context_action(context: Dictionary) -> String:
+	if context.has("source_action_id"):
+		return String(context["source_action_id"])
+	if context.has("action_id"):
+		return String(context["action_id"])
+	return String(context.get("action", ""))
+
+
+func _emit_rule(rule: RuleResource, context: Dictionary) -> void:
+	var event_key := _event_key(rule.id, context)
+	if event_key != "" and _emitted_event_keys.has(event_key):
+		return
+	if event_key != "":
+		_emitted_event_keys[event_key] = true
+	var output_context := context.duplicate(true)
+	output_context["rule_id"] = rule.id
+	output_context["rule_effect"] = rule.effect
+	rule_triggered.emit(rule.id, output_context)
+	EventBus.rule_triggered.emit(rule.id, output_context)
+	_emit_effect_outputs(rule.effect)
+
+
+func _event_key(rule_id: String, context: Dictionary) -> String:
+	var event_id := String(context.get("event_id", ""))
+	return "" if event_id == "" else "%s:%s" % [rule_id, event_id]
+
+
+func _emit_effect_outputs(effect: Dictionary) -> void:
+	var clue_id := String(effect.get("clue_id", effect.get("unlock_clue_id", "")))
+	if clue_id != "":
+		clue_unlocked.emit(clue_id)
+		EventBus.clue_unlocked.emit(clue_id)
+
+
+func _collection_has(collection: Variant, value: Variant) -> bool:
+	if typeof(collection) == TYPE_PACKED_STRING_ARRAY:
+		return (collection as PackedStringArray).has(String(value))
+	if typeof(collection) == TYPE_ARRAY:
+		var array := collection as Array
+		return array.has(value) or array.has(String(value)) or array.has(StringName(String(value)))
+	return false

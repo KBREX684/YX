@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="ManifestResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/systems/resources/manifest_resource.gd" id="1_manifest_script"]
+
+[resource]
+script = ExtResource("1_manifest_script")
+id = "manifest_levels_p1"
+entries = {
+"event_corridor_stretch": {
+"path": "res://scenes/dungeon/micro_school_blockout.tscn",
+"type": "map_event"
+},
+"level_abandoned_school": {
+"path": "res://scenes/dungeon/abandoned_school.tscn",
+"type": "level"
+},
+"room_classroom_a": {
+"path": "res://scenes/dungeon/rooms/classroom_a.tscn",
+"type": "room"
+},
+"room_office_a": {
+"path": "res://scenes/dungeon/rooms/office_a.tscn",
+"type": "room"
+},
+"room_restroom_a": {
+"path": "res://scenes/dungeon/rooms/restroom_a.tscn",
+"type": "room"
+},
+"room_storage_a": {
+"path": "res://scenes/dungeon/rooms/storage_a.tscn",
+"type": "room"
+}
+}
