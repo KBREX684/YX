@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://yx_abandoned_school"]
+[gd_scene load_steps=22 format=3 uid="uid://yx_abandoned_school"]
 
 [ext_resource type="PackedScene" path="res://scenes/dungeon/rooms/classroom_a.tscn" id="1_classroom"]
 [ext_resource type="PackedScene" path="res://scenes/dungeon/rooms/storage_a.tscn" id="2_storage"]
@@ -19,6 +19,7 @@
 [ext_resource type="Script" path="res://scripts/dungeon/ritual_step_trigger.gd" id="17_ritual_trigger"]
 [ext_resource type="Script" path="res://scripts/systems/settlement_calculator.gd" id="18_settlement_calculator"]
 [ext_resource type="PackedScene" path="res://scenes/ui/settlement_screen.tscn" id="19_settlement_screen"]
+[ext_resource type="Script" path="res://scripts/dungeon/navigation_baker.gd" id="20_nav_baker"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ritual_trigger"]
 size = Vector2(54, 54)
@@ -123,6 +124,7 @@ position = Vector2(-520, 0)
 [node name="Floor" type="Polygon2D" parent="Sections/Entrance"]
 polygon = PackedVector2Array(-90, -60, 90, -60, 90, 60, -90, 60)
 color = Color(0.13, 0.18, 0.2, 1)
+groups = ["nav_floor"]
 
 [node name="PlaceholderAssetLabel" type="Label" parent="Sections/Entrance"]
 offset_left = -100.0
@@ -137,6 +139,7 @@ horizontal_alignment = 1
 [node name="Floor" type="Polygon2D" parent="Sections/MainCorridor"]
 polygon = PackedVector2Array(-420, -48, 420, -48, 420, 48, -420, 48)
 color = Color(0.12, 0.16, 0.18, 1)
+groups = ["nav_floor"]
 
 [node name="PlaceholderAssetLabel" type="Label" parent="Sections/MainCorridor"]
 offset_left = -160.0
@@ -152,6 +155,7 @@ position = Vector2(160, -190)
 [node name="Floor" type="Polygon2D" parent="Sections/RitualRoom"]
 polygon = PackedVector2Array(-130, -70, 130, -70, 130, 70, -130, 70)
 color = Color(0.25, 0.18, 0.18, 1)
+groups = ["nav_floor"]
 
 [node name="PlaceholderAssetLabel" type="Label" parent="Sections/RitualRoom"]
 offset_left = -135.0
@@ -167,6 +171,7 @@ position = Vector2(520, 0)
 [node name="Floor" type="Polygon2D" parent="Sections/ExitArea"]
 polygon = PackedVector2Array(-90, -60, 90, -60, 90, 60, -90, 60)
 color = Color(0.14, 0.2, 0.18, 1)
+groups = ["nav_floor"]
 
 [node name="PlaceholderAssetLabel" type="Label" parent="Sections/ExitArea"]
 offset_left = -100.0
@@ -316,3 +321,4 @@ manifest_duration = 2.5
 [node name="HeartbeatPlayer" parent="Audio" instance=ExtResource("13_heartbeat")]
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
+script = ExtResource("20_nav_baker")

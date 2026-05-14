@@ -5,6 +5,7 @@
 [node name="BlockoutFloor" type="Polygon2D" parent="."]
 polygon = PackedVector2Array(-110, -65, 110, -65, 110, 65, -110, 65)
 color = Color(0.27, 0.25, 0.22, 1)
+groups = ["nav_floor"]
 
 [node name="PlaceholderAssetLabel" type="Label" parent="."]
 offset_left = -120.0

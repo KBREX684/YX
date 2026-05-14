@@ -1,4 +1,4 @@
-[gd_resource type="AudioBusLayout" load_steps=2 format=3 uid="uid://yx_audio_pressure_buses"]
+[gd_resource type="AudioBusLayout" format=3 uid="uid://cy8eenvj5en4v"]
 
 [sub_resource type="AudioEffectLowPassFilter" id="AudioEffectLowPassFilter_sanity"]
 resource_name = "SanityLowPass"

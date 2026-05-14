@@ -1,8 +1,9 @@
-[gd_scene load_steps=10 format=3 uid="uid://yx_micro_school_blockout"]
+[gd_scene load_steps=11 format=3 uid="uid://yx_micro_school_blockout"]
 
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="1_player"]
 [ext_resource type="Script" path="res://scripts/dungeon/map_change_event.gd" id="2_map_event"]
 [ext_resource type="Script" path="res://scripts/dungeon/playtest_interactable.gd" id="3_playtest_interactable"]
+[ext_resource type="Script" path="res://scripts/dungeon/navigation_baker.gd" id="4_nav_baker"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hide"]
 size = Vector2(48, 36)
@@ -27,6 +28,7 @@ y_sort_enabled = true
 [node name="CorridorFloor" type="Polygon2D" parent="World/MainCorridor"]
 polygon = PackedVector2Array(-260, -45, 260, -45, 260, 45, -260, 45)
 color = Color(0.12, 0.16, 0.18, 1)
+groups = ["nav_floor"]
 
 [node name="ChangeSegment" type="Polygon2D" parent="World/MainCorridor"]
 position = Vector2(150, 0)
@@ -47,6 +49,7 @@ position = Vector2(-150, -130)
 [node name="Floor" type="Polygon2D" parent="World/RoomClassroomA"]
 polygon = PackedVector2Array(-90, -55, 90, -55, 90, 55, -90, 55)
 color = Color(0.22, 0.28, 0.3, 1)
+groups = ["nav_floor"]
 
 [node name="PlaceholderAssetLabel" type="Label" parent="World/RoomClassroomA"]
 offset_left = -100.0
@@ -62,6 +65,7 @@ position = Vector2(150, 130)
 [node name="Floor" type="Polygon2D" parent="World/RoomStorageA"]
 polygon = PackedVector2Array(-90, -55, 90, -55, 90, 55, -90, 55)
 color = Color(0.19, 0.23, 0.2, 1)
+groups = ["nav_floor"]
 
 [node name="PlaceholderAssetLabel" type="Label" parent="World/RoomStorageA"]
 offset_left = -100.0
@@ -145,6 +149,7 @@ position = Vector2(450, 0)
 shape = SubResource("RectangleShape2D_vertical_bounds")
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
+script = ExtResource("4_nav_baker")
 
 [node name="PlayerSpawn" type="Marker2D" parent="."]
 position = Vector2(-300, 0)
