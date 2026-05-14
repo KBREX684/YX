@@ -1,9 +1,10 @@
-extends LimboState
+extends Node
 class_name PlayerLimboState
-## PlayerLimboState —— 玩家移动状态的 LimboAI 元数据节点。
+## PlayerStateMeta —— 玩家移动状态的元数据节点（已脱离 LimboAI）。
 ##
-## P1-1 先用 LimboHSM/ LimboState 搭建状态节点骨架；输入采集和最小运动
-## 注入仍由 player.gd 完成，P1 后续可把转移条件迁入可视化状态机。
+## 历史保留：原 P1-1 使用 LimboHSM/LimboState；B2 移除 LimboAI 依赖后改为纯 Node
+## 元数据载体。`player.gd` 不再调用 dispatch；这些节点只用于在编辑器中查看每个
+## 状态的标称噪声等级与名称，便于后续接入可视化状态机时迁移。
 
 @export var state_id: StringName = &"idle"
 @export_range(0, 3, 1) var noise_level: int = 0

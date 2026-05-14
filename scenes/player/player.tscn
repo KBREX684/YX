@@ -37,29 +37,29 @@ horizontal_alignment = 1
 position = Vector2(0, -22)
 shape = SubResource("RectangleShape2D_player")
 
-[node name="StateMachine" type="LimboHSM" parent="."]
+[node name="StateMachine" type="Node" parent="."]
 
-[node name="Idle" type="LimboState" parent="StateMachine"]
+[node name="Idle" type="Node" parent="StateMachine"]
 script = ExtResource("3_state_script")
 state_id = &"idle"
 noise_level = 0
 
-[node name="Walk" type="LimboState" parent="StateMachine"]
+[node name="Walk" type="Node" parent="StateMachine"]
 script = ExtResource("3_state_script")
 state_id = &"walk"
 noise_level = 2
 
-[node name="Run" type="LimboState" parent="StateMachine"]
+[node name="Run" type="Node" parent="StateMachine"]
 script = ExtResource("3_state_script")
 state_id = &"run"
 noise_level = 3
 
-[node name="Crouch" type="LimboState" parent="StateMachine"]
+[node name="Crouch" type="Node" parent="StateMachine"]
 script = ExtResource("3_state_script")
 state_id = &"crouch"
 noise_level = 1
 
-[node name="Hide" type="LimboState" parent="StateMachine"]
+[node name="Hide" type="Node" parent="StateMachine"]
 script = ExtResource("3_state_script")
 state_id = &"hide"
 noise_level = 0
@@ -80,6 +80,14 @@ color = Color(1, 0.88, 0.48, 0.28)
 enabled = true
 position_smoothing_enabled = true
 position_smoothing_speed = 8.0
+drag_horizontal_enabled = true
+drag_vertical_enabled = true
+drag_left_margin = 0.15
+drag_right_margin = 0.15
+drag_top_margin = 0.15
+drag_bottom_margin = 0.15
+limit_smoothed = true
+process_callback = 1
 
 [node name="FeedbackLabel" type="Label" parent="."]
 offset_left = -150.0

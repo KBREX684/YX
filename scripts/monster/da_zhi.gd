@@ -15,10 +15,10 @@ const PHASE_DISPOSAL := &"disposal"
 
 @onready var _visual: CanvasItem = $Visual
 @onready var _navigation_agent: NavigationAgent2D = $NavigationAgent2D
-@onready var _state_machine: Node = $StateMachine
 
 var _phase: StringName = PHASE_DORMANT
 var _is_manifested := false
+var _manifest_timer: SceneTreeTimer = null
 
 
 func _ready() -> void:
@@ -46,30 +46,43 @@ func is_manifested() -> bool:
 
 
 func set_target_position(target_position: Vector2) -> void:
+	if not is_finite(target_position.x) or not is_finite(target_position.y):
+		push_warning("DaZhiAI.set_target_position: non-finite position ignored: %s" % str(target_position))
+		return
 	_navigation_agent.target_position = target_position
 
 
 func tick_navigation(_delta: float = 0.016) -> void:
-	if _phase == PHASE_DORMANT or _phase == PHASE_PROBING:
+	# DORMANT 完全不动；PROBING 缓慢逼近目标（之前 bug：直接 return 导致永不移动）。
+	if _phase == PHASE_DORMANT:
 		velocity = Vector2.ZERO
 		return
 	if _navigation_agent.is_navigation_finished():
 		velocity = Vector2.ZERO
 		return
 	var next_position := _navigation_agent.get_next_path_position()
-	var direction := (next_position - global_position).normalized()
-	velocity = direction * _speed_for_phase()
+	var direction := (next_position - global_position)
+	if direction.length_squared() < 0.0001:
+		velocity = Vector2.ZERO
+		return
+	velocity = direction.normalized() * _speed_for_phase()
 
 
 func apply_rule_context(_rule_id: String, context: Dictionary) -> void:
 	var effect: Dictionary = context.get("rule_effect", {})
-	match String(effect.get("type", "")):
+	var effect_type := String(effect.get("type", "")).strip_edges().to_lower()
+	match effect_type:
+		"":
+			# 上下文不携带 rule_effect 时按 no-op 静默通过；其他模块自行消费。
+			return
 		"phase_change":
 			_set_phase(StringName(effect.get("phase", PHASE_SEARCH)))
 		"manifestation":
 			manifest(float(effect.get("duration", 2.5)))
 		"weakness_window":
 			_set_phase(PHASE_PROBING)
+		_:
+			push_warning("DaZhiAI.apply_rule_context: unhandled effect.type '%s'" % effect_type)
 
 
 func manifest(duration: float = 2.5) -> void:
@@ -77,8 +90,14 @@ func manifest(duration: float = 2.5) -> void:
 	_sync_visual()
 	EventBus.monster_manifested.emit(entity_id, duration)
 	EventBus.pressure_changed.emit(maxf(_pressure_for_phase(), 0.65))
+	# 之前 bug：每次 manifest 都新建 timer，重叠时新的会被旧的 clear_manifestation 覆盖。
+	# 修复：复用一个 timer 引用，旧的 timeout 信号在新建前断开。
+	if _manifest_timer != null and _manifest_timer.timeout.is_connected(clear_manifestation):
+		_manifest_timer.timeout.disconnect(clear_manifestation)
+	_manifest_timer = null
 	if duration > 0.0 and is_inside_tree():
-		get_tree().create_timer(duration).timeout.connect(clear_manifestation, CONNECT_ONE_SHOT)
+		_manifest_timer = get_tree().create_timer(duration)
+		_manifest_timer.timeout.connect(clear_manifestation, CONNECT_ONE_SHOT)
 
 
 func show_apparition(duration: float = 2.5) -> void:
@@ -87,6 +106,7 @@ func show_apparition(duration: float = 2.5) -> void:
 
 func clear_manifestation() -> void:
 	_is_manifested = false
+	_manifest_timer = null
 	_sync_visual()
 
 
@@ -98,8 +118,6 @@ func _set_phase(next_phase: StringName) -> void:
 	if _phase == next_phase:
 		return
 	_phase = next_phase
-	if _state_machine.has_method("dispatch"):
-		_state_machine.call("dispatch", _phase)
 	EventBus.monster_phase_changed.emit(entity_id, _phase)
 	EventBus.pressure_changed.emit(_pressure_for_phase())
 

@@ -17,8 +17,10 @@ size = Vector2(900, 32)
 size = Vector2(32, 560)
 
 [node name="MicroSchoolBlockout" type="Node2D"]
+y_sort_enabled = true
 
 [node name="World" type="Node2D" parent="."]
+y_sort_enabled = true
 
 [node name="MainCorridor" type="Node2D" parent="World"]
 

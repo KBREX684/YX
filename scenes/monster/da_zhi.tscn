@@ -44,29 +44,29 @@ path_desired_distance = 8.0
 target_desired_distance = 12.0
 radius = 12.0
 
-[node name="StateMachine" type="LimboHSM" parent="."]
+[node name="StateMachine" type="Node" parent="."]
 
-[node name="Dormant" type="LimboState" parent="StateMachine"]
+[node name="Dormant" type="Node" parent="StateMachine"]
 script = ExtResource("2_state")
 phase_id = &"dormant"
 threat_level = 0
 
-[node name="Probing" type="LimboState" parent="StateMachine"]
+[node name="Probing" type="Node" parent="StateMachine"]
 script = ExtResource("2_state")
 phase_id = &"probing"
 threat_level = 1
 
-[node name="Search" type="LimboState" parent="StateMachine"]
+[node name="Search" type="Node" parent="StateMachine"]
 script = ExtResource("2_state")
 phase_id = &"search"
 threat_level = 3
 
-[node name="Hunt" type="LimboState" parent="StateMachine"]
+[node name="Hunt" type="Node" parent="StateMachine"]
 script = ExtResource("2_state")
 phase_id = &"hunt"
 threat_level = 5
 
-[node name="Disposal" type="LimboState" parent="StateMachine"]
+[node name="Disposal" type="Node" parent="StateMachine"]
 script = ExtResource("2_state")
 phase_id = &"disposal"
 threat_level = 5

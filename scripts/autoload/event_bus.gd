@@ -11,6 +11,7 @@ signal noise_emitted(level: int, position: Vector2, source_action_id: StringName
 signal player_died                                          ## 玩家死亡
 signal player_hidden_changed(is_hidden: bool)               ## 进入/离开躲藏点
 signal flashlight_toggled(is_on: bool, battery: float)      ## 手电开关与电量更新
+signal flashlight_aimed_at_monster(monster_id: String, duration: float) ## 手电直射怪物（朝向 raycast 命中）
 
 # --- 场景与流程 --------------------------------------------------------------
 signal scene_changed(from_id: String, to_id: String)        ## 场景切换（基地 ↔ 副本）

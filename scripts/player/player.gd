@@ -25,6 +25,7 @@ const STATE_NOISE := {
 	STATE_RUN: 3,
 	STATE_HIDE: 0,
 }
+const FLASHLIGHT_OFFSET := 28.0
 @export var walk_speed: float = 140.0
 @export var run_speed: float = 220.0
 @export var crouch_speed: float = 70.0
@@ -32,23 +33,33 @@ const STATE_NOISE := {
 @export var friction: float = 1000.0
 @export var flashlight_data: Resource
 @onready var _flashlight: PointLight2D = $Flashlight
+@onready var _flashlight_beam: Node2D = get_node_or_null("FlashlightBeam")
 @onready var _feedback_view: Node = $FeedbackView
 @onready var _interaction_sensor: Node = $InteractionSensor
-@onready var _state_machine: Node = $StateMachine
 var _movement_state: StringName = STATE_IDLE
+var _facing: Vector2 = Vector2.RIGHT
 var _flashlight_enabled := false
 var _flashlight_battery := 0.0
 var _is_hidden := false
 var _temp_inventory: Dictionary = {}
 var _read_notes: Dictionary = {}
 func _ready() -> void:
+	# process_mode=ALWAYS：仍接收 pause action；_physics_process 内部判断暂停。
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	if flashlight_data == null:
 		flashlight_data = load("res://data/items/flashlight.tres")
 	_flashlight_battery = _flashlight_float(&"battery_capacity")
 	_sync_flashlight_visual()
+	_sync_flashlight_transform()
 	_sync_state_visual()
 	_show_feedback("WASD移动  F手电  C蹲伏  E交互  H躲藏")
 func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed(ACTION_PAUSE):
+		get_tree().paused = not get_tree().paused
+		get_viewport().set_input_as_handled()
+		return
+	if get_tree().paused:
+		return
 	if event.is_action_pressed(ACTION_FLASHLIGHT):
 		set_flashlight_enabled(not _flashlight_enabled)
 		get_viewport().set_input_as_handled()
@@ -58,15 +69,18 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed(ACTION_INTERACT):
 		try_interact()
 		get_viewport().set_input_as_handled()
-	if event.is_action_pressed(ACTION_PAUSE):
-		get_tree().paused = not get_tree().paused
-		get_viewport().set_input_as_handled()
 func _physics_process(delta: float) -> void:
+	if get_tree().paused:
+		velocity = Vector2.ZERO
+		return
 	var input_vector := Input.get_vector(ACTION_MOVE_LEFT, ACTION_MOVE_RIGHT, ACTION_MOVE_UP, ACTION_MOVE_DOWN)
 	apply_movement_intent(input_vector, Input.is_action_pressed(ACTION_RUN), Input.is_action_pressed(ACTION_CROUCH), _dominant_action(input_vector), delta)
 	move_and_slide()
 	tick_flashlight(delta)
 func apply_movement_intent(input_vector: Vector2, is_running: bool, is_crouching: bool, source_action_id: StringName, delta: float = 0.016) -> void:
+	if input_vector != Vector2.ZERO:
+		_facing = input_vector.normalized()
+		_sync_flashlight_transform()
 	var next_state := _state_for(input_vector, is_running, is_crouching)
 	_set_movement_state(next_state, source_action_id)
 	var target_velocity := Vector2.ZERO
@@ -90,6 +104,7 @@ func tick_flashlight(delta: float) -> void:
 func get_flashlight_battery() -> float: return _flashlight_battery
 func is_flashlight_low() -> bool: return _flashlight_battery <= _flashlight_float(&"low_battery_threshold")
 func get_movement_state() -> StringName: return _movement_state
+func get_facing() -> Vector2: return _facing
 func try_interact() -> Dictionary:
 	var target := _nearest_interactable()
 	if target == null:
@@ -112,7 +127,7 @@ func interact_with(target: Node) -> Dictionary:
 	_set_movement_state(STATE_INTERACT, &"interact")
 	var payload: Dictionary = target.interact(self)
 	_apply_interaction_payload(payload)
-	if _feedback_view.has_method("show_interaction"):
+	if _feedback_view != null and _feedback_view.has_method("show_interaction"):
 		_feedback_view.call("show_interaction", payload)
 	return payload
 func add_temp_item(item_id: StringName, amount: int = 1) -> void: _temp_inventory[item_id] = get_temp_item_count(item_id) + amount
@@ -147,9 +162,9 @@ func _set_movement_state(next_state: StringName, source_action_id: StringName) -
 	if _movement_state == next_state:
 		return
 	_movement_state = next_state
-	if _state_machine.has_method("dispatch"):
-		_state_machine.call("dispatch", next_state)
-	EventBus.noise_emitted.emit(int(STATE_NOISE.get(next_state, 0)), global_position, source_action_id)
+	# 躲藏状态不发噪音，且不消费 source_action_id 的 STATE_NOISE 映射。
+	if next_state != STATE_HIDE:
+		EventBus.noise_emitted.emit(int(STATE_NOISE.get(next_state, 0)), global_position, source_action_id)
 	_sync_state_visual()
 func _speed_for(state: StringName) -> float:
 	return run_speed if state == STATE_RUN else crouch_speed if state == STATE_CROUCH else walk_speed
@@ -167,17 +182,28 @@ func _toggle_hidden() -> void:
 func _sync_flashlight_visual() -> void:
 	if _flashlight == null:
 		return
-	if _feedback_view.has_method("sync_flashlight"):
+	if _feedback_view != null and _feedback_view.has_method("sync_flashlight"):
 		_feedback_view.call("sync_flashlight", _flashlight_enabled)
 	if not _flashlight_enabled:
 		_flashlight.energy = _flashlight_float(&"off_energy")
 		return
 	_flashlight.energy = _flashlight_float(&"low_energy") if is_flashlight_low() else _flashlight_float(&"full_energy")
+func _sync_flashlight_transform() -> void:
+	# 让手电相对 player 中心点朝 _facing 方向并旋转 beam。
+	if _facing == Vector2.ZERO:
+		return
+	var angle := _facing.angle()
+	if _flashlight != null:
+		_flashlight.position = _facing * FLASHLIGHT_OFFSET + Vector2(0.0, -28.0)
+		_flashlight.rotation = angle
+	if _flashlight_beam != null:
+		_flashlight_beam.position = _facing * (FLASHLIGHT_OFFSET * 0.6) + Vector2(0.0, -30.0)
+		_flashlight_beam.rotation = angle
 func _sync_state_visual() -> void:
-	if _feedback_view.has_method("sync_state"):
+	if _feedback_view != null and _feedback_view.has_method("sync_state"):
 		_feedback_view.call("sync_state", _movement_state, _is_hidden)
 func _show_feedback(text: String) -> void:
-	if _feedback_view.has_method("show_message"):
+	if _feedback_view != null and _feedback_view.has_method("show_message"):
 		_feedback_view.call("show_message", text)
 func _nearest_interactable(required_result: String = "") -> Node:
 	if _interaction_sensor == null or not _interaction_sensor.has_method("get_nearest_interactable"):

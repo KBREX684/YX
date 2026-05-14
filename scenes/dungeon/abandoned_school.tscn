@@ -24,6 +24,7 @@
 size = Vector2(54, 54)
 
 [node name="AbandonedSchool" type="Node2D"]
+y_sort_enabled = true
 
 [node name="ClueBook" type="Node" parent="."]
 script = ExtResource("15_clue_book")

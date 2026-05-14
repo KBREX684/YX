@@ -83,7 +83,7 @@ func _rule_is_visible(rule: RuleResource, context: Dictionary) -> bool:
 
 
 func _condition_matches(condition: Dictionary, context: Dictionary) -> bool:
-	match String(condition.get("type", "")):
+	match String(condition.get("type", "")).strip_edges().to_lower():
 		"always":
 			return true
 		"player_action":
@@ -105,7 +105,34 @@ func _condition_matches(condition: Dictionary, context: Dictionary) -> bool:
 		"context_equals":
 			var key := String(condition.get("key", ""))
 			return key != "" and context.has(key) and context[key] == condition.get("value")
+		"player_hidden":
+			return bool(context.get("player_is_hidden", context.get("is_hidden", false))) == bool(condition.get("value", true))
+		"distance_max":
+			# 玩家与目标坐标的最大距离上限。需要 context.position 与 condition.target。
+			var p: Variant = context.get("position", context.get("player_position"))
+			var target: Variant = condition.get("target", context.get("target_position"))
+			if typeof(p) != TYPE_VECTOR2 or typeof(target) != TYPE_VECTOR2:
+				return false
+			return (p as Vector2).distance_to(target as Vector2) <= float(condition.get("max", 0.0))
+		"time_since":
+			var key_name := String(condition.get("key", ""))
+			if key_name == "" or not context.has(key_name):
+				return false
+			var elapsed := float(Time.get_ticks_msec()) / 1000.0 - float(context[key_name])
+			return elapsed <= float(condition.get("max_seconds", 1e9))
+		"or":
+			var sub_conditions: Array = condition.get("conditions", [])
+			for sub in sub_conditions:
+				if typeof(sub) == TYPE_DICTIONARY and _condition_matches(sub, context):
+					return true
+			return false
+		"not":
+			var inner: Variant = condition.get("condition", null)
+			if typeof(inner) != TYPE_DICTIONARY:
+				return false
+			return not _condition_matches(inner, context)
 		_:
+			push_warning("RuleEngine: unknown condition type '%s'" % String(condition.get("type", "")))
 			return false
 
 
