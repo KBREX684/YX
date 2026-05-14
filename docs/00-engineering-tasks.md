@@ -1,7 +1,7 @@
 # 工程任务书 Engineering Tasks
 
-版本：v1.5.8
-关联实施计划：[`00-implementation-plan.md`](00-implementation-plan.md) v2.5.5
+版本：v1.5.9
+关联实施计划：[`00-implementation-plan.md`](00-implementation-plan.md) v2.5.6
 关联技术规约：[`00-tech-constraints.md`](00-tech-constraints.md) v1.3.1
 关联垂直切片：[`00-vertical-slice.md`](00-vertical-slice.md) v1.0.4
 创建日期：2026-05-14
@@ -504,11 +504,18 @@
 - **产出**：`/docs/perf/p2-review.md`
 - **实现步骤**：按实施计划 §十三 P2 行逐项勾验；记录遗留 issue。
 - **验收**：
-  - [ ] VS §2 + §4 前 3 项 + §1 第 2 项 全勾。
-  - [ ] `RuleEngine` GUT 用例 100% 通过。
+  - [x] VS §2 + §4 前 3 项 + §1 第 2 项 全勾。
+  - [x] `RuleEngine` GUT 用例 100% 通过。
 - **关联 VS**：见上。
 - **关联模块**：[`00-implementation-plan.md`](00-implementation-plan.md) §十三。
-- **状态**：TODO
+- **状态**：DONE
+
+**完成记录（2026-05-14）**
+
+- 设计：P2 出口只验收怪物可观察、压力反馈与规则可学习前置，不提前实现 P3 线索正文、击杀/收容执行和死亡复活。
+- 搭建：新增 `docs/perf/p2-review.md`，逐项记录 VS §2、§4 前 3 项、§1 第 2 项和 RuleEngine GUT 结果。
+- 审计修复：走查发现“大只两种以上现形条件”不足，已补 `rule_da_zhi_flashlight_stare_manifestation.tres` 并纳入测试和 profile。
+- 验收：GUT `42/42` 通过；schema 校验 17 个资源通过或按 P8 前 schema 口径 SKIP；关键 P2 场景 headless 加载通过；审计修复提交 `5023655`。
 
 ---
 
@@ -957,7 +964,7 @@
 | TASK-P2-2-da-zhi-ai | P2 | DONE | `ad22a25` |
 | TASK-P2-3-pressure-feedback | P2 | DONE | `a5820a2` |
 | TASK-P2-4-monster-clue-stubs | P2 | DONE | `b52b51c` |
-| TASK-P2-5-phase-exit-review | P2 | TODO | — |
+| TASK-P2-5-phase-exit-review | P2 | DONE | `5023655` / review doc |
 | TASK-P3-1-clue-system | P3 | TODO | — |
 | TASK-P3-2-weakness-containment | P3 | TODO | — |
 | TASK-P3-3-settlement-calculator | P3 | TODO | — |
@@ -981,11 +988,18 @@
 | TASK-P8-2-schema-validation-ci | P8 | TODO | — |
 | TASK-P8-3-docs-closeout | P8 | TODO | — |
 
-合计：**37 条 TASK**，P0、P1 与 P2-1/P2-2/P2-3/P2-4 已完成并通过命令行复核；当前可进入 TASK-P2-5 阶段出口走查。当前没有因开放问题阻塞的 TASK。
+合计：**37 条 TASK**，P0、P1 与 P2 全部 TASK 已完成并通过命令行复核；当前可进入 TASK-P3-1 线索系统与规则推理。当前没有因开放问题阻塞的 TASK。
 
 ---
 
 ## 版本记录
+
+### v1.5.9 - 2026-05-14
+
+- 完成 TASK-P2-5：新增 `docs/perf/p2-review.md`，记录 P2 阶段出口走查。
+- P2-5 审计修复新增 `rule_da_zhi_flashlight_stare_manifestation.tres`，使“大只至少两种特定条件现形”达标。
+- P2 阶段全部 TASK 标记为 DONE；当前实施入口推进至 TASK-P3-1。
+- 同步实施计划 v2.5.6、Monster Bible v0.2.6 与术语表 v1.4.7。
 
 ### v1.5.8 - 2026-05-14
 

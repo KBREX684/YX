@@ -1,6 +1,6 @@
 # 大只 — Monster Bible
 
-版本：v0.2.5
+版本：v0.2.6
 关联总设定版本：v0.8.2
 关联副本主题：破败校园
 状态：Demo 规则口径确认
@@ -235,6 +235,7 @@ P2-2 不写具体规则 ID；大只只读取 `RuleEngine` 注入的 `rule_effect
 |---|---|---|
 | `rule_da_zhi_corridor_run` | P1：走廊内不可奔跑 | 关键失败 / 搜索阶段触发，占位 `learnable_hint` 已填 |
 | `rule_da_zhi_first_manifestation` | 首次进入主走廊强制现形 | 首次现形条件，占位时长 2.5 秒 |
+| `rule_da_zhi_flashlight_stare_manifestation` | 手电长时间照向空走廊后的侧影现形 | P2-5 审计修复，补足第二种特定现形条件 |
 | `rule_da_zhi_broadcast_power_off_weakness` | 广播断电后失向弱点窗口 | 击杀链弱点窗口，需 `clue_broadcast_dependency` 解锁 |
 | `rule_da_zhi_containment_roster_step` | 收容步骤 1：名单确认 | 收容链第 1 步，需 `clue_full_roster` 解锁 |
 | `clue_da_zhi_corridor_echo` | 奔跑后额外脚步声行为观察 | P3-1 线索对象占位，稳定 ID 为 `clue_corridor_echo` |
@@ -266,6 +267,11 @@ P2-2 不写具体规则 ID；大只只读取 `RuleEngine` 注入的 `rule_effect
 ---
 
 ## 版本记录
+
+### v0.2.6 - 2026-05-14
+
+- P2-5 审计修复新增 `rule_da_zhi_flashlight_stare_manifestation`，补足第二种特定现形条件。
+- 同步 P2 出口走查结果：大只通常不可见、间接反馈可判断、阶段流程无随机传送均已达标。
 
 ### v0.2.5 - 2026-05-14
 
