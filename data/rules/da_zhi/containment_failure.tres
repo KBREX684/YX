@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="RuleResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/systems/resources/rule_resource.gd" id="1_rule"]
+
+[resource]
+script = ExtResource("1_rule")
+id = "rule_da_zhi_containment_failure"
+trigger_conditions = [{
+"type": "zone",
+"zone_id": "ritual_room"
+}, {
+"type": "player_action",
+"action": "place_anchors"
+}, {
+"type": "flag",
+"key": "ritual_order_correct",
+"value": false
+}]
+effect = {
+"type": "objective_complete",
+"objective_type": 3,
+"outcome": "miscontain",
+"target_id": "da_zhi",
+"monster_id": "da_zhi",
+"failure_level": "heavy",
+"origin_quality": "unstable",
+"origin_stability": "volatile"
+}
+clue_unlock_id = "clue_silence_taboo"
+learnable_hint = "锚点顺序错误会让大只被错误收束，保留原形但带来重度污染。"

@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://yx_abandoned_school"]
+[gd_scene load_steps=19 format=3 uid="uid://yx_abandoned_school"]
 
 [ext_resource type="PackedScene" path="res://scenes/dungeon/rooms/classroom_a.tscn" id="1_classroom"]
 [ext_resource type="PackedScene" path="res://scenes/dungeon/rooms/storage_a.tscn" id="2_storage"]
@@ -15,11 +15,97 @@
 [ext_resource type="PackedScene" path="res://scenes/audio/heartbeat_player.tscn" id="13_heartbeat"]
 [ext_resource type="PackedScene" path="res://scenes/objects/clue_note.tscn" id="14_clue_note"]
 [ext_resource type="Script" path="res://scripts/systems/clue_book.gd" id="15_clue_book"]
+[ext_resource type="Script" path="res://scripts/systems/objective_resolver.gd" id="16_objective_resolver"]
+[ext_resource type="Script" path="res://scripts/dungeon/ritual_step_trigger.gd" id="17_ritual_trigger"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ritual_trigger"]
+size = Vector2(54, 54)
 
 [node name="AbandonedSchool" type="Node2D"]
 
 [node name="ClueBook" type="Node" parent="."]
 script = ExtResource("15_clue_book")
+
+[node name="ObjectiveResolver" type="Node" parent="."]
+script = ExtResource("16_objective_resolver")
+
+[node name="RitualTriggers" type="Node2D" parent="."]
+
+[node name="RosterStep" type="Area2D" parent="RitualTriggers"]
+position = Vector2(130, -152)
+script = ExtResource("17_ritual_trigger")
+step_id = &"roster_confirmation"
+zone_id = &"records_room"
+action_id = &"read_roster"
+placeholder_asset_note = "占位: 收容步骤1，档案室完整名单确认点；后续替换为厚涂档案页、学生名册与纸张翻动轻动画。"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RitualTriggers/RosterStep"]
+shape = SubResource("RectangleShape2D_ritual_trigger")
+
+[node name="PlaceholderAssetLabel" type="Label" parent="RitualTriggers/RosterStep"]
+offset_left = -128.0
+offset_top = -34.0
+offset_right = 128.0
+offset_bottom = 28.0
+text = "占位: 名单确认"
+horizontal_alignment = 1
+
+[node name="SoundSealStep" type="Area2D" parent="RitualTriggers"]
+position = Vector2(250, -152)
+script = ExtResource("17_ritual_trigger")
+step_id = &"sound_seal"
+zone_id = &"broadcast_room"
+action_id = &"play_tape"
+placeholder_asset_note = "占位: 收容步骤2，熄灯广播室磁带封声点；后续替换为旧磁带、广播旋钮与声波压暗动画。"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RitualTriggers/SoundSealStep"]
+shape = SubResource("RectangleShape2D_ritual_trigger")
+
+[node name="PlaceholderAssetLabel" type="Label" parent="RitualTriggers/SoundSealStep"]
+offset_left = -128.0
+offset_top = -34.0
+offset_right = 128.0
+offset_bottom = 28.0
+text = "占位: 封声磁带"
+horizontal_alignment = 1
+
+[node name="AnchorStep" type="Area2D" parent="RitualTriggers"]
+position = Vector2(160, -190)
+script = ExtResource("17_ritual_trigger")
+step_id = &"anchor_order"
+zone_id = &"ritual_room"
+action_id = &"place_anchors"
+placeholder_asset_note = "占位: 收容步骤3，仪式室四锚点摆放；后续替换为校牌、照片、值班表、末次广播稿的分层 PNG。"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RitualTriggers/AnchorStep"]
+shape = SubResource("RectangleShape2D_ritual_trigger")
+
+[node name="PlaceholderAssetLabel" type="Label" parent="RitualTriggers/AnchorStep"]
+offset_left = -128.0
+offset_top = -34.0
+offset_right = 128.0
+offset_bottom = 28.0
+text = "占位: 四锚点"
+horizontal_alignment = 1
+
+[node name="FailureStep" type="Area2D" parent="RitualTriggers"]
+position = Vector2(160, -122)
+script = ExtResource("17_ritual_trigger")
+step_id = &"wrong_anchor_order"
+zone_id = &"ritual_room"
+action_id = &"place_anchors"
+placeholder_asset_note = "占位: 错误收容反馈点；后续替换为红绳错位、黑板名册渗墨和污染扩散动画。"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RitualTriggers/FailureStep"]
+shape = SubResource("RectangleShape2D_ritual_trigger")
+
+[node name="PlaceholderAssetLabel" type="Label" parent="RitualTriggers/FailureStep"]
+offset_left = -128.0
+offset_top = -34.0
+offset_right = 128.0
+offset_bottom = 28.0
+text = "占位: 错误收容"
+horizontal_alignment = 1
 
 [node name="Sections" type="Node2D" parent="."]
 

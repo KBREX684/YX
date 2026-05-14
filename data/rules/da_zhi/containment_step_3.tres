@@ -1,0 +1,54 @@
+[gd_resource type="Resource" script_class="RuleResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/systems/resources/rule_resource.gd" id="1_rule"]
+
+[resource]
+script = ExtResource("1_rule")
+id = "rule_da_zhi_containment_step_3"
+trigger_conditions = [{
+"type": "zone",
+"zone_id": "ritual_room"
+}, {
+"type": "player_action",
+"action": "place_anchors"
+}, {
+"type": "has_item",
+"item_id": "item_school_badge"
+}, {
+"type": "has_item",
+"item_id": "item_student_photo"
+}, {
+"type": "has_item",
+"item_id": "item_duty_roster"
+}, {
+"type": "has_item",
+"item_id": "item_last_broadcast_script"
+}, {
+"type": "collection_has",
+"key": "completed_steps",
+"value": "roster_confirmation"
+}, {
+"type": "collection_has",
+"key": "completed_steps",
+"value": "sound_seal"
+}, {
+"type": "collection_has",
+"key": "known_clues",
+"value": "clue_silence_taboo"
+}, {
+"type": "flag",
+"key": "ritual_order_correct",
+"value": true
+}]
+effect = {
+"type": "objective_complete",
+"objective_type": 2,
+"outcome": "contain",
+"target_id": "da_zhi",
+"monster_id": "da_zhi",
+"origin_quality": "high",
+"origin_stability": "stable",
+"archive_unlock": "da_zhi_containment"
+}
+clue_unlock_id = "clue_ritual_cord_right"
+learnable_hint = "最后按铭牌、照片、值班表、末次广播稿的顺序压住四个锚点。"

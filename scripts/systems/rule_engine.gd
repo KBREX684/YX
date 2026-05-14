@@ -96,6 +96,9 @@ func _condition_matches(condition: Dictionary, context: Dictionary) -> bool:
 			return bool(context.get("light_is_on", false)) == bool(condition.get("is_on", true))
 		"has_item":
 			return _collection_has(context.get("items", context.get("player_carried_items", [])), condition.get("item_id", ""))
+		"collection_has":
+			var collection_key := String(condition.get("key", ""))
+			return collection_key != "" and _collection_has(context.get(collection_key, []), condition.get("value", ""))
 		"flag":
 			var key := String(condition.get("key", ""))
 			return key != "" and context.has(key) and context[key] == condition.get("value", true)
