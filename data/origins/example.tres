@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="OriginResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/systems/resources/origin_resource.gd" id="1_origin_script"]
+
+[resource]
+script = ExtResource("1_origin_script")
+id = "origin_big_001"
+progress = Vector3(10, 0, 0)
+stability = 1.0
+stage = 1
+side_effects = [{
+"type": "contamination",
+"value": 0.1
+}]
+locked = false

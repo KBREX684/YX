@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="MonsterProfile" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/systems/resources/monster_profile.gd" id="1_monster_script"]
+
+[resource]
+script = ExtResource("1_monster_script")
+id = "big"
+name = "大只"
+rule_ids = PackedStringArray("rule_corridor_dont_run")
+weakness_rule_id = "rule_corridor_dont_run"
+containment_rule_ids = PackedStringArray()

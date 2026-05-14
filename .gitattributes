@@ -1,0 +1,19 @@
+# Git LFS 占位配置
+# TASK-P0-1 阶段 /assets/audio/ 尚未引入实际素材，暂未启用 LFS。
+# 当出现单文件 > 10MB 的二进制资源（音频/视频）时，按 docs/00-tech-constraints.md §八.2 启用：
+#   git lfs install
+#   git lfs track "*.ogg" "*.wav" "*.mp4"
+# 并将相应行从注释中移除。
+#
+# *.ogg filter=lfs diff=lfs merge=lfs -text
+# *.wav filter=lfs diff=lfs merge=lfs -text
+# *.mp4 filter=lfs diff=lfs merge=lfs -text
+
+# 文本规范化
+*.gd     text eol=lf
+*.md     text eol=lf
+*.json   text eol=lf
+*.cfg    text eol=lf
+*.tres   text eol=lf
+*.tscn   text eol=lf
+*.import text eol=lf
