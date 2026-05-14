@@ -1,6 +1,6 @@
 # 工程任务书 Engineering Tasks
 
-版本：v1.5.2
+版本：v1.5.3
 关联实施计划：[`00-implementation-plan.md`](00-implementation-plan.md) v2.5.0
 关联技术规约：[`00-tech-constraints.md`](00-tech-constraints.md) v1.3.1
 关联垂直切片：[`00-vertical-slice.md`](00-vertical-slice.md) v1.0.4
@@ -332,11 +332,20 @@
   2. `door` 支持开/关、可被规则锁定占位字段；`pickup` 写入临时 `inventory`（P4 接搜刮系统时替换）；`note` 弹出 Dialogic 2 的占位对话；`hiding_spot` 让 player 进入 `hide` 状态。
   3. 把至少 5 个实例摆进 `abandoned_school.tscn`，确保 VS §1 第 1 项"开门 / 拾取 / 阅读线索 / 进入躲藏点"四类操作都能在本副本内完成。
 - **验收**：
-  - [ ] VS §1 第 1 项的全部六个动作能在副本中实测完成。
-  - [ ] 任一交互物脚本 ≤ 80 行。
+  - [x] VS §1 第 1 项的全部六个动作能在副本中实测完成。
+  - [x] 任一交互物脚本 ≤ 80 行。
 - **关联 VS**：§1 第 1 项。
 - **关联模块**：[`modules/01-player-control-exploration.md`](modules/01-player-control-exploration.md)。
-- **状态**：TODO
+- **状态**：DONE
+
+#### TASK-P1-3 完成记录（2026-05-14）
+
+- 实现提交：`ca89401 feat(TASK-P1-3): add interactable object stubs`。
+- 设计：四类交互物统一为 `Area2D` 场景，脚本通过 `scripts/objects/interactable.gd` 提供 `interact(player)` 接口；交互物返回 payload，玩家控制器消费 payload，避免对象反向直接改写玩家状态。
+- 搭建：新增 `door / pickup / note / hiding_spot` 四个占位场景与根脚本；`abandoned_school.tscn` 放入 `EntranceDoor`、`ExitDoor`、`BatteryPickup`、`RuleNote`、`LockerHidingSpot` 共 5 个实例。
+- 占位资源：门、拾取电池、线索纸条和躲藏柜均在场景内用 `PlaceholderAssetLabel` 标注正式美术替换意图。
+- 审计修复：Dialogic 2 暂不启用运行时 Autoload，`note` 仅保留 `dialogic_timeline_id` 和 `note_text` 占位；派生交互脚本使用显式脚本路径继承，避免无编辑器导入缓存时 `class_name` 解析失败。
+- 验收：GUT `17/17` 通过；schema 校验通过（未注册 P1 资源保持 P8 schema hardening 前的 SKIP）；废弃学校与交互物场景 headless 加载通过；GoPeak `resource_dependencies` 检查无循环依赖，编辑器桥接仍因 `127.0.0.1:6506` 被占用不可连接。
 
 ---
 
@@ -901,7 +910,7 @@
 | TASK-P0-6-schema-skeletons | P0 | DONE | — |
 | TASK-P1-1-player-controller | P1 | DONE | `a28dbf7` |
 | TASK-P1-2-dungeon-handmade | P1 | DONE | `42f9796` |
-| TASK-P1-3-interactables-stub | P1 | TODO | — |
+| TASK-P1-3-interactables-stub | P1 | DONE | `ca89401` |
 | TASK-P1-4-phase-exit-review | P1 | TODO | — |
 | TASK-P2-1-rule-engine | P2 | TODO | — |
 | TASK-P2-2-da-zhi-ai | P2 | TODO（Q-16 已定案） | — |
@@ -931,11 +940,16 @@
 | TASK-P8-2-schema-validation-ci | P8 | TODO | — |
 | TASK-P8-3-docs-closeout | P8 | TODO | — |
 
-合计：**37 条 TASK**，P0 已完成并通过命令行复核；当前可进入 P1，且 P1 必须先过微切片门禁。当前没有因开放问题阻塞的 TASK。
+合计：**37 条 TASK**，P0 已完成并通过命令行复核；P1 已完成玩家控制、手工副本灰盒与交互物占位，当前可进入 TASK-P1-4 阶段出口走查。当前没有因开放问题阻塞的 TASK。
 
 ---
 
 ## 版本记录
+
+### v1.5.3 - 2026-05-14
+
+- 完成 TASK-P1-3：新增四类交互物占位场景、统一交互接口、玩家临时交互 payload 消费和废弃学校 5 个交互实例。
+- 记录 P1-3 设计、搭建、审计修复和验收结果；状态跟踪表写入实现提交 `ca89401`。
 
 ### v1.5.2 - 2026-05-14
 
