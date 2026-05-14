@@ -1,6 +1,6 @@
 # 无限流异常副本游戏设想
 
-版本：v0.2.0
+版本：v0.3.0
 状态：初期设想
 创建日期：2026-05-14
 最后更新：2026-05-14
@@ -42,6 +42,23 @@
 5. 玩家带回素材、情报和怪物留下的原形。
 6. 玩家在基地养成原形，解锁新的能力、剧情和副本策略。
 7. 养成后的原形影响后续副本探索，形成长期成长。
+
+### 模块细化文档
+
+每个系统模块已拆分为独立文档，存放在 `docs/modules/`：
+
+1. [玩家控制与探索模块](modules/01-player-control-exploration.md)
+2. [副本生成与地图模块](modules/02-dungeon-generation-map.md)
+3. [怪物与异常规则模块](modules/03-monster-anomaly-rules.md)
+4. [恐怖感知与压力模块](modules/04-horror-perception-pressure.md)
+5. [线索、解谜与规则推理模块](modules/05-clues-puzzles-rule-deduction.md)
+6. [副本目标与结算模块](modules/06-objectives-settlement.md)
+7. [搜刮与资源模块](modules/07-looting-resources.md)
+8. [原形获取与养成模块](modules/08-origin-acquisition-growth.md)
+9. [原形携带与助战模块](modules/09-origin-companion-support.md)
+10. [基地经营与研究模块](modules/10-base-management-research.md)
+11. [叙事与世界观模块](modules/11-narrative-worldbuilding.md)
+12. [进度、难度与长期成长模块](modules/12-progression-difficulty-longterm-growth.md)
 
 ### 1. 玩家控制与探索模块
 
@@ -393,6 +410,12 @@
 当前建议是：以恐怖求生和异常规则探索作为主体验，以原形养成作为长期奖励和策略扩展。养成系统不应完全安全化、萌化或数值化异常，否则会削弱恐怖基调。
 
 ## 版本记录
+
+### v0.3.0 - 2026-05-14
+
+- 将 12 个系统模块拆分为独立细化文档，存放于 `docs/modules/`。
+- 新增模块文档索引，方便从总设定跳转到具体模块。
+- 更新协作规则，要求后续修改模块文档时同步维护版本号、最后更新时间和版本记录。
 
 ### v0.2.0 - 2026-05-14
 
